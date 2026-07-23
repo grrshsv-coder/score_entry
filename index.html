@@ -4,12 +4,16 @@
   <base target="_top">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Class Marks Entry</title>
+  
+  <!-- PDF Generation Library -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
   <style>
     /* Aesthetic Color Palette & Typography */
     body { font-family: 'Segoe UI', system-ui, sans-serif; padding: 15px; background-color: #eef2f5; margin: 0; color: #334155; }
     
     .container { max-width: 500px; margin: auto; background: #ffffff; padding: 25px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); min-height: 80vh; border-top: 6px solid #4a90e2; }
-    .table-container-wrapper { max-width: 100%; overflow-x: auto; margin: auto; background: #ffffff; padding: 10px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); min-height: 80vh; border-top: 6px solid #10b981; }
+    .table-container-wrapper { max-width: 100%; overflow-x: auto; margin: auto; background: #ffffff; padding: 10px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); min-height: 80vh; border-top: 6px solid #64748b; }
     
     /* School Branding Headers */
     .school-name { text-align: center; color: #1e3a8a; margin: 0 0 5px 0; font-size: 22px; font-weight: 800; letter-spacing: 0.5px; }
@@ -39,8 +43,9 @@
     .action-btn { background-color: #3b82f6; color: white; width: 100%; margin-top: 25px; box-shadow: 0 4px 6px rgba(59, 130, 246, 0.25); font-size: 18px; }
     .action-btn:active { background-color: #2563eb; transform: scale(0.98); }
     
-    .report-btn { background-color: #10b981; color: white; width: 100%; box-shadow: 0 4px 6px rgba(16, 185, 129, 0.25); }
-    .report-btn:active { background-color: #059669; transform: scale(0.98); }
+    /* Minimal Report Button */
+    .report-btn { background-color: #f1f5f9; color: #475569; border: 1px solid #cbd5e1; width: 100%; box-shadow: none; font-size: 15px; }
+    .report-btn:active { background-color: #e2e8f0; transform: scale(0.98); }
     
     .back-btn { background-color: transparent; color: #3b82f6; padding: 0; margin-bottom: 20px; font-size: 15px; width: auto; font-weight: bold; }
     
@@ -52,15 +57,15 @@
     
     #message { text-align: center; font-weight: bold; margin-top: 20px; min-height: 24px; padding: 10px; border-radius: 6px; }
 
-    /* Data Table Styles */
-    .table-responsive { width: 100%; overflow-x: auto; margin-top: 20px; border-radius: 8px; border: 1px solid #e2e8f0; }
+    /* Data Table Styles with Alternating Colors */
+    .table-responsive { width: 100%; overflow-x: auto; margin-top: 15px; border-radius: 8px; border: 1px solid #e2e8f0; }
     .marks-table { width: 100%; border-collapse: collapse; white-space: nowrap; font-size: 14px; }
     .marks-table th, .marks-table td { padding: 10px 12px; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; text-align: center; }
-    .marks-table th { background-color: #f8fafc; color: #334155; font-weight: 700; }
+    .marks-table th { background-color: #f8fafc; color: #334155; font-weight: 700; text-align: left; }
     
-    /* Sticky Column so Student Name stays visible when scrolling right */
-    .sticky-col { position: sticky; left: 0; background-color: #ffffff; z-index: 1; border-right: 2px solid #cbd5e1; text-align: left !important; font-weight: 500; color: #1e293b; box-shadow: 2px 0 4px rgba(0,0,0,0.05); }
-    .marks-table th.sticky-col { background-color: #f8fafc; z-index: 2; }
+    /* Zebra Striping for table rows */
+    .marks-table tbody tr:nth-child(odd) { background-color: #ffffff; }
+    .marks-table tbody tr:nth-child(even) { background-color: #f1f5f9; }
     
     #loadingIndicator { text-align: center; color: #3b82f6; font-weight: bold; margin: 30px 0; font-size: 18px; }
   </style>
@@ -73,7 +78,7 @@
     <!-- PAGE 1: Select Division (Home Page) -->
     <div id="page1" class="page active">
       <h1 class="school-name">SANSKRIT HS VATTOLI</h1>
-      <h2 class="event-name">Vijayotsavam2026-27</h2>
+      <h2 class="event-name">Vijayotsavam 2026-27</h2>
       <h3 class="test-name">SSLC Monthly Test</h3>
       <hr class="divider">
       
@@ -91,7 +96,7 @@
       </div>
 
       <hr class="divider">
-      <button class="report-btn" onclick="showPage('page4')">📊 View Class Reports</button>
+      <button class="report-btn" onclick="showPage('page4')">View Class Reports</button>
     </div>
 
     <!-- PAGE 2: Select Subject -->
@@ -140,15 +145,16 @@
     </div>
   </div>
 
-  <!-- TABLE FLOW CONTAINER (Wider for the table) -->
+  <!-- TABLE FLOW CONTAINER -->
   <div class="table-container-wrapper page" id="page5">
     <button class="back-btn" onclick="showPage('page4')">← Back to Divisions</button>
     <h2 id="reportTitle">Class Report</h2>
     
-    <div id="loadingIndicator" style="display: none;">
-      Fetching latest marks from Google Sheets... ⏳
-    </div>
+    <button id="downloadPdfBtn" class="nav-btn" style="display: none; margin-bottom: 15px; width: 100%; border-color: #3b82f6; color: #3b82f6;" onclick="downloadPDF()">📥 Download as PDF</button>
+
+    <div id="loadingIndicator" style="display: none;">Generating... ⏳</div>
     
+    <!-- This div will be converted to PDF -->
     <div class="table-responsive" id="tableWrapper" style="display: none;">
       <!-- Table will be injected here -->
     </div>
@@ -170,6 +176,7 @@
     const currentClass = "10"; 
     let currentDivision = "";
     let currentSubject = "";
+    let currentReportClass = "";
 
     // REPLACE THIS WITH YOUR APPS SCRIPT URL!
     const scriptURL = 'https://script.google.com/macros/s/AKfycby05tkg3ElQdyLWsIwXICADRJgQYWkJQZkELLdvV-KArxfZNvWQXfgE9LRRrB3Bii-7lQ/exec';
@@ -178,11 +185,11 @@
       document.querySelectorAll('.page').forEach(page => page.classList.remove('active'));
       document.getElementById(pageId).classList.add('active');
       
-      // Toggle the main container vs wide table container
       if(pageId === 'page5') {
         document.getElementById('mainContainer').style.display = 'none';
       } else {
         document.getElementById('mainContainer').style.display = 'block';
+        document.getElementById('downloadPdfBtn').style.display = 'none';
       }
 
       if(document.getElementById('message')) {
@@ -264,13 +271,14 @@
 
     // --- LOGIC FOR VIEWING REPORTS ---
     function fetchAndShowReport(className) {
+      currentReportClass = className;
       document.getElementById('reportTitle').textContent = "Class " + className + " Report";
       showPage('page5');
       
       document.getElementById('loadingIndicator').style.display = 'block';
       document.getElementById('tableWrapper').style.display = 'none';
+      document.getElementById('downloadPdfBtn').style.display = 'none';
 
-      // Send the Read Request
       fetch(scriptURL, {
         method: 'POST',
         headers: { 'Content-Type': 'text/plain;charset=utf-8' },
@@ -292,7 +300,6 @@
     function buildTable(className, fetchedData) {
       let students = studentsData[className];
       
-      // Pivot the flat data into a dictionary based on student names
       let pivot = {};
       students.forEach(s => pivot[s] = {}); 
       
@@ -302,24 +309,45 @@
         }
       });
 
-      // Construct HTML Table
-      let html = '<table class="marks-table"><thead><tr><th class="sticky-col">Student Name</th>';
+      // Constructed without the sticky columns
+      let html = '<div style="padding: 10px; background: white;"><h2 style="text-align: center; margin-bottom: 20px;">SANSKRIT HS VATTOLI - Class ' + className + '</h2>';
+      html += '<table class="marks-table"><thead><tr><th>Student Name</th>';
       subjectsList.forEach(sub => html += `<th>${sub}</th>`);
       html += '</tr></thead><tbody>';
 
-      students.forEach(student => {
-        html += `<tr><td class="sticky-col">${student}</td>`;
+      students.forEach((student, index) => {
+        html += `<tr><td style="text-align: left;">${index + 1}. ${student}</td>`;
         subjectsList.forEach(sub => {
-          let mark = pivot[student][sub] || '-'; // Show dash if no mark is found
+          let mark = pivot[student][sub] || '-'; 
           html += `<td>${mark}</td>`;
         });
         html += '</tr>';
       });
-      html += '</tbody></table>';
+      html += '</tbody></table></div>';
 
       document.getElementById('tableWrapper').innerHTML = html;
       document.getElementById('loadingIndicator').style.display = 'none';
       document.getElementById('tableWrapper').style.display = 'block';
+      
+      // Show the PDF button now that the table is ready
+      document.getElementById('downloadPdfBtn').style.display = 'block';
+    }
+
+    // --- LOGIC FOR PDF GENERATION ---
+    function downloadPDF() {
+      const element = document.getElementById('tableWrapper');
+      
+      // Configuration for generating a landscape A4 PDF 
+      var opt = {
+        margin:       0.3,
+        filename:     'Class_' + currentReportClass + '_Marks_Report.pdf',
+        image:        { type: 'jpeg', quality: 0.98 },
+        html2canvas:  { scale: 2 },
+        jsPDF:        { unit: 'in', format: 'a4', orientation: 'landscape' }
+      };
+
+      // Call the library to build and download
+      html2pdf().set(opt).from(element).save();
     }
   </script>
 </body>
