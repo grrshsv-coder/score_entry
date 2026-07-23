@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <base target="_top">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Class Marks Entry</title>
+  <style>
+    body { font-family: system-ui, sans-serif; padding: 15px; background-color: #f4f4f9; margin: 0; }
+    .container { max-width: 500px; margin: auto; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); min-height: 80vh; }
+    
+    h2 { text-align: center; color: #333; margin-top: 0; margin-bottom: 5px; }
+    h3 { color: #555; text-align: center; margin-bottom: 20px; margin-top: 5px; font-weight: normal; }
+    
+    /* Page Navigation */
+    .page { display: none; }
+    .page.active { display: block; }
+    
+    /* Grids for Buttons */
+    .button-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 20px; }
+    .list-grid { display: grid; grid-template-columns: 1fr; gap: 10px; margin-top: 20px; }
+    
+    button { padding: 15px; font-size: 18px; font-weight: bold; cursor: pointer; border: none; border-radius: 6px; }
+    .nav-btn { background-color: #e9ecef; color: #333; transition: 0.2s; }
+    .nav-btn:active { background-color: #ced4da; }
+    
+    .action-btn { background-color: #0d6efd; color: white; width: 100%; margin-top: 20px; }
+    .action-btn:active { background-color: #0b5ed7; }
+    .action-btn:disabled { background-color: #a5c8fd; }
+    
+    .back-btn { background-color: transparent; color: #0d6efd; padding: 0; margin-bottom: 15px; font-size: 16px; width: auto; }
+    
+    /* Student List */
+    .student-row { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid #eee; }
+    .student-name { font-size: 16px; font-weight: 500; color: #444; flex-grow: 1; padding-right: 10px; }
+    .mark-input { width: 80px; padding: 10px; font-size: 16px; border: 1px solid #ccc; border-radius: 4px; text-align: center; }
+    
+    #message { text-align: center; font-weight: bold; margin-top: 15px; min-height: 24px; }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    
+    <!-- PAGE 1: Select Division (Home Page) -->
+    <div id="page1" class="page active">
+      <h2>Select Division</h2>
+      <h3>Class 10</h3>
+      <div class="button-grid">
+        <button class="nav-btn" onclick="selectDivision('A')">A</button>
+        <button class="nav-btn" onclick="selectDivision('B')">B</button>
+        <button class="nav-btn" onclick="selectDivision('C')">C</button>
+        <button class="nav-btn" onclick="selectDivision('D')">D</button>
+        <button class="nav-btn" onclick="selectDivision('E')">E</button>
+        <button class="nav-btn" onclick="selectDivision('F')">F</button>
+        <button class="nav-btn" onclick="selectDivision('G')">G</button>
+        <button class="nav-btn" onclick="selectDivision('H')">H</button>
+      </div>
+    </div>
+
+    <!-- PAGE 2: Select Subject -->
+    <div id="page2" class="page">
+      <button class="back-btn" onclick="showPage('page1')">← Back</button>
+      <h2>Select Subject</h2>
+      <h3 id="subjectTitleClass"></h3>
+      <div class="list-grid">
+        <button class="nav-btn" onclick="selectSubject('Language 1')">Language 1</button>
+        <button class="nav-btn" onclick="selectSubject('Language 2')">Language 2</button>
+        <button class="nav-btn" onclick="selectSubject('English')">English</button>
+        <button class="nav-btn" onclick="selectSubject('Hindi')">Hindi</button>
+        <button class="nav-btn" onclick="selectSubject('Social Science')">Social Science</button>
+        <button class="nav-btn" onclick="selectSubject('Physics')">Physics</button>
+        <button class="nav-btn" onclick="selectSubject('Chemistry')">Chemistry</button>
+        <button class="nav-btn" onclick="selectSubject('Biology')">Biology</button>
+        <button class="nav-btn" onclick="selectSubject('Mathematics')">Mathematics</button>
+      </div>
+    </div>
+
+    <!-- PAGE 3: Enter Marks -->
+    <div id="page3" class="page">
+      <button class="back-btn" onclick="showPage('page2')">← Back</button>
+      <h2 id="marksTitle">Enter Marks</h2>
+      <h3 id="marksSubtitle"></h3>
+      
+      <div id="studentListContainer">
+        <!-- Student rows will be injected here by JavaScript -->
+      </div>
+
+      <button id="saveBtn" class="action-btn" onclick="saveMarks()">Save All Marks</button>
+      <div id="message"></div>
+    </div>
+
+  </div>
+
+  <script>
+    const studentsData = {
+      "10A": ["ADHIDEV A S", "ADHISANKAR S R", "ALAN S N", "ALANKRISHNA V S", "ANUNANDA N P", "ANUNANDH P D", "ANVIK K C", "DEVANANDA K", "DEVARSH RAJEEV", "DHYANA SOJAV. V P", "FATHIMA RIZA MEHRIN", "FATHIMA ZAHRA K", "FILZA FATHIMA C H", "HANIYA FATHIMA N S", "HINA FARHEEN", "KARTHIK. B", "KOUSHIK PRAKASH", "LEZIN MUHAMMAD", "LIYA MEHAJABIN", "MADHUMATH SARANG", "MISBA MEHRIN", "MUHAMMED MUNEES P P", "MUHAMMED NASMIL V K", "MUHAMMED RIDAN.K.K", "MUHAMMED ZIDHAN T K", "NAADHIDEV S R", "NAVAMI A S", "NEERAJ R", "NIHA FATHIMA", "NIVEDITHA .D", "RAMONA ROSE", "RITHU S LAKSHMI", "SALMAN", "SARANNYA V K", "SHAJA FATHIMA K K", "SIVA PANCHAMI.M.K", "SIVAKESH", "SOORYAKIRAN V P", "SRAVAN KRISHNA", "SREEDARSH L L", "SREEHARSH L L", "SUHANA SAFREEN", "SURYADEV V BABU", "THANHARA C T", "VIVEK.R"],
+      "10B": ["AGNEY S KUMAR", "AMAN MUHAMMAD P", "AMEN RIZA", "ANAGASREE.P.M", "ANHA ASLAM", "ANMIYA ROSE . J.R", "ARSHAWIN S AJITH", "B . HARY NIGAM", "BHAVIYUKTHA SURESH P S", "BHUVAN GOPAL J P", "DEVA NANDHA P", "DEVAMITHRA S", "DHYAN KRISHNA", "DILSHAN", "DIYA MEHRIN", "EHNA S DOYAL", "FATHIMA HAYA PARVEEN N K", "FIDA RATHNA C P", "FIDIN MINSHAD", "HADIYA NOURIN P P", "HANFA MEHFIN", "LEYA LINEESH", "MINHA FATHIMA G P", "MOHAMMED SHEES O", "MUHAMMAD IHSAN", "MUHAMMAD MIRSAH", "MUHAMMAD RASAL N", "MUHAMMAD RAZIN", "MUHAMMED RAJUL SHAN C K", "MUHAMMED SHABIN P P", "NAINA ZIYA", "NIYALAKSHMI M", "NUBHA FATHIMA K M", "PRANAV DEV", "RAIDA MEHEBIN", "SOUVIK MAJUMDER", "THARAK N", "THEERTHA R", "YASHIKA SINGH M", "ZAYBA DAANIYA JAMSHID"],
+      "10C": ["AADIL S M", "AASHMI RATNESH", "ABAYKRISHNA S R", "ADHEENA BABU", "AGNEY R AJAY", "AHAL THEJ A R", "AMANYA A V", "ANUSHKA V V", "ARCHIT RAJESH", "DAIWIK G KRISHNA", "DENUK N SASI", "DEVAPRIYA L G", "DHYAN DEV K", "DHYANA LAKSHMI D S", "FADIN FAROOK", "FATHIMA", "FATHIMA SAFVANA O", "KRISHNAPRIYA S S", "LAMIA ZAHRIN P P", "LOONA KHADEEJA", "MINHA ZAYAN J P", "MITHVA M", "MUHAMMAD FAZ P", "MUHAMMAD NACEEB", "MUHAMMAD RAFIN SHAN", "MUHAMMAD YASEEN.V.K", "NAKHIYA NAJA", "NEERAJ KRISHNA", "NEERAV A P", "NEVIN VAIBHAV", "NIVEDA R J", "PRITHWINJITH V", "RAFIN SHAN N P", "RAFNA FATHIMA K K", "SANVI KRISHNA", "SHAIHA FATHIMA", "SHANWIN KRISHNA", "SHENZA MEHBIN P P", "SIDHARTH PURUSHOTHAMAN", "SIYANA FATHIMA", "SREEHARI . S", "SREEHARI RAJAN", "SREELAKSHMI S N", "THAHLIYA FATHIMA", "THANHA FATHIMA", "THEJA S R", "VEDHA S.R"],
+      "10D": ["ADHISH C R", "ADIDEV K P", "ADITHYA K T", "ALVIN KRISHNA", "AYUSH K", "BADHIYA KHADEEJA T V", "DHARMIK. N R", "FARHA BINTH NASEER", "FATHIMA", "FATHIMA NOORA N K", "FATHIMA SANHA P M", "GOUTHAM KRISHNA", "HANIYA T", "JITHU PRIYA N A", "KARTHIK C", "LIYA FATHIMA", "MUHAMMAD AIMAN P T", "MUHAMMAD SIJAL M", "MUHAMMED FAYIS", "MUHAMMED HANAN", "MUHAMMED IHSAN M P", "NAIFA FATHIMA", "NAVATHEJ .M", "NIRAAMAY B S", "RANA FATHIMA", "RITHU LAKSHMI", "RITHUPARNA GOSH C", "S B VAIGA LAKSHMI", "SANAY KRISHNA K T", "SANJAY KRISHNA.V.K", "SAVINAY S R", "SHANTO", "SHARON DEV", "SIDHARTH M K", "SREENANDH", "SRINGA", "SURYATHEJ K", "THAMANNA ABDUL JALEEL", "YETHIN LIJESH"],
+      "10E": ["AADHIDEV C K", "ADHISH S BABU", "ADHITYAN P P", "ALJIN ANIL", "ANANYASREE", "ANHITHA S ASHOK", "ANMIYA C M", "ANURAJ", "ASHNA MOL S S", "AYSHA NAIFA", "DEVATHEERTH S B", "DHYAN KRISHNA RAJESH", "DHYANDEV M K", "FATHIMA", "HABEEB AHAMMED KEERAM POYIL", "HADHI HANNAN", "HANNA FATHIMA", "HANNA SHADHIYA", "HISHAM", "JISHNU R P", "KASHINADH P S", "KRISHNA VENI S N", "MISBA MEHARIN", "MUHAMMAD AFLAH", "MUHAMMAD RISHAD", "MUHAMMED NIHAL N", "MUHAMMED SAFVAN", "MUHAMMED SHUHAIM", "MUHAMMED SINAN", "NAITHIKA G S", "NEJA C S", "NIVEDH KRISHNA", "RAFNAJ M", "REVATHI RINITH", "SAYOOJ V P", "SIVA MITHRA", "SREEDEV .M.V", "THANVI E K", "VEDAKEERTHI R", "VEDHA L J", "YADHU KRISHNA K C P", "ZAEEM ABDULLA"],
+      "10F": ["AANLIYA N S", "ABDULNAFIH", "ALWIN AJITH", "AMEEN ABDULLA", "ANASWAR P", "DANISH T", "DEVAJ K K", "DHYANDEV V P", "DIYA DEVA D S", "DYUTHIKALAKSHMI B S", "HADI MUHAMMAD K K", "ISHAN S LINT", "JHANVI R AJI", "MITHRA V RAJ", "MUHAMMAD RINAN O.P", "MUHAMMED AJIFAN P P", "MUHAMMED MISUAB", "MUHAMMED RAIHAN", "MUHAMMED SHIBIL SHAM P.P.", "NAISHAN A NEERAJ", "NERVIN N ASHOK", "NIDA FATHIMA", "NIVED R M", "NIVEDH PAVITHRAN", "R N SURYADEV", "SAIKRISHNA K P", "SHIKHA RANJITH K.K.", "SHIVADEV KRISHNA B", "SHIVAMITHRA SHAJI K", "SHIYONA VINOD P K", "SREEDEV S S", "SURYADEV .S.N", "VARUNJITH K R", "VEDHA LAKSHMI", "VEDHIKA A S", "VIDU SMERA . K", "VYGA P P"],
+      "10G": ["AADIDEV S R", "ABHIN KRISHNA K", "ABINANDHA A", "ABINEET S R", "ADWIN RAJ", "AGNEY S SUJITH", "AHALYA K K", "AKSHITH K K", "ALAN KRISHNA E M", "ALEKH S SUJITH", "ANAMIKA P M", "ANLIYA S S", "ANSIYA", "ARUSH DEV K K", "ASHMI .K", "ATHIL C S", "AYANDEV .V", "DEVANGANA . M.S", "DIYAN DEV", "GARHITHA", "GAYANA RAJEEV K P", "GOUTHAM KRISHNA G S", "ISHAN SURESH", "JINU DEV V V", "NAITHIKA.K.P", "NEEL KAUTHIK.S", "RIVETH KRISHNA V P", "SANJOG V", "SAYOOJ B BABURAJAN", "SHIVANANDA M.T.P", "SHIVANI V P", "SINOBIYA RINEESH", "SIVAKEERTH D N", "SREEDEV K", "SRIRAM T", "THEJUL DEV", "VEDHASREE"],
+      "10H": ["AASHLINRAJ", "ABHIMANYU R MANOJ", "ABHINAV C K", "ADHISH RAJESH", "ADIDEV A B", "ADISH J S", "ADISH KRISHNA D S", "ADWAYA E K", "ALANDEV N K", "ALANDEV P P", "ALBIN KRISHNA", "ALVIN C P", "AMAN JYOTH P S", "AMEGH NATH R B", "ANANTHU P K", "ANGITHKRISHNA", "ARADHYA A S", "ASHIN C K", "ATMAJ ALAN.N S", "DEVASURYA P P", "DHYAN KRISHNA C K", "KARTHIK", "NAINIKA. K M", "NIHARA P C", "PARVANA K K", "RHETHUNAND V P", "RONA P P", "SANMAYA N K", "SAYOOJ V S", "SHARON FIDHAL A S", "SHEHAN SHAJU", "SHIYONA ROSE S R", "SIVANANDHA S R", "SIYA .V S", "SREEDEV .B", "THANMAYA .A"]
+    };
+
+    const currentClass = "10"; // Hardcoded class prefix
+    let currentDivision = "";
+    let currentSubject = "";
+
+    function showPage(pageId) {
+      document.querySelectorAll('.page').forEach(page => page.classList.remove('active'));
+      document.getElementById(pageId).classList.add('active');
+      document.getElementById('message').textContent = ""; // Clear messages on page change
+    }
+
+    function selectDivision(div) {
+      currentDivision = div;
+      const fullClassName = currentClass + currentDivision;
+      document.getElementById('subjectTitleClass').textContent = "Class " + fullClassName;
+      showPage('page2');
+    }
+
+    function selectSubject(sub) {
+      currentSubject = sub;
+      const fullClassName = currentClass + currentDivision;
+      
+      document.getElementById('marksTitle').textContent = "Class " + fullClassName;
+      document.getElementById('marksSubtitle').textContent = sub;
+      
+      renderStudentList(fullClassName);
+      showPage('page3');
+    }
+
+    function renderStudentList(className) {
+      const container = document.getElementById('studentListContainer');
+      container.innerHTML = ""; // Clear previous list
+      
+      const students = studentsData[className];
+      
+      if (!students || students.length === 0) {
+        container.innerHTML = "<p style='text-align:center;'>No students found for this class.</p>";
+        return;
+      }
+
+      students.forEach((student, index) => {
+        const row = document.createElement('div');
+        row.className = 'student-row';
+        
+        const nameLabel = document.createElement('div');
+        nameLabel.className = 'student-name';
+        nameLabel.textContent = (index + 1) + ". " + student;
+        
+        const markInput = document.createElement('input');
+        markInput.type = 'number';
+        markInput.className = 'mark-input';
+        markInput.placeholder = '0';
+        markInput.dataset.studentName = student; // Store name in data attribute
+        
+        row.appendChild(nameLabel);
+        row.appendChild(markInput);
+        container.appendChild(row);
+      });
+    }
+
+    function saveMarks() {
+      const msg = document.getElementById('message');
+      const btn = document.getElementById('saveBtn');
+      
+      const fullClassName = currentClass + currentDivision;
+      const inputs = document.querySelectorAll('.mark-input');
+      const marksToSave = [];
+
+      inputs.forEach(input => {
+        const markValue = input.value.trim();
+        // Only save if a mark was actually entered
+        if (markValue !== "") {
+          marksToSave.push({
+            className: fullClassName,
+            subject: currentSubject,
+            student: input.dataset.studentName,
+            mark: markValue
+          });
+        }
+      });
+
+      if (marksToSave.length === 0) {
+        msg.style.color = "#dc3545";
+        msg.textContent = "No marks entered. Nothing to save.";
+        return;
+      }
+
+      btn.disabled = true;
+      btn.textContent = "Saving...";
+      msg.textContent = "";
+
+      // REPLACE THE URL BELOW WITH YOUR NEW GOOGLE APPS SCRIPT URL
+      const scriptURL = "https://script.google.com/macros/s/AKfycby05tkg3ElQdyLWsIwXICADRJgQYWkJQZkELLdvV-KArxfZNvWQXfgE9LRRrB3Bii-7lQ/exec';
+
+      fetch(scriptURL, {
+        method: 'POST',
+        // Using text/plain prevents strict CORS errors from Google
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        body: JSON.stringify(marksToSave)
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.status === "error") {
+          msg.style.color = "#dc3545";
+          msg.textContent = data.message;
+        } else {
+          msg.style.color = "#198754";
+          msg.textContent = data.message;
+          
+          inputs.forEach(input => input.value = "");
+          setTimeout(() => showPage('page1'), 3000); 
+        }
+        btn.disabled = false;
+        btn.textContent = "Save All Marks";
+      })
+      .catch(error => {
+        msg.style.color = "#dc3545";
+        msg.textContent = "Network Error: Could not connect to the database.";
+        btn.disabled = false;
+        btn.textContent = "Save All Marks";
+      });
+    }
+  </script>
+</body>
+</html>
