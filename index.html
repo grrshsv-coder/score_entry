@@ -150,14 +150,16 @@
     <button class="back-btn" onclick="showPage('page4')">← Back to Divisions</button>
     <h2 id="reportTitle">Class Report</h2>
     
-    <button id="downloadPdfBtn" class="nav-btn" style="display: none; margin-bottom: 15px; width: 100%; border-color: #3b82f6; color: #3b82f6;" onclick="downloadPDF()">📥 Download as PDF</button>
-
     <div id="loadingIndicator" style="display: none;">Generating... ⏳</div>
     
     <!-- This div will be converted to PDF -->
     <div class="table-responsive" id="tableWrapper" style="display: none;">
       <!-- Table will be injected here -->
     </div>
+
+    <!-- Moved the PDF button below the table -->
+    <button id="downloadPdfBtn" class="nav-btn" style="display: none; margin-top: 15px; width: 100%; border-color: #3b82f6; color: #3b82f6;" onclick="downloadPDF()">📥 Download as PDF</button>
+
   </div>
 
   <script>
@@ -337,13 +339,13 @@
     function downloadPDF() {
       const element = document.getElementById('tableWrapper');
       
-      // Configuration for generating a landscape A4 PDF 
+      // Configuration for generating a portrait A4 PDF 
       var opt = {
         margin:       0.3,
         filename:     'Class_' + currentReportClass + '_Marks_Report.pdf',
         image:        { type: 'jpeg', quality: 0.98 },
         html2canvas:  { scale: 2 },
-        jsPDF:        { unit: 'in', format: 'a4', orientation: 'landscape' }
+        jsPDF:        { unit: 'in', format: 'a4', orientation: 'portrait' } // Set back to portrait
       };
 
       // Call the library to build and download
