@@ -12,7 +12,7 @@
     /* Aesthetic Color Palette & Typography */
     body { font-family: 'Segoe UI', system-ui, sans-serif; padding: 15px; background-color: #eef2f5; margin: 0; color: #334155; }
     
-    .container { max-width: 500px; margin: auto; background: #ffffff; padding: 25px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); min-height: 80vh; border-top: 6px solid #4a90e2; }
+    .container { max-width: 500px; margin: auto; background: #ffffff; padding: 25px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); min-height: 80vh; border-top: 6px solid #4a90e2; position: relative; }
     .table-container-wrapper { max-width: 100%; overflow-x: auto; margin: auto; background: #ffffff; padding: 10px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); min-height: 80vh; border-top: 6px solid #64748b; }
     
     /* School Branding Headers */
@@ -68,6 +68,9 @@
     .marks-table tbody tr:nth-child(even) { background-color: #f1f5f9; }
     
     #loadingIndicator { text-align: center; color: #3b82f6; font-weight: bold; margin: 30px 0; font-size: 18px; }
+
+    /* Developer Credit Styles */
+    .developer-credit { text-align: center; margin-top: 35px; font-size: 13px; color: #94a3b8; font-weight: 500; letter-spacing: 0.3px; }
   </style>
 </head>
 <body>
@@ -97,6 +100,9 @@
 
       <hr class="divider">
       <button class="report-btn" onclick="showPage('page4')">View Class Reports</button>
+
+      <!-- Developer Credit Added Here -->
+      <div class="developer-credit">Designed & Developed by grr</div>
     </div>
 
     <!-- PAGE 2: Select Subject -->
@@ -157,7 +163,6 @@
       <!-- Table will be injected here -->
     </div>
 
-    <!-- Moved the PDF button below the table -->
     <button id="downloadPdfBtn" class="nav-btn" style="display: none; margin-top: 15px; width: 100%; border-color: #3b82f6; color: #3b82f6;" onclick="downloadPDF()">📥 Download as PDF</button>
 
   </div>
@@ -345,7 +350,7 @@
         filename:     'Class_' + currentReportClass + '_Marks_Report.pdf',
         image:        { type: 'jpeg', quality: 0.98 },
         html2canvas:  { scale: 2 },
-        jsPDF:        { unit: 'in', format: 'a4', orientation: 'portrait' } // Set back to portrait
+        jsPDF:        { unit: 'in', format: 'a4', orientation: 'portrait' } 
       };
 
       // Call the library to build and download
