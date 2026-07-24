@@ -80,7 +80,7 @@
     <div id="page1" class="page active">
       <h1 class="school-name">SANSKRIT HS VATTOLI</h1>
       <h2 class="event-name">Vijayotsavam 2026-27</h2>
-      <h3 class="test-name">SSLC Monthly Test</h3>
+      <h3 class="test-name">SSLC Mid Term Examination</h3>
       <hr class="divider">
       
       <h2>Enter Marks</h2>
@@ -189,28 +189,50 @@
     let currentDivision = "";
     let currentSubject = "";
     
-    // Tracks whether we want the 'full' class list or just the 'top10'
     let currentReportType = "full"; 
     let currentReportClass = "";
 
     // REPLACE THIS WITH YOUR APPS SCRIPT URL!
     const scriptURL = 'https://script.google.com/macros/s/AKfycby05tkg3ElQdyLWsIwXICADRJgQYWkJQZkELLdvV-KArxfZNvWQXfgE9LRRrB3Bii-7lQ/exec';
 
+    // --- HARDWARE BACK BUTTON & HASH ROUTING LOGIC ---
     function showPage(pageId) {
-      document.querySelectorAll('.page').forEach(page => page.classList.remove('active'));
-      document.getElementById(pageId).classList.add('active');
+      window.location.hash = pageId; 
+    }
+
+    // This listens for BOTH on-screen buttons and the phone's hardware back button
+    window.addEventListener('hashchange', function() {
+      const pageId = window.location.hash.substring(1) || 'page1';
       
-      if(pageId === 'page5') {
+      document.querySelectorAll('.page').forEach(page => page.classList.remove('active'));
+      const targetElement = document.getElementById(pageId);
+      
+      if (targetElement) {
+        targetElement.classList.add('active');
+      } else {
+        document.getElementById('page1').classList.add('active');
+      }
+      
+      if (pageId === 'page5') {
         document.getElementById('mainContainer').style.display = 'none';
       } else {
         document.getElementById('mainContainer').style.display = 'block';
       }
 
-      if(document.getElementById('message')) {
-        document.getElementById('message').textContent = ""; 
-        document.getElementById('message').style.backgroundColor = "transparent";
+      const msgEl = document.getElementById('message');
+      if (msgEl) {
+        msgEl.textContent = ""; 
+        msgEl.style.backgroundColor = "transparent";
       }
-    }
+    });
+
+    // Handle initial page load smoothly
+    window.addEventListener('load', function() {
+      if (!window.location.hash) {
+        window.history.replaceState(null, null, '#page1');
+      }
+      window.dispatchEvent(new Event('hashchange'));
+    });
 
     // --- LOGIC FOR ENTERING MARKS ---
     function selectDivision(div) {
