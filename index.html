@@ -56,20 +56,12 @@
 
     /* Data Table Styles */
     .table-responsive { width: 100%; overflow-x: auto; margin-top: 15px; border-radius: 8px; border: 1px solid #e2e8f0; }
-    
-    /* Removed white-space: nowrap to allow wrapping */
     .marks-table { width: 100%; border-collapse: collapse; font-size: 13px; }
-    
-    /* Tighter padding */
     .marks-table th, .marks-table td { padding: 8px 4px; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; text-align: center; }
-    
-    /* Headers can now stack text (e.g. Social Science) */
     .marks-table th { background-color: #f8fafc; color: #334155; font-weight: 700; white-space: normal; line-height: 1.2; font-size: 12px; }
-    
-    /* Force the student name column to stay on one line and align left */
     .marks-table td:first-child, .marks-table th:first-child { text-align: left; white-space: nowrap; padding-left: 8px; }
     
-    /* Zebra Striping for table rows */
+    /* Zebra Striping */
     .marks-table tbody tr:nth-child(odd) { background-color: #ffffff; }
     .marks-table tbody tr:nth-child(even) { background-color: #f1f5f9; }
     
@@ -88,7 +80,7 @@
     <div id="page1" class="page active">
       <h1 class="school-name">SANSKRIT HS VATTOLI</h1>
       <h2 class="event-name">Vijayotsavam 2026-27</h2>
-      <h3 class="test-name">SSLC Mid Term Examination</h3>
+      <h3 class="test-name">SSLC Monthly Test</h3>
       <hr class="divider">
       
       <h2>Enter Marks</h2>
@@ -107,7 +99,6 @@
       <hr class="divider">
       <button class="report-btn" onclick="showPage('page4')">View Class Reports</button>
 
-      <!-- Developer Credit Added Here (Moved slightly upwards) -->
       <div class="developer-credit">Designed & Developed by GRR</div>
     </div>
 
@@ -139,11 +130,22 @@
       <div id="message"></div>
     </div>
 
-    <!-- PAGE 4: Select Division to View Report -->
+    <!-- PAGE 4: Select Report Type -->
     <div id="page4" class="page">
       <button class="back-btn" onclick="showPage('page1')">← Back to Home</button>
-      <h2>View Class Reports</h2>
-      <h3>Select a class to generate table</h3>
+      <h2>Class Reports</h2>
+      <h3>Select report type</h3>
+      <div class="list-grid">
+        <button class="nav-btn" onclick="selectReportType('full')">📄 Full Class Report</button>
+        <button class="nav-btn" onclick="selectReportType('top10')">🏆 Top 10 Students</button>
+      </div>
+    </div>
+
+    <!-- PAGE 4a: Select Division for Report -->
+    <div id="page4a" class="page">
+      <button class="back-btn" onclick="showPage('page4')">← Back to Reports</button>
+      <h2 id="reportDivisionTitle">Select Division</h2>
+      <h3>Choose a class to view</h3>
       <div class="button-grid">
         <button class="nav-btn" onclick="fetchAndShowReport('10A')">10 A</button>
         <button class="nav-btn" onclick="fetchAndShowReport('10B')">10 B</button>
@@ -159,7 +161,7 @@
 
   <!-- TABLE FLOW CONTAINER -->
   <div class="table-container-wrapper page" id="page5">
-    <button class="back-btn" onclick="showPage('page4')">← Back to Divisions</button>
+    <button class="back-btn" onclick="showPage('page4a')">← Back to Divisions</button>
     <h2 id="reportTitle">Class Report</h2>
     
     <div id="loadingIndicator" style="display: none;">Generating... ⏳</div>
@@ -186,6 +188,9 @@
     const currentClass = "10"; 
     let currentDivision = "";
     let currentSubject = "";
+    
+    // Tracks whether we want the 'full' class list or just the 'top10'
+    let currentReportType = "full"; 
     let currentReportClass = "";
 
     // REPLACE THIS WITH YOUR APPS SCRIPT URL!
@@ -279,6 +284,12 @@
     }
 
     // --- LOGIC FOR VIEWING REPORTS ---
+    function selectReportType(type) {
+      currentReportType = type;
+      document.getElementById('reportDivisionTitle').textContent = type === 'top10' ? "Top 10 - Select Division" : "Full Report - Select Division";
+      showPage('page4a');
+    }
+
     function fetchAndShowReport(className) {
       currentReportClass = className;
       document.getElementById('reportTitle').textContent = "Class " + className + " Report";
@@ -308,28 +319,53 @@
     function buildTable(className, fetchedData) {
       let students = studentsData[className];
       
+      // Pivot data and calculate totals
       let pivot = {};
-      students.forEach(s => pivot[s] = {}); 
+      students.forEach(s => { 
+        pivot[s] = { total: 0 }; 
+      }); 
       
       fetchedData.forEach(row => {
         if(pivot[row.student]) {
-          pivot[row.student][row.subject] = row.mark;
+          let mark = parseInt(row.mark) || 0;
+          pivot[row.student][row.subject] = mark;
+          pivot[row.student].total += mark;
         }
       });
 
-      // Constructed the table with wrap-friendly headers
-      let html = '<div style="padding: 10px; background: white;"><h2 style="text-align: center; margin-bottom: 20px;">SANSKRIT HS VATTOLI - Class ' + className + '</h2>';
+      // Filter and Sort based on Report Type
+      let displayStudents = [];
+      if (currentReportType === 'top10') {
+        // Sort students by highest total first, slice the top 10
+        displayStudents = [...students].sort((a, b) => pivot[b].total - pivot[a].total).slice(0, 10);
+      } else {
+        // Keep alphabetical order for full class report
+        displayStudents = students;
+      }
+
+      // Build the table
+      let titleSuffix = currentReportType === 'top10' ? " (Top 10 Students)" : "";
+      let rankHeader = currentReportType === 'top10' ? "Rank" : "No.";
+      
+      let html = '<div style="padding: 10px; background: white;"><h2 style="text-align: center; margin-bottom: 20px;">SANSKRIT HS VATTOLI - Class ' + className + titleSuffix + '</h2>';
+      
       html += '<table class="marks-table"><thead><tr><th>Student Name</th>';
       subjectsList.forEach(sub => html += `<th>${sub}</th>`);
-      html += '</tr></thead><tbody>';
+      html += '<th style="background-color: #e2e8f0;">Total</th></tr></thead><tbody>';
 
-      students.forEach((student, index) => {
-        html += `<tr><td>${index + 1}. ${student}</td>`;
+      displayStudents.forEach((student, index) => {
+        // Decide what number to show next to the name
+        let rankOrNo = currentReportType === 'top10' ? (index + 1) : (students.indexOf(student) + 1);
+        
+        html += `<tr><td>${rankOrNo}. ${student}</td>`;
+        
         subjectsList.forEach(sub => {
-          let mark = pivot[student][sub] || '-'; 
+          let mark = pivot[student][sub] !== undefined ? pivot[student][sub] : '-'; 
           html += `<td>${mark}</td>`;
         });
-        html += '</tr>';
+        
+        // Add Total Column
+        html += `<td style="font-weight: bold; background-color: #f8fafc;">${pivot[student].total}</td></tr>`;
       });
       html += '</tbody></table></div>';
 
