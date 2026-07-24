@@ -81,31 +81,17 @@
     .back-btn:active { transform: translateX(0) !important; }
 
     /* ------------------------------------- */
-    /* Light Pastel Shades for Divisions     */
+    /* Page-Specific Division Button Colors  */
     /* ------------------------------------- */
-    .div-a { background-color: #fef3c7; border-color: #fde68a; box-shadow: 0 4px 0 #fcd34d; }
-    .div-a:hover { box-shadow: 0 6px 0 #fcd34d; }
     
-    .div-b { background-color: #d1fae5; border-color: #a7f3d0; box-shadow: 0 4px 0 #6ee7b7; }
-    .div-b:hover { box-shadow: 0 6px 0 #6ee7b7; }
+    /* Entry Page: Soft Blue */
+    .page1-div { background-color: #dbeafe; border-color: #bfdbfe; box-shadow: 0 4px 0 #93c5fd, 0 5px 10px rgba(0,0,0,0.05); }
+    .page1-div:hover { box-shadow: 0 6px 0 #93c5fd, 0 8px 15px rgba(0,0,0,0.1); }
     
-    .div-c { background-color: #e0e7ff; border-color: #c7d2fe; box-shadow: 0 4px 0 #a5b4fc; }
-    .div-c:hover { box-shadow: 0 6px 0 #a5b4fc; }
-    
-    .div-d { background-color: #fae8ff; border-color: #f5d0fe; box-shadow: 0 4px 0 #e879f9; }
-    .div-d:hover { box-shadow: 0 6px 0 #e879f9; }
-    
-    .div-e { background-color: #ffedd5; border-color: #fed7aa; box-shadow: 0 4px 0 #fdba74; }
-    .div-e:hover { box-shadow: 0 6px 0 #fdba74; }
-    
-    .div-f { background-color: #dbeafe; border-color: #bfdbfe; box-shadow: 0 4px 0 #93c5fd; }
-    .div-f:hover { box-shadow: 0 6px 0 #93c5fd; }
-    
-    .div-g { background-color: #ecfdf5; border-color: #a7f3d0; box-shadow: 0 4px 0 #6ee7b7; }
-    .div-g:hover { box-shadow: 0 6px 0 #6ee7b7; }
-    
-    .div-h { background-color: #ffe4e6; border-color: #fecdd3; box-shadow: 0 4px 0 #fda4af; }
-    .div-h:hover { box-shadow: 0 6px 0 #fda4af; }
+    /* Reports Page: Soft Purple */
+    .page4a-div { background-color: #e0e7ff; border-color: #c7d2fe; box-shadow: 0 4px 0 #a5b4fc, 0 5px 10px rgba(0,0,0,0.05); }
+    .page4a-div:hover { box-shadow: 0 6px 0 #a5b4fc, 0 8px 15px rgba(0,0,0,0.1); }
+
     /* ------------------------------------- */
     
     /* Student List Form */
@@ -142,21 +128,21 @@
     <!-- PAGE 1: Select Division (Home Page) -->
     <div id="page1" class="page active">
       <h1 class="school-name">SANSKRIT HS VATTOLI</h1>
-      <h2 class="event-name">Vijayotsavam2026-27</h2>
-      <h3 class="test-name">SSLC Monthly Test</h3>
+      <h2 class="event-name">Vijayotsavam 2026-27</h2>
+      <h3 class="test-name">SSLC Mid Term Examination</h3>
       <hr class="divider">
       
       <h2>Enter Marks</h2>
       <h3>Select Class 10 Division</h3>
       <div class="button-grid">
-        <button class="nav-btn div-a" onclick="selectDivision('A')">10 A</button>
-        <button class="nav-btn div-b" onclick="selectDivision('B')">10 B</button>
-        <button class="nav-btn div-c" onclick="selectDivision('C')">10 C</button>
-        <button class="nav-btn div-d" onclick="selectDivision('D')">10 D</button>
-        <button class="nav-btn div-e" onclick="selectDivision('E')">10 E</button>
-        <button class="nav-btn div-f" onclick="selectDivision('F')">10 F</button>
-        <button class="nav-btn div-g" onclick="selectDivision('G')">10 G</button>
-        <button class="nav-btn div-h" onclick="selectDivision('H')">10 H</button>
+        <button class="nav-btn page1-div" onclick="selectDivision('A')">10 A</button>
+        <button class="nav-btn page1-div" onclick="selectDivision('B')">10 B</button>
+        <button class="nav-btn page1-div" onclick="selectDivision('C')">10 C</button>
+        <button class="nav-btn page1-div" onclick="selectDivision('D')">10 D</button>
+        <button class="nav-btn page1-div" onclick="selectDivision('E')">10 E</button>
+        <button class="nav-btn page1-div" onclick="selectDivision('F')">10 F</button>
+        <button class="nav-btn page1-div" onclick="selectDivision('G')">10 G</button>
+        <button class="nav-btn page1-div" onclick="selectDivision('H')">10 H</button>
       </div>
 
       <hr class="divider">
@@ -213,14 +199,14 @@
       <h2 id="reportDivisionTitle">Select Division</h2>
       <h3>Choose a class to view</h3>
       <div class="button-grid">
-        <button class="nav-btn div-a" onclick="fetchAndShowReport('10A')">10 A</button>
-        <button class="nav-btn div-b" onclick="fetchAndShowReport('10B')">10 B</button>
-        <button class="nav-btn div-c" onclick="fetchAndShowReport('10C')">10 C</button>
-        <button class="nav-btn div-d" onclick="fetchAndShowReport('10D')">10 D</button>
-        <button class="nav-btn div-e" onclick="fetchAndShowReport('10E')">10 E</button>
-        <button class="nav-btn div-f" onclick="fetchAndShowReport('10F')">10 F</button>
-        <button class="nav-btn div-g" onclick="fetchAndShowReport('10G')">10 G</button>
-        <button class="nav-btn div-h" onclick="fetchAndShowReport('10H')">10 H</button>
+        <button class="nav-btn page4a-div" onclick="fetchAndShowReport('10A')">10 A</button>
+        <button class="nav-btn page4a-div" onclick="fetchAndShowReport('10B')">10 B</button>
+        <button class="nav-btn page4a-div" onclick="fetchAndShowReport('10C')">10 C</button>
+        <button class="nav-btn page4a-div" onclick="fetchAndShowReport('10D')">10 D</button>
+        <button class="nav-btn page4a-div" onclick="fetchAndShowReport('10E')">10 E</button>
+        <button class="nav-btn page4a-div" onclick="fetchAndShowReport('10F')">10 F</button>
+        <button class="nav-btn page4a-div" onclick="fetchAndShowReport('10G')">10 G</button>
+        <button class="nav-btn page4a-div" onclick="fetchAndShowReport('10H')">10 H</button>
       </div>
     </div>
   </div>
