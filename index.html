@@ -84,13 +84,17 @@
     /* Page-Specific Division Button Colors  */
     /* ------------------------------------- */
     
-    /* Entry Page: Soft Blue */
-    .page1-div { background-color: #dbeafe; border-color: #bfdbfe; box-shadow: 0 4px 0 #93c5fd, 0 5px 10px rgba(0,0,0,0.05); }
-    .page1-div:hover { box-shadow: 0 6px 0 #93c5fd, 0 8px 15px rgba(0,0,0,0.1); }
+    /* Entry Page: Light Green */
+    .page1-div { background-color: #d1fae5; border-color: #a7f3d0; box-shadow: 0 4px 0 #6ee7b7, 0 5px 10px rgba(0,0,0,0.05); }
+    .page1-div:hover { box-shadow: 0 6px 0 #6ee7b7, 0 8px 15px rgba(0,0,0,0.1); }
     
-    /* Reports Page: Soft Purple */
-    .page4a-div { background-color: #e0e7ff; border-color: #c7d2fe; box-shadow: 0 4px 0 #a5b4fc, 0 5px 10px rgba(0,0,0,0.05); }
-    .page4a-div:hover { box-shadow: 0 6px 0 #a5b4fc, 0 8px 15px rgba(0,0,0,0.1); }
+    /* Full Report: Light Pink */
+    .full-div { background-color: #fce7f3; border-color: #fbcfe8; box-shadow: 0 4px 0 #f9a8d4, 0 5px 10px rgba(0,0,0,0.05); }
+    .full-div:hover { box-shadow: 0 6px 0 #f9a8d4, 0 8px 15px rgba(0,0,0,0.1); }
+
+    /* Top 10: Light Blue */
+    .top10-div { background-color: #dbeafe; border-color: #bfdbfe; box-shadow: 0 4px 0 #93c5fd, 0 5px 10px rgba(0,0,0,0.05); }
+    .top10-div:hover { box-shadow: 0 6px 0 #93c5fd, 0 8px 15px rgba(0,0,0,0.1); }
 
     /* ------------------------------------- */
     /* Light Pastel Rainbow For Subjects     */
@@ -228,14 +232,14 @@
       <h2 id="reportDivisionTitle">Select Division</h2>
       <h3>Choose a class to view</h3>
       <div class="button-grid">
-        <button class="nav-btn page4a-div" onclick="fetchAndShowReport('10A')">10 A</button>
-        <button class="nav-btn page4a-div" onclick="fetchAndShowReport('10B')">10 B</button>
-        <button class="nav-btn page4a-div" onclick="fetchAndShowReport('10C')">10 C</button>
-        <button class="nav-btn page4a-div" onclick="fetchAndShowReport('10D')">10 D</button>
-        <button class="nav-btn page4a-div" onclick="fetchAndShowReport('10E')">10 E</button>
-        <button class="nav-btn page4a-div" onclick="fetchAndShowReport('10F')">10 F</button>
-        <button class="nav-btn page4a-div" onclick="fetchAndShowReport('10G')">10 G</button>
-        <button class="nav-btn page4a-div" onclick="fetchAndShowReport('10H')">10 H</button>
+        <button class="nav-btn report-class-btn" onclick="fetchAndShowReport('10A')">10 A</button>
+        <button class="nav-btn report-class-btn" onclick="fetchAndShowReport('10B')">10 B</button>
+        <button class="nav-btn report-class-btn" onclick="fetchAndShowReport('10C')">10 C</button>
+        <button class="nav-btn report-class-btn" onclick="fetchAndShowReport('10D')">10 D</button>
+        <button class="nav-btn report-class-btn" onclick="fetchAndShowReport('10E')">10 E</button>
+        <button class="nav-btn report-class-btn" onclick="fetchAndShowReport('10F')">10 F</button>
+        <button class="nav-btn report-class-btn" onclick="fetchAndShowReport('10G')">10 G</button>
+        <button class="nav-btn report-class-btn" onclick="fetchAndShowReport('10H')">10 H</button>
       </div>
     </div>
   </div>
@@ -408,6 +412,13 @@
     function selectReportType(type) {
       currentReportType = type;
       document.getElementById('reportDivisionTitle').textContent = type === 'top10' ? "Top 10 - Select Division" : "Full Report - Select Division";
+      
+      // Update buttons colors based on report type
+      const reportBtns = document.querySelectorAll('#page4a .report-class-btn');
+      reportBtns.forEach(btn => {
+        btn.className = 'nav-btn report-class-btn ' + (type === 'top10' ? 'top10-div' : 'full-div');
+      });
+      
       showPage('page4a');
     }
 
