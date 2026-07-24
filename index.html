@@ -32,22 +32,81 @@
     .button-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 15px; }
     .list-grid { display: grid; grid-template-columns: 1fr; gap: 12px; margin-top: 15px; }
     
-    /* Styled Buttons */
-    button { padding: 15px; font-size: 16px; font-weight: 600; cursor: pointer; border: none; border-radius: 8px; transition: all 0.15s ease; }
-    .nav-btn { background-color: #f8fafc; color: #334155; border: 1px solid #e2e8f0; box-shadow: 0 2px 4px rgba(0,0,0,0.02); }
-    .nav-btn:active { background-color: #e2e8f0; transform: scale(0.98); }
+    /* ------------------------------------- */
+    /* 3D Button Styles & Hover Effects      */
+    /* ------------------------------------- */
+    button { 
+      padding: 15px; font-size: 16px; font-weight: 600; cursor: pointer; border: none; border-radius: 8px; 
+      transition: all 0.15s ease; position: relative;
+    }
     
-    .action-btn { background-color: #3b82f6; color: white; width: 100%; margin-top: 25px; box-shadow: 0 4px 6px rgba(59, 130, 246, 0.25); font-size: 18px; }
-    .action-btn:active { background-color: #2563eb; transform: scale(0.98); }
+    /* Default Navigation Buttons */
+    .nav-btn { 
+      background-color: #f8fafc; color: #334155; border: 1px solid #e2e8f0; 
+      box-shadow: 0 4px 0 #cbd5e1, 0 5px 10px rgba(0,0,0,0.05); 
+    }
+    .nav-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 0 #cbd5e1, 0 8px 15px rgba(0,0,0,0.1); }
+    .nav-btn:active { transform: translateY(4px); box-shadow: 0 0 0 transparent !important; }
     
-    .edit-btn { background-color: #f59e0b; color: white; width: 100%; margin-top: 25px; box-shadow: 0 4px 6px rgba(245, 158, 11, 0.25); font-size: 18px; display: none; }
-    .edit-btn:active { background-color: #d97706; transform: scale(0.98); }
+    /* Blue Action Button (Save) */
+    .action-btn { 
+      background-color: #3b82f6; color: white; width: 100%; margin-top: 25px; font-size: 18px; 
+      box-shadow: 0 4px 0 #2563eb, 0 5px 15px rgba(59, 130, 246, 0.3); 
+    }
+    .action-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 0 #2563eb, 0 8px 20px rgba(59, 130, 246, 0.4); }
+    .action-btn:active { transform: translateY(4px); box-shadow: 0 0 0 transparent; }
+    
+    /* Yellow Edit Button */
+    .edit-btn { 
+      background-color: #f59e0b; color: white; width: 100%; margin-top: 25px; font-size: 18px; display: none; 
+      box-shadow: 0 4px 0 #d97706, 0 5px 15px rgba(245, 158, 11, 0.3); 
+    }
+    .edit-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 0 #d97706, 0 8px 20px rgba(245, 158, 11, 0.4); }
+    .edit-btn:active { transform: translateY(4px); box-shadow: 0 0 0 transparent; }
     
     /* Minimal Report Button */
-    .report-btn { background-color: #f1f5f9; color: #475569; border: 1px solid #cbd5e1; width: 100%; box-shadow: none; font-size: 15px; }
-    .report-btn:active { background-color: #e2e8f0; transform: scale(0.98); }
+    .report-btn { 
+      background-color: #f1f5f9; color: #475569; border: 1px solid #cbd5e1; width: 100%; font-size: 15px; 
+      box-shadow: 0 4px 0 #94a3b8, 0 5px 10px rgba(0,0,0,0.05); 
+    }
+    .report-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 0 #94a3b8, 0 8px 15px rgba(0,0,0,0.1); }
+    .report-btn:active { transform: translateY(4px); box-shadow: 0 0 0 transparent; }
     
-    .back-btn { background-color: transparent; color: #3b82f6; padding: 0; margin-bottom: 20px; font-size: 15px; width: auto; font-weight: bold; }
+    /* Back Button (Exempt from 3D blockiness) */
+    .back-btn { 
+      background-color: transparent; color: #3b82f6; padding: 0; margin-bottom: 20px; font-size: 15px; 
+      width: auto; font-weight: bold; box-shadow: none !important; transform: none !important; 
+    }
+    .back-btn:hover { color: #2563eb; transform: translateX(-3px) !important; box-shadow: none !important; }
+    .back-btn:active { transform: translateX(0) !important; }
+
+    /* ------------------------------------- */
+    /* Light Pastel Shades for Divisions     */
+    /* ------------------------------------- */
+    .div-a { background-color: #fef3c7; border-color: #fde68a; box-shadow: 0 4px 0 #fcd34d; }
+    .div-a:hover { box-shadow: 0 6px 0 #fcd34d; }
+    
+    .div-b { background-color: #d1fae5; border-color: #a7f3d0; box-shadow: 0 4px 0 #6ee7b7; }
+    .div-b:hover { box-shadow: 0 6px 0 #6ee7b7; }
+    
+    .div-c { background-color: #e0e7ff; border-color: #c7d2fe; box-shadow: 0 4px 0 #a5b4fc; }
+    .div-c:hover { box-shadow: 0 6px 0 #a5b4fc; }
+    
+    .div-d { background-color: #fae8ff; border-color: #f5d0fe; box-shadow: 0 4px 0 #e879f9; }
+    .div-d:hover { box-shadow: 0 6px 0 #e879f9; }
+    
+    .div-e { background-color: #ffedd5; border-color: #fed7aa; box-shadow: 0 4px 0 #fdba74; }
+    .div-e:hover { box-shadow: 0 6px 0 #fdba74; }
+    
+    .div-f { background-color: #dbeafe; border-color: #bfdbfe; box-shadow: 0 4px 0 #93c5fd; }
+    .div-f:hover { box-shadow: 0 6px 0 #93c5fd; }
+    
+    .div-g { background-color: #ecfdf5; border-color: #a7f3d0; box-shadow: 0 4px 0 #6ee7b7; }
+    .div-g:hover { box-shadow: 0 6px 0 #6ee7b7; }
+    
+    .div-h { background-color: #ffe4e6; border-color: #fecdd3; box-shadow: 0 4px 0 #fda4af; }
+    .div-h:hover { box-shadow: 0 6px 0 #fda4af; }
+    /* ------------------------------------- */
     
     /* Student List Form */
     .student-row { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid #f1f5f9; }
@@ -83,21 +142,21 @@
     <!-- PAGE 1: Select Division (Home Page) -->
     <div id="page1" class="page active">
       <h1 class="school-name">SANSKRIT HS VATTOLI</h1>
-      <h2 class="event-name">Vijayotsavam 2026-27</h2>
-      <h3 class="test-name">SSLC Mid Term Examination</h3>
+      <h2 class="event-name">Vijayotsavam2026-27</h2>
+      <h3 class="test-name">SSLC Monthly Test</h3>
       <hr class="divider">
       
       <h2>Enter Marks</h2>
       <h3>Select Class 10 Division</h3>
       <div class="button-grid">
-        <button class="nav-btn" onclick="selectDivision('A')">10 A</button>
-        <button class="nav-btn" onclick="selectDivision('B')">10 B</button>
-        <button class="nav-btn" onclick="selectDivision('C')">10 C</button>
-        <button class="nav-btn" onclick="selectDivision('D')">10 D</button>
-        <button class="nav-btn" onclick="selectDivision('E')">10 E</button>
-        <button class="nav-btn" onclick="selectDivision('F')">10 F</button>
-        <button class="nav-btn" onclick="selectDivision('G')">10 G</button>
-        <button class="nav-btn" onclick="selectDivision('H')">10 H</button>
+        <button class="nav-btn div-a" onclick="selectDivision('A')">10 A</button>
+        <button class="nav-btn div-b" onclick="selectDivision('B')">10 B</button>
+        <button class="nav-btn div-c" onclick="selectDivision('C')">10 C</button>
+        <button class="nav-btn div-d" onclick="selectDivision('D')">10 D</button>
+        <button class="nav-btn div-e" onclick="selectDivision('E')">10 E</button>
+        <button class="nav-btn div-f" onclick="selectDivision('F')">10 F</button>
+        <button class="nav-btn div-g" onclick="selectDivision('G')">10 G</button>
+        <button class="nav-btn div-h" onclick="selectDivision('H')">10 H</button>
       </div>
 
       <hr class="divider">
@@ -154,14 +213,14 @@
       <h2 id="reportDivisionTitle">Select Division</h2>
       <h3>Choose a class to view</h3>
       <div class="button-grid">
-        <button class="nav-btn" onclick="fetchAndShowReport('10A')">10 A</button>
-        <button class="nav-btn" onclick="fetchAndShowReport('10B')">10 B</button>
-        <button class="nav-btn" onclick="fetchAndShowReport('10C')">10 C</button>
-        <button class="nav-btn" onclick="fetchAndShowReport('10D')">10 D</button>
-        <button class="nav-btn" onclick="fetchAndShowReport('10E')">10 E</button>
-        <button class="nav-btn" onclick="fetchAndShowReport('10F')">10 F</button>
-        <button class="nav-btn" onclick="fetchAndShowReport('10G')">10 G</button>
-        <button class="nav-btn" onclick="fetchAndShowReport('10H')">10 H</button>
+        <button class="nav-btn div-a" onclick="fetchAndShowReport('10A')">10 A</button>
+        <button class="nav-btn div-b" onclick="fetchAndShowReport('10B')">10 B</button>
+        <button class="nav-btn div-c" onclick="fetchAndShowReport('10C')">10 C</button>
+        <button class="nav-btn div-d" onclick="fetchAndShowReport('10D')">10 D</button>
+        <button class="nav-btn div-e" onclick="fetchAndShowReport('10E')">10 E</button>
+        <button class="nav-btn div-f" onclick="fetchAndShowReport('10F')">10 F</button>
+        <button class="nav-btn div-g" onclick="fetchAndShowReport('10G')">10 G</button>
+        <button class="nav-btn div-h" onclick="fetchAndShowReport('10H')">10 H</button>
       </div>
     </div>
   </div>
@@ -201,6 +260,16 @@
 
     // REPLACE THIS WITH YOUR APPS SCRIPT URL!
     const scriptURL = 'https://script.google.com/macros/s/AKfycby05tkg3ElQdyLWsIwXICADRJgQYWkJQZkELLdvV-KArxfZNvWQXfgE9LRRrB3Bii-7lQ/exec';
+
+    // Prevent Back History and Close App when Phone's Hardware Back Button is Pressed
+    window.history.pushState(null, null, window.location.href);
+    window.addEventListener("popstate", function(event) {
+      window.close(); // Attempts to securely close the window
+      document.body.innerHTML = "<h2 style='text-align:center; margin-top:50px; color:#334155;'>App closed. You can exit this tab.</h2>";
+      setTimeout(function() {
+        window.location.href = "about:blank"; // Fallback empty page if close() is blocked
+      }, 300);
+    });
 
     function showPage(pageId) {
       document.querySelectorAll('.page').forEach(page => page.classList.remove('active'));
@@ -373,11 +442,14 @@
       // Filter and Sort based on Report Type
       let displayStudents = [];
       if (currentReportType === 'top10') {
+        // Sort students by highest total first, slice the top 10
         displayStudents = [...students].sort((a, b) => pivot[b].total - pivot[a].total).slice(0, 10);
       } else {
+        // Keep alphabetical order for full class report
         displayStudents = students;
       }
 
+      // Build the table
       let titleSuffix = currentReportType === 'top10' ? " (Top 10 Students)" : "";
       let rankHeader = currentReportType === 'top10' ? "Rank" : "No.";
       
@@ -388,6 +460,7 @@
       html += '<th style="background-color: #e2e8f0;">Total</th></tr></thead><tbody>';
 
       displayStudents.forEach((student, index) => {
+        // Decide what number to show next to the name
         let rankOrNo = currentReportType === 'top10' ? (index + 1) : (students.indexOf(student) + 1);
         
         html += `<tr><td>${rankOrNo}. ${student}</td>`;
