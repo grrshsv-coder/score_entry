@@ -468,8 +468,11 @@
       // Filter and Sort based on Report Type
       let displayStudents = [];
       if (currentReportType === 'top10') {
-        // Sort students by highest total first, slice the top 10
-        displayStudents = [...students].sort((a, b) => pivot[b].total - pivot[a].total).slice(0, 10);
+        // Filter out students with 0 total, sort by highest total first, slice the top 10
+        displayStudents = [...students]
+          .filter(a => pivot[a].total > 0)
+          .sort((a, b) => pivot[b].total - pivot[a].total)
+          .slice(0, 10);
       } else {
         // Keep alphabetical order for full class report
         displayStudents = students;
