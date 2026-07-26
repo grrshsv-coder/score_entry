@@ -143,17 +143,27 @@
     
     #message { text-align: center; font-weight: bold; margin-top: 20px; min-height: 24px; padding: 10px; border-radius: 6px; }
 
-    /* Data Table Styles */
+    /* Data Table Styles (Full Class & Top 10) */
     .table-responsive { width: 100%; overflow-x: auto; margin-top: 15px; border-radius: 8px; border: 1px solid #e2e8f0; }
     .marks-table { width: 100%; border-collapse: collapse; font-size: 13px; }
     .marks-table th, .marks-table td { padding: 8px 4px; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; text-align: center; }
     .marks-table th { background-color: #f8fafc; color: #334155; font-weight: 700; white-space: normal; line-height: 1.2; font-size: 12px; }
     .marks-table td:first-child, .marks-table th:first-child { text-align: left; white-space: nowrap; padding-left: 8px; }
     
-    /* Zebra Striping */
+    /* Zebra Striping for generic data tables ONLY */
     .marks-table tbody tr:nth-child(odd) { background-color: #ffffff; }
     .marks-table tbody tr:nth-child(even) { background-color: #f1f5f9; }
     
+    /* ------------------------------------- */
+    /* Dedicated Progress Report Table Style */
+    /* ------------------------------------- */
+    .progress-table { width: 100%; border-collapse: collapse; border: 2px solid #64748b; margin-bottom: 20px; }
+    .progress-table th, .progress-table td { padding: 18px; font-size: 24px; border: 1px solid #94a3b8; text-align: center; color: #334155; }
+    .progress-table th { background-color: #f8fafc; font-weight: bold; border-bottom: 2px solid #64748b; }
+    .progress-table td:first-child, .progress-table th:first-child { text-align: left; padding-left: 20px; }
+    /* Removes the highlighted/colored row specifically for this table */
+    .progress-table tbody tr { background-color: #ffffff !important; } 
+
     #loadingIndicator { text-align: center; color: #3b82f6; font-weight: bold; margin: 30px 0; font-size: 18px; }
 
     /* Developer Credit Styles */
@@ -209,7 +219,7 @@
         page-break-inside: avoid !important; break-inside: avoid !important; 
       }
       
-      /* Force background colors to show in PDF */
+      /* Force background colors/borders to show clearly in PDF */
       * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
     }
   </style>
@@ -620,22 +630,22 @@
         html = `<div>`;
         displayStudents.forEach(student => {
           html += `
-          <div class="report-card" style="border: 2px solid #cbd5e1; border-radius: 8px; padding: 40px; margin-bottom: 40px; background: white;">
+          <div class="report-card">
              <h3 style="text-align: center; color: #1e3a8a; margin: 0 0 10px 0; font-size: 28px;">SANSKRIT HS VATTOLI</h3>
-             <div style="text-align: center; font-size: 18px; color: #64748b; margin-bottom: 25px; text-transform: uppercase; letter-spacing: 1px;">
+             <div style="text-align: center; font-size: 24px; color: #64748b; margin-bottom: 25px; text-transform: uppercase; letter-spacing: 1px;">
                SSLC Mid Term Examination 2026-27<br><br>
-               <span style="color: #3b82f6; font-weight: bold; font-size: 22px;">Progress Report</span>
+               <span style="color: #3b82f6; font-weight: bold; font-size: 26px;">Progress Report</span>
              </div>
-             <div style="font-weight: bold; font-size: 20px; margin-bottom: 20px; color: #334155; border-bottom: 2px solid #e2e8f0; padding-bottom: 15px; display: flex; justify-content: space-between;">
+             <div style="font-weight: bold; font-size: 22px; margin-bottom: 20px; color: #334155; border-bottom: 2px solid #e2e8f0; padding-bottom: 15px; display: flex; justify-content: space-between;">
                <span>Name: <span style="color: #000;">${student}</span></span>
                <span>Class: <span style="color: #000;">${className}</span></span>
              </div>
-             <table class="marks-table" style="width: 100%; font-size: 18px;">
+             <table class="progress-table">
                <thead>
                  <tr>
-                   <th style="text-align: left; padding: 18px; font-size: 20px;">Subject</th>
-                   <th style="padding: 18px; font-size: 20px;">Mark</th>
-                   <th style="padding: 18px; font-size: 20px;">Grade</th>
+                   <th>Subject</th>
+                   <th>Mark</th>
+                   <th>Grade</th>
                  </tr>
                </thead>
                <tbody>
@@ -665,16 +675,24 @@
                else grade = 'E';
              }
 
-             // Enlarge padding and make text bigger for the rows
              html += `<tr>
-                        <td style="text-align: left; padding: 16px;">${sub}</td>
-                        <td style="padding: 16px;">${mark}</td>
-                        <td style="padding: 16px; font-weight: bold;">${grade}</td>
+                        <td>${sub}</td>
+                        <td>${mark}</td>
+                        <td style="font-weight: bold;">${grade}</td>
                       </tr>`;
           });
           html += `
                </tbody>
              </table>
+             
+             <!-- Signature Block -->
+             <div style="text-align: right; margin-top: 90px; padding-right: 20px;">
+               <div style="display: inline-block; text-align: center;">
+                 <div style="border-bottom: 1px solid #334155; width: 280px; margin-bottom: 15px;"></div>
+                 <div style="font-size: 22px; font-weight: bold; color: #334155;">Signature of Class Teacher</div>
+               </div>
+             </div>
+             
           </div>`;
         });
         html += `</div>`;
