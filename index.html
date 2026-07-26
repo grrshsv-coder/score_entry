@@ -513,7 +513,9 @@
       
       fetchedData.forEach(row => {
         if(pivot[row.student]) {
-          let mark = parseInt(row.mark) || 0;
+          // If the mark is a valid number, round it. E.g. 6.5 becomes 7
+          let parsedMark = parseFloat(row.mark);
+          let mark = isNaN(parsedMark) ? 0 : Math.round(parsedMark);
           pivot[row.student][row.subject] = mark;
           pivot[row.student].total += mark;
         }
