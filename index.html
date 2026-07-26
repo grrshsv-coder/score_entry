@@ -77,7 +77,7 @@
     
     /* Back Button (Exempt from 3D blockiness) */
     .back-btn { 
-      background-color: transparent; color: #3b82f6; padding: 0; margin-bottom: 20px; font-size: 15px; 
+      background-color: transparent; color: #3b82f6; padding: 0; margin-bottom: 10px; font-size: 15px; 
       width: auto; font-weight: bold; box-shadow: none !important; transform: none !important; 
     }
     .back-btn:hover { color: #2563eb; transform: translateX(-3px) !important; box-shadow: none !important; }
@@ -157,9 +157,9 @@
     /* ------------------------------------- */
     /* Dedicated Progress Report Table Style */
     /* ------------------------------------- */
-    .progress-table { width: 100%; border-collapse: collapse; border: 2px solid #64748b; margin-bottom: 20px; }
-    .progress-table th, .progress-table td { padding: 18px; font-size: 24px; border: 1px solid #94a3b8; text-align: center; color: #334155; }
-    .progress-table th { background-color: #f8fafc; font-weight: bold; border-bottom: 2px solid #64748b; }
+    .progress-table { width: 100%; border-collapse: collapse; border: 2px solid #000000; margin-bottom: 15px; }
+    .progress-table th, .progress-table td { padding: 16px; font-size: 24px; border: 1px solid #000000; text-align: center; color: #000000; }
+    .progress-table th { background-color: #ffffff; font-weight: bold; border-bottom: 2px solid #000000; color: #000000; }
     .progress-table td:first-child, .progress-table th:first-child { text-align: left; padding-left: 20px; }
     /* Removes the highlighted/colored row specifically for this table */
     .progress-table tbody tr { background-color: #ffffff !important; } 
@@ -182,7 +182,8 @@
       body, html { 
         background-color: #ffffff !important; 
         margin: 0; 
-        padding: 0 !important; 
+        /* Reduced padding to shift everything up slightly */
+        padding: 10mm 15mm !important; 
         height: auto; 
       }
       #mainContainer { display: none !important; }
@@ -199,13 +200,13 @@
       /* Hide all buttons during print */
       .back-btn, #downloadPdfBtn, #downloadExcelBtn { display: none !important; }
       
-      /* Force ONE report card per page and add printable margins */
+      /* Force ONE report card per page */
       .report-card { 
         page-break-after: always !important; 
         break-after: page !important; 
         margin: 0 !important; 
         border: none !important; 
-        padding: 20mm !important; 
+        padding: 0 !important; 
         box-sizing: border-box;
       }
       
@@ -219,7 +220,7 @@
         page-break-inside: avoid !important; break-inside: avoid !important; 
       }
       
-      /* Force background colors/borders to show clearly in PDF */
+      /* Force colors/borders to show clearly in PDF */
       * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
     }
   </style>
@@ -320,19 +321,22 @@
 
   <!-- TABLE FLOW CONTAINER -->
   <div class="table-container-wrapper page" id="page5">
-    <button class="back-btn" onclick="showPage('page4a')">← Back to Divisions</button>
-    <h2 id="reportTitle">Class Report</h2>
+    
+    <!-- Top Bar with Back Button and Download Buttons -->
+    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px;">
+      <button class="back-btn" onclick="showPage('page4a')" style="margin-bottom: 0;">← Back to Divisions</button>
+      <div style="text-align: right;">
+        <button id="downloadPdfBtn" class="nav-btn" style="display: none; border-color: #3b82f6; color: #3b82f6; padding: 10px 15px; font-size: 14px; margin-bottom: 10px;" onclick="downloadPDF()">📥 Download as PDF</button>
+        <button id="downloadExcelBtn" class="nav-btn" style="display: none; border-color: #10b981; color: #10b981; padding: 10px 15px; font-size: 14px; margin-bottom: 10px;" onclick="downloadExcel()">📊 Download as Excel</button>
+      </div>
+    </div>
+
+    <h2 id="reportTitle" style="margin-top: -10px;">Class Report</h2>
     
     <div id="loadingIndicator" style="display: none;">Generating... ⏳</div>
     
     <div class="table-responsive" id="tableWrapper" style="display: none;">
       <!-- Table will be injected here -->
-    </div>
-
-    <!-- Download Buttons (Bottom Left) -->
-    <div style="text-align: left; margin-top: 15px;">
-      <button id="downloadPdfBtn" class="nav-btn" style="display: none; border-color: #3b82f6; color: #3b82f6; padding: 10px 15px; font-size: 14px;" onclick="downloadPDF()">📥 Download as PDF</button>
-      <button id="downloadExcelBtn" class="nav-btn" style="display: none; border-color: #10b981; color: #10b981; padding: 10px 15px; font-size: 14px;" onclick="downloadExcel()">📊 Download as Excel</button>
     </div>
 
   </div>
@@ -626,19 +630,19 @@
       let html = "";
 
       if (currentReportType === 'progress') {
-        // BUILD INDIVIDUAL PROGRESS REPORTS (WITH ENLARGED FONTS/PADDING FOR A4 PAPER)
+        // BUILD INDIVIDUAL PROGRESS REPORTS (WITH PURE BLACK TEXT FOR A4 PAPER)
         html = `<div>`;
         displayStudents.forEach(student => {
           html += `
           <div class="report-card">
-             <h3 style="text-align: center; color: #1e3a8a; margin: 0 0 10px 0; font-size: 28px;">SANSKRIT HS VATTOLI</h3>
-             <div style="text-align: center; font-size: 24px; color: #64748b; margin-bottom: 25px; text-transform: uppercase; letter-spacing: 1px;">
+             <h3 style="text-align: center; color: #000000; margin: 0 0 10px 0; font-size: 28px;">SANSKRIT HS VATTOLI</h3>
+             <div style="text-align: center; font-size: 24px; color: #000000; margin-bottom: 15px; text-transform: uppercase; letter-spacing: 1px;">
                SSLC Mid Term Examination 2026-27<br><br>
-               <span style="color: #3b82f6; font-weight: bold; font-size: 26px;">Progress Report</span>
+               <span style="color: #000000; font-weight: bold; font-size: 26px;">Progress Report</span>
              </div>
-             <div style="font-weight: bold; font-size: 22px; margin-bottom: 20px; color: #334155; border-bottom: 2px solid #e2e8f0; padding-bottom: 15px; display: flex; justify-content: space-between;">
-               <span>Name: <span style="color: #000;">${student}</span></span>
-               <span>Class: <span style="color: #000;">${className}</span></span>
+             <div style="font-weight: bold; font-size: 22px; margin-bottom: 10px; color: #000000; border-bottom: 2px solid #000000; padding-bottom: 10px; display: flex; justify-content: space-between;">
+               <span>Name: <span style="color: #000000;">${student}</span></span>
+               <span>Class: <span style="color: #000000;">${className}</span></span>
              </div>
              <table class="progress-table">
                <thead>
@@ -686,10 +690,10 @@
              </table>
              
              <!-- Signature Block -->
-             <div style="text-align: right; margin-top: 90px; padding-right: 20px;">
+             <div style="text-align: right; margin-top: 50px; padding-right: 20px;">
                <div style="display: inline-block; text-align: center;">
-                 <div style="border-bottom: 1px solid #334155; width: 280px; margin-bottom: 15px;"></div>
-                 <div style="font-size: 22px; font-weight: bold; color: #334155;">Signature of Class Teacher</div>
+                 <div style="border-bottom: 1px solid #000000; width: 280px; margin-bottom: 10px;"></div>
+                 <div style="font-size: 22px; font-weight: bold; color: #000000;">Signature of Class Teacher</div>
                </div>
              </div>
              
