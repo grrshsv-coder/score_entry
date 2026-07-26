@@ -322,6 +322,9 @@
       document.getElementById('marksTitle').textContent = "Class " + fullClassName;
       document.getElementById('marksSubtitle').textContent = sub;
       
+      // Move showPage here so it clears previous messages BEFORE we set the new loading message
+      showPage('page3');
+      
       // Hide inputs while fetching from Google Sheets
       document.getElementById('studentListContainer').style.display = "none";
       document.getElementById('saveBtn').style.display = "none";
@@ -330,10 +333,8 @@
       const msg = document.getElementById('message');
       msg.style.color = "#3b82f6";
       msg.style.backgroundColor = "transparent";
-      msg.textContent = "Loading... ⏳";
+      msg.textContent = "Loading, Please Wait........";
       
-      showPage('page3');
-
       // Fetch marks from Google Sheet
       fetch(scriptURL, {
         method: 'POST',
