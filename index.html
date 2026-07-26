@@ -594,25 +594,45 @@
         html = `<div>`;
         displayStudents.forEach(student => {
           html += `
-          <div class="report-card">
+          <div class="report-card" style="border: 2px solid #cbd5e1; border-radius: 8px; padding: 15px; margin-bottom: 25px; page-break-inside: avoid; break-inside: avoid; background: white;">
              <h3 style="text-align: center; color: #1e3a8a; margin: 0 0 5px 0;">SANSKRIT HS VATTOLI</h3>
              <div style="text-align: center; font-size: 14px; color: #64748b; margin-bottom: 15px;">SSLC Mid Term Examination 2026-27</div>
              <div style="font-weight: bold; font-size: 16px; margin-bottom: 10px; color: #334155; border-bottom: 1px solid #e2e8f0; padding-bottom: 5px;">
                Name: ${student} &nbsp;&nbsp;|&nbsp;&nbsp; Class: ${className}
              </div>
              <table class="marks-table" style="width: 100%;">
-               <thead><tr><th style="text-align: left;">Subject</th><th>Mark</th></tr></thead>
+               <thead><tr><th style="text-align: left;">Subject</th><th>Mark</th><th>Grade</th></tr></thead>
                <tbody>
           `;
           subjectsList.forEach(sub => {
              let mark = pivot[student][sub] !== undefined ? pivot[student][sub] : '-';
-             html += `<tr><td style="text-align: left;">${sub}</td><td>${mark}</td></tr>`;
+             let grade = '-';
+             
+             if (mark !== '-') {
+               let maxMark = 25;
+               if (sub === 'Social Science' || sub === 'Mathematics') {
+                 maxMark = 40;
+               } else if (sub === 'English') {
+                 maxMark = (className === '10A' || className === '10F') ? 35 : 40;
+               }
+               
+               let percentage = Math.round((parseFloat(mark) / maxMark) * 100);
+               
+               if (percentage >= 90) grade = 'A+';
+               else if (percentage >= 80) grade = 'A';
+               else if (percentage >= 70) grade = 'B+';
+               else if (percentage >= 60) grade = 'B';
+               else if (percentage >= 50) grade = 'C+';
+               else if (percentage >= 40) grade = 'C';
+               else if (percentage >= 30) grade = 'D+';
+               else if (percentage >= 20) grade = 'D';
+               else grade = 'E';
+             }
+
+             html += `<tr><td style="text-align: left;">${sub}</td><td>${mark}</td><td>${grade}</td></tr>`;
           });
           html += `
                </tbody>
-               <tfoot>
-                 <tr><th style="text-align: left; background-color: #e2e8f0;">Total</th><th style="background-color: #e2e8f0;">${pivot[student].total}</th></tr>
-               </tfoot>
              </table>
           </div>`;
         });
