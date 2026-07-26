@@ -5,6 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Class Marks Entry</title>
 
+  <!-- PDF Generation Library -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
   <style>
     /* Aesthetic Color Palette & Typography */
     body { font-family: 'Segoe UI', system-ui, sans-serif; padding: 15px; background-color: #eef2f5; margin: 0; color: #334155; }
@@ -257,6 +260,11 @@
       <!-- Table will be injected here -->
     </div>
 
+    <!-- PDF Download Button (Bottom Left) -->
+    <div style="text-align: left; margin-top: 15px;">
+      <button id="downloadPdfBtn" class="nav-btn" style="display: none; border-color: #3b82f6; color: #3b82f6; padding: 10px 15px; font-size: 14px;" onclick="downloadPDF()">📥 Download as PDF</button>
+    </div>
+
   </div>
 
   <script>
@@ -483,6 +491,7 @@
       
       document.getElementById('loadingIndicator').style.display = 'block';
       document.getElementById('tableWrapper').style.display = 'none';
+      document.getElementById('downloadPdfBtn').style.display = 'none'; // Hide PDF button initially
 
       fetch(scriptURL, {
         method: 'POST',
@@ -563,6 +572,32 @@
       document.getElementById('tableWrapper').innerHTML = html;
       document.getElementById('loadingIndicator').style.display = 'none';
       document.getElementById('tableWrapper').style.display = 'block';
+
+      // Show the Download PDF button ONLY if we are viewing the Top 10 report
+      if (currentReportType === 'top10') {
+        document.getElementById('downloadPdfBtn').style.display = 'inline-block';
+      }
+    }
+
+    // --- LOGIC FOR PDF GENERATION ---
+    function downloadPDF() {
+      const element = document.getElementById('tableWrapper');
+      
+      // Temporarily remove scroll restriction so PDF captures full width/length
+      element.style.overflowX = 'visible';
+      
+      var opt = {
+        margin:       0.3,
+        filename:     'Class_' + currentReportClass + '_Top10_Report.pdf',
+        image:        { type: 'jpeg', quality: 0.98 },
+        html2canvas:  { scale: 2 },
+        jsPDF:        { unit: 'in', format: 'a4', orientation: 'landscape' } // Landscape for wide tables
+      };
+
+      // Generate the PDF, then restore the horizontal scrolling feature for the phone screen
+      html2pdf().set(opt).from(element).save().then(() => {
+         element.style.overflowX = 'auto';
+      });
     }
   </script>
 </body>
