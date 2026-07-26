@@ -163,7 +163,11 @@
     /* Native Print / PDF Generation Styles  */
     /* ------------------------------------- */
     @media print {
-      body, html { background-color: #ffffff !important; margin: 0; padding: 0; height: auto; }
+      /* This page rule completely removes the browser's default URL, Page Numbers, and Date */
+      @page { margin: 0; }
+      
+      /* We add padding to the body so the text doesn't touch the very edge of the paper */
+      body, html { background-color: #ffffff !important; margin: 0; padding: 15mm; height: auto; }
       #mainContainer { display: none !important; }
       
       .table-container-wrapper { 
