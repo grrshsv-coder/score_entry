@@ -64,12 +64,12 @@
     .edit-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 0 #d97706, 0 8px 20px rgba(245, 158, 11, 0.4); }
     .edit-btn:active { transform: translateY(4px); box-shadow: 0 0 0 transparent; }
     
-    /* Minimal Report Button */
+    /* Light Color Report Button */
     .report-btn { 
-      background-color: #f1f5f9; color: #475569; border: 1px solid #cbd5e1; width: 100%; font-size: 15px; 
-      box-shadow: 0 4px 0 #94a3b8, 0 5px 10px rgba(0,0,0,0.05); 
+      background-color: #fef3c7; color: #92400e; border: 1px solid #fde68a; width: 100%; font-size: 16px; 
+      box-shadow: 0 4px 0 #fcd34d, 0 5px 10px rgba(0,0,0,0.05); 
     }
-    .report-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 0 #94a3b8, 0 8px 15px rgba(0,0,0,0.1); }
+    .report-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 0 #fcd34d, 0 8px 15px rgba(0,0,0,0.1); }
     .report-btn:active { transform: translateY(4px); box-shadow: 0 0 0 transparent; }
     
     /* Back Button (Exempt from 3D blockiness) */
@@ -220,9 +220,11 @@
       <button class="back-btn" onclick="showPage('page1')">← Back to Home</button>
       <h2>Class Reports</h2>
       <h3>Select report type</h3>
-      <div class="list-grid">
-        <button class="nav-btn" onclick="selectReportType('full')">📄 Full Class Report</button>
-        <button class="nav-btn" onclick="selectReportType('top10')">🏆 Top 10 Students</button>
+      
+      <!-- Centered Report Type Buttons -->
+      <div style="display: flex; flex-direction: column; align-items: center; gap: 20px; margin-top: 30px;">
+        <button class="nav-btn full-div" style="width: 85%; max-width: 300px; padding: 20px;" onclick="selectReportType('full')">📄 Full Class Report</button>
+        <button class="nav-btn top10-div" style="width: 85%; max-width: 300px; padding: 20px;" onclick="selectReportType('top10')">🏆 Top 10 Students</button>
       </div>
     </div>
 
@@ -328,7 +330,7 @@
       const msg = document.getElementById('message');
       msg.style.color = "#3b82f6";
       msg.style.backgroundColor = "transparent";
-      msg.textContent = "Fetching existing marks... ⏳";
+      msg.textContent = "Loading... ⏳";
       
       showPage('page3');
 
