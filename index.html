@@ -181,12 +181,13 @@
       
       body, html { 
         background-color: #ffffff !important; 
-        margin: 0; 
-        /* Reduced padding to shift everything up slightly */
-        padding: 10mm 15mm !important; 
+        margin: 0 !important; 
+        padding: 0 !important; 
         height: auto; 
       }
-      #mainContainer { display: none !important; }
+      
+      /* Hide main containers and report heading */
+      #mainContainer, #reportTitle { display: none !important; }
       
       .table-container-wrapper { 
         box-shadow: none !important; 
@@ -200,13 +201,13 @@
       /* Hide all buttons during print */
       .back-btn, #downloadPdfBtn, #downloadExcelBtn { display: none !important; }
       
-      /* Force ONE report card per page */
+      /* Force ONE report card per page and add printable margins */
       .report-card { 
         page-break-after: always !important; 
         break-after: page !important; 
         margin: 0 !important; 
         border: none !important; 
-        padding: 0 !important; 
+        padding: 40mm 20mm 20mm 20mm !important; /* Huge top padding to move text down */
         box-sizing: border-box;
       }
       
