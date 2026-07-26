@@ -7,6 +7,8 @@
 
   <!-- PDF Generation Library -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+  <!-- Excel Generation Library -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 
   <style>
     /* Aesthetic Color Palette & Typography */
@@ -260,9 +262,10 @@
       <!-- Table will be injected here -->
     </div>
 
-    <!-- PDF Download Button (Bottom Left) -->
+    <!-- Download Buttons (Bottom Left) -->
     <div style="text-align: left; margin-top: 15px;">
       <button id="downloadPdfBtn" class="nav-btn" style="display: none; border-color: #3b82f6; color: #3b82f6; padding: 10px 15px; font-size: 14px;" onclick="downloadPDF()">📥 Download as PDF</button>
+      <button id="downloadExcelBtn" class="nav-btn" style="display: none; border-color: #10b981; color: #10b981; padding: 10px 15px; font-size: 14px;" onclick="downloadExcel()">📊 Download as Excel</button>
     </div>
 
   </div>
@@ -491,7 +494,10 @@
       
       document.getElementById('loadingIndicator').style.display = 'block';
       document.getElementById('tableWrapper').style.display = 'none';
-      document.getElementById('downloadPdfBtn').style.display = 'none'; // Hide PDF button initially
+      
+      // Hide both download buttons initially
+      document.getElementById('downloadPdfBtn').style.display = 'none';
+      document.getElementById('downloadExcelBtn').style.display = 'none';
 
       fetch(scriptURL, {
         method: 'POST',
@@ -573,9 +579,13 @@
       document.getElementById('loadingIndicator').style.display = 'none';
       document.getElementById('tableWrapper').style.display = 'block';
 
-      // Show the Download PDF button ONLY if we are viewing the Top 10 report
+      // Show specific download buttons based on the report type
       if (currentReportType === 'top10') {
         document.getElementById('downloadPdfBtn').style.display = 'inline-block';
+        document.getElementById('downloadExcelBtn').style.display = 'none';
+      } else {
+        document.getElementById('downloadPdfBtn').style.display = 'none';
+        document.getElementById('downloadExcelBtn').style.display = 'inline-block';
       }
     }
 
@@ -591,13 +601,20 @@
         filename:     'Class_' + currentReportClass + '_Top10_Report.pdf',
         image:        { type: 'jpeg', quality: 0.98 },
         html2canvas:  { scale: 2 },
-        jsPDF:        { unit: 'in', format: 'a4', orientation: 'landscape' } // Landscape for wide tables
+        jsPDF:        { unit: 'in', format: 'a4', orientation: 'landscape' }
       };
 
       // Generate the PDF, then restore the horizontal scrolling feature for the phone screen
       html2pdf().set(opt).from(element).save().then(() => {
          element.style.overflowX = 'auto';
       });
+    }
+
+    // --- LOGIC FOR EXCEL GENERATION ---
+    function downloadExcel() {
+      const table = document.querySelector('#tableWrapper table');
+      const workbook = XLSX.utils.table_to_book(table, {sheet: "Class Report"});
+      XLSX.writeFile(workbook, 'Class_' + currentReportClass + '_Full_Report.xlsx');
     }
   </script>
 </body>
