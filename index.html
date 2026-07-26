@@ -163,26 +163,48 @@
     /* Native Print / PDF Generation Styles  */
     /* ------------------------------------- */
     @media print {
-      /* This page rule completely removes the browser's default URL, Page Numbers, and Date */
-      @page { margin: 0; }
+      /* Remove browser's default URL, Page Numbers, Date and FORCE A4 Portrait */
+      @page { 
+        margin: 0; 
+        size: A4 portrait; 
+      }
       
-      /* We add padding to the body so the text doesn't touch the very edge of the paper */
-      body, html { background-color: #ffffff !important; margin: 0; padding: 15mm; height: auto; }
+      body, html { 
+        background-color: #ffffff !important; 
+        margin: 0; 
+        padding: 0 !important; 
+        height: auto; 
+      }
       #mainContainer { display: none !important; }
       
       .table-container-wrapper { 
-        box-shadow: none !important; border: none !important; 
-        padding: 0 !important; margin: 0 !important; width: 100%; max-width: 100%; 
+        box-shadow: none !important; 
+        border: none !important; 
+        padding: 0 !important; 
+        margin: 0 !important; 
+        width: 100%; 
+        max-width: 100%; 
       }
       
       /* Hide all buttons during print */
       .back-btn, #downloadPdfBtn, #downloadExcelBtn { display: none !important; }
       
-      /* Prevent report cards and table rows from being cut in half */
+      /* Force ONE report card per page and add printable margins */
       .report-card { 
-        page-break-inside: avoid !important; break-inside: avoid !important; 
-        margin-bottom: 30px !important; border: 2px solid #cbd5e1 !important; 
+        page-break-after: always !important; 
+        break-after: page !important; 
+        margin: 0 !important; 
+        border: none !important; 
+        padding: 20mm !important; 
+        box-sizing: border-box;
       }
+      
+      /* Remove the break on the very last card to prevent a blank final page */
+      .report-card:last-child {
+        page-break-after: auto !important;
+        break-after: auto !important;
+      }
+      
       tr { 
         page-break-inside: avoid !important; break-inside: avoid !important; 
       }
@@ -594,18 +616,28 @@
       let html = "";
 
       if (currentReportType === 'progress') {
-        // BUILD INDIVIDUAL PROGRESS REPORTS
+        // BUILD INDIVIDUAL PROGRESS REPORTS (WITH ENLARGED FONTS/PADDING FOR A4 PAPER)
         html = `<div>`;
         displayStudents.forEach(student => {
           html += `
-          <div class="report-card" style="border: 2px solid #cbd5e1; border-radius: 8px; padding: 15px; margin-bottom: 25px; page-break-inside: avoid; break-inside: avoid; background: white;">
-             <h3 style="text-align: center; color: #1e3a8a; margin: 0 0 5px 0;">SANSKRIT HS VATTOLI</h3>
-             <div style="text-align: center; font-size: 14px; color: #64748b; margin-bottom: 15px;">SSLC Mid Term Examination 2026-27</div>
-             <div style="font-weight: bold; font-size: 16px; margin-bottom: 10px; color: #334155; border-bottom: 1px solid #e2e8f0; padding-bottom: 5px;">
-               Name: ${student} &nbsp;&nbsp;|&nbsp;&nbsp; Class: ${className}
+          <div class="report-card" style="border: 2px solid #cbd5e1; border-radius: 8px; padding: 40px; margin-bottom: 40px; background: white;">
+             <h3 style="text-align: center; color: #1e3a8a; margin: 0 0 10px 0; font-size: 28px;">SANSKRIT HS VATTOLI</h3>
+             <div style="text-align: center; font-size: 18px; color: #64748b; margin-bottom: 25px; text-transform: uppercase; letter-spacing: 1px;">
+               SSLC Mid Term Examination 2026-27<br><br>
+               <span style="color: #3b82f6; font-weight: bold; font-size: 22px;">Progress Report</span>
              </div>
-             <table class="marks-table" style="width: 100%;">
-               <thead><tr><th style="text-align: left;">Subject</th><th>Mark</th><th>Grade</th></tr></thead>
+             <div style="font-weight: bold; font-size: 20px; margin-bottom: 20px; color: #334155; border-bottom: 2px solid #e2e8f0; padding-bottom: 15px; display: flex; justify-content: space-between;">
+               <span>Name: <span style="color: #000;">${student}</span></span>
+               <span>Class: <span style="color: #000;">${className}</span></span>
+             </div>
+             <table class="marks-table" style="width: 100%; font-size: 18px;">
+               <thead>
+                 <tr>
+                   <th style="text-align: left; padding: 18px; font-size: 20px;">Subject</th>
+                   <th style="padding: 18px; font-size: 20px;">Mark</th>
+                   <th style="padding: 18px; font-size: 20px;">Grade</th>
+                 </tr>
+               </thead>
                <tbody>
           `;
           subjectsList.forEach(sub => {
@@ -633,7 +665,12 @@
                else grade = 'E';
              }
 
-             html += `<tr><td style="text-align: left;">${sub}</td><td>${mark}</td><td>${grade}</td></tr>`;
+             // Enlarge padding and make text bigger for the rows
+             html += `<tr>
+                        <td style="text-align: left; padding: 16px;">${sub}</td>
+                        <td style="padding: 16px;">${mark}</td>
+                        <td style="padding: 16px; font-weight: bold;">${grade}</td>
+                      </tr>`;
           });
           html += `
                </tbody>
