@@ -320,28 +320,79 @@
       document.getElementById('marksTitle').textContent = "Class " + fullClassName;
       document.getElementById('marksSubtitle').textContent = sub;
       
-      // Reset buttons when opening a new subject
-      document.getElementById('saveBtn').style.display = "block";
-      document.getElementById('saveBtn').disabled = false;
-      document.getElementById('saveBtn').textContent = "Save All Marks";
+      // Hide inputs while fetching from Google Sheets
+      document.getElementById('studentListContainer').style.display = "none";
+      document.getElementById('saveBtn').style.display = "none";
       document.getElementById('editBtn').style.display = "none";
       
-      renderStudentList(fullClassName);
+      const msg = document.getElementById('message');
+      msg.style.color = "#3b82f6";
+      msg.style.backgroundColor = "transparent";
+      msg.textContent = "Fetching existing marks... ⏳";
+      
       showPage('page3');
+
+      // Fetch marks from Google Sheet
+      fetch(scriptURL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        body: JSON.stringify({ action: "getMarks", className: fullClassName })
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.status === "success") {
+           // Filter for current subject
+           let subjectMarks = {};
+           data.data.forEach(row => {
+             if (row.subject === currentSubject) {
+               subjectMarks[row.student] = row.mark;
+             }
+           });
+           renderStudentListWithMarks(fullClassName, subjectMarks);
+        } else {
+           msg.textContent = "Failed to load marks. Starting fresh.";
+           msg.style.color = "#b91c1c";
+           renderStudentListWithMarks(fullClassName, {});
+        }
+      })
+      .catch(error => {
+        msg.textContent = "Network error. Starting fresh.";
+        msg.style.color = "#b91c1c";
+        renderStudentListWithMarks(fullClassName, {});
+      });
     }
 
-    function renderStudentList(className) {
+    function renderStudentListWithMarks(className, existingMarks) {
       const container = document.getElementById('studentListContainer');
       container.innerHTML = ""; 
       const students = studentsData[className];
       
+      let hasExistingMarks = Object.keys(existingMarks).length > 0;
+
       students.forEach((student, index) => {
         const row = document.createElement('div');
         row.className = 'student-row';
+        
+        let markVal = existingMarks[student] !== undefined ? existingMarks[student] : "";
+        let disabledAttr = hasExistingMarks ? "disabled" : "";
+        
         row.innerHTML = `<div class="student-name">${index + 1}. ${student}</div>
-                         <input type="number" class="mark-input" placeholder="0" data-student-name="${student}">`;
+                         <input type="number" class="mark-input" placeholder="0" data-student-name="${student}" value="${markVal}" ${disabledAttr}>`;
         container.appendChild(row);
       });
+      
+      container.style.display = "block";
+      document.getElementById('message').textContent = "";
+      
+      if (hasExistingMarks) {
+        document.getElementById('saveBtn').style.display = "none";
+        document.getElementById('editBtn').style.display = "block";
+      } else {
+        document.getElementById('saveBtn').style.display = "block";
+        document.getElementById('saveBtn').disabled = false;
+        document.getElementById('saveBtn').textContent = "Save All Marks";
+        document.getElementById('editBtn').style.display = "none";
+      }
     }
 
     function saveMarks() {
