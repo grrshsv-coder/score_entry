@@ -86,8 +86,9 @@
     /* ------------------------------------- */
     /* Progress Bar Styles                   */
     /* ------------------------------------- */
-    .progress-box { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 12px; cursor: pointer; transition: transform 0.2s, box-shadow 0.2s; }
-    .progress-box:hover { transform: translateY(-2px); box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
+    .progress-box { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 12px; }
+    .progress-box.clickable { cursor: pointer; transition: transform 0.2s, box-shadow 0.2s; }
+    .progress-box.clickable:hover { transform: translateY(-2px); box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
     .progress-header { display: flex; justify-content: space-between; font-size: 14px; font-weight: bold; color: #475569; margin-bottom: 8px; }
     .progress-track { background: #e2e8f0; border-radius: 10px; height: 14px; overflow: hidden; box-shadow: inset 0 1px 3px rgba(0,0,0,0.1); }
     .progress-fill { background: #10b981; height: 100%; width: 0%; transition: width 1s ease-in-out; border-radius: 10px; }
@@ -152,7 +153,7 @@
     
     #message { text-align: center; font-weight: bold; margin-top: 20px; min-height: 24px; padding: 10px; border-radius: 6px; }
 
-    /* Data Table Styles (Full Class, Top 10, & Consolidated) */
+    /* Data Table Styles (Full Class & Top 10) */
     .table-responsive { width: 100%; overflow-x: auto; margin-top: 15px; border-radius: 8px; border: 1px solid #e2e8f0; }
     .marks-table { width: 100%; border-collapse: collapse; font-size: 13px; }
     .marks-table th, .marks-table td { padding: 8px 4px; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; text-align: center; }
@@ -406,16 +407,11 @@
     </div>
   </div>
 
-  <!-- CONSOLIDATED PROGRESS CONTAINER (Page 6) -->
+  <!-- DRILL DOWN PROGRESS CONTAINER (Page 6) -->
   <div class="table-container-wrapper page" id="page6">
     <button class="back-btn" onclick="showPage('page0')" style="margin-bottom: 10px;">← Back to Progress</button>
-    <h2 style="margin-top: -10px;">Consolidated Progress</h2>
-    
-    <h3 style="margin-top: 15px; color: #1e3a8a; text-align: left; padding-left: 10px;">Class-wise Progress</h3>
-    <div class="table-responsive" id="classWiseProgressTable"></div>
-
-    <h3 style="margin-top: 30px; color: #1e3a8a; text-align: left; padding-left: 10px;">Subject-wise Progress</h3>
-    <div class="table-responsive" id="subjectWiseProgressTable"></div>
+    <h2 id="drillDownTitle" style="margin-top: -10px;">Detailed Progress</h2>
+    <div id="drillDownContainer" class="list-grid" style="margin-top: 20px;"></div>
   </div>
 
   <!-- HIDDEN PRINT AREA FOR PROGRESS REPORTS -->
@@ -542,7 +538,7 @@
            let total = studentsData[cls].length * subjectsList.length;
            let entered = divEntered[cls];
            let pct = Math.round((entered / total) * 100) || 0;
-           divContainer.innerHTML += createProgressHTML(cls, pct, entered, total);
+           divContainer.innerHTML += createProgressHTML(cls, pct, entered, total, 'class');
         });
 
         // Build Subject Progress
@@ -553,7 +549,7 @@
            let total = totalStudents;
            let entered = subEntered[sub];
            let pct = Math.round((entered / total) * 100) || 0;
-           subContainer.innerHTML += createProgressHTML(sub, pct, entered, total);
+           subContainer.innerHTML += createProgressHTML(sub, pct, entered, total, 'subject');
         });
 
         // Display
@@ -565,7 +561,8 @@
       });
     }
 
-    function createProgressHTML(label, pct, entered, total) {
+    // Pass type ('class' or 'subject') to make it clickable to drill down
+    function createProgressHTML(label, pct, entered, total, type) {
       // Small animation delay for smooth rendering
       setTimeout(() => {
         let bars = document.querySelectorAll('.progress-fill');
@@ -574,9 +571,11 @@
         });
       }, 100);
 
-      // Added onclick to open the consolidated report on clicking the progress box
+      let clickableClass = type ? 'clickable' : '';
+      let onClickAttr = type ? `onclick="showDrillDownProgress('${type}', '${label}')"` : '';
+
       return `
-        <div class="progress-box" onclick="showConsolidatedProgress()">
+        <div class="progress-box ${clickableClass}" ${onClickAttr}>
           <div class="progress-header">
             <span>${label}</span>
             <span>${pct}% &nbsp;&nbsp; <span style="color:#94a3b8; font-weight:normal; font-size:12px;">(${entered}/${total})</span></span>
@@ -588,47 +587,35 @@
       `;
     }
 
-    // --- LOGIC FOR CONSOLIDATED REPORT (PAGE 6) ---
-    function showConsolidatedProgress() {
+    // --- LOGIC FOR DRILL DOWN REPORT (PAGE 6) ---
+    function showDrillDownProgress(type, label) {
       showPage('page6');
+      const container = document.getElementById('drillDownContainer');
+      container.innerHTML = "";
       
-      // 1. Build Class-wise Table (Rows: Classes, Cols: Subjects)
-      let classHtml = '<table class="marks-table"><thead><tr><th style="font-size: 14px;">Class</th>';
-      subjectsList.forEach(sub => classHtml += `<th>${sub}</th>`);
-      classHtml += '</tr></thead><tbody>';
-      
-      divisionsList.forEach(cls => {
-        classHtml += `<tr><td style="font-weight:bold; background-color:#f8fafc; font-size: 14px;">${cls}</td>`;
-        let totalStudents = studentsData[cls].length;
-        subjectsList.forEach(sub => {
-          let entered = globalProgressMatrix[cls][sub] || 0;
-          let pct = Math.round((entered / totalStudents) * 100) || 0;
-          let color = pct === 100 ? '#10b981' : (pct > 0 ? '#f59e0b' : '#ef4444');
-          classHtml += `<td><span style="color: ${color}; font-weight: bold; font-size: 14px;">${entered}/${totalStudents}</span><br><span style="font-size:10px; color:#64748b;">(${pct}%)</span></td>`;
-        });
-        classHtml += '</tr>';
-      });
-      classHtml += '</tbody></table>';
-      document.getElementById('classWiseProgressTable').innerHTML = classHtml;
-
-      // 2. Build Subject-wise Table (Rows: Subjects, Cols: Classes)
-      let subHtml = '<table class="marks-table"><thead><tr><th style="font-size: 14px;">Subject</th>';
-      divisionsList.forEach(cls => subHtml += `<th>${cls}</th>`);
-      subHtml += '</tr></thead><tbody>';
-      
-      subjectsList.forEach(sub => {
-        subHtml += `<tr><td style="font-weight:bold; background-color:#f8fafc; font-size: 14px;">${sub}</td>`;
-        divisionsList.forEach(cls => {
-          let totalStudents = studentsData[cls].length;
-          let entered = globalProgressMatrix[cls][sub] || 0;
-          let pct = Math.round((entered / totalStudents) * 100) || 0;
-          let color = pct === 100 ? '#10b981' : (pct > 0 ? '#f59e0b' : '#ef4444');
-          subHtml += `<td><span style="color: ${color}; font-weight: bold; font-size: 14px;">${entered}/${totalStudents}</span><br><span style="font-size:10px; color:#64748b;">(${pct}%)</span></td>`;
-        });
-        subHtml += '</tr>';
-      });
-      subHtml += '</tbody></table>';
-      document.getElementById('subjectWiseProgressTable').innerHTML = subHtml;
+      if (type === 'class') {
+         document.getElementById('drillDownTitle').textContent = `Progress for Class ${label}`;
+         let cls = label;
+         let totalStudents = studentsData[cls].length;
+         
+         subjectsList.forEach(sub => {
+            let entered = globalProgressMatrix[cls][sub] || 0;
+            let pct = Math.round((entered / totalStudents) * 100) || 0;
+            // Passing null as type so these specific drill-down bars are not clickable
+            container.innerHTML += createProgressHTML(sub, pct, entered, totalStudents, null);
+         });
+         
+      } else if (type === 'subject') {
+         document.getElementById('drillDownTitle').textContent = `Progress for ${label}`;
+         let sub = label;
+         
+         divisionsList.forEach(cls => {
+            let totalStudents = studentsData[cls].length;
+            let entered = globalProgressMatrix[cls][sub] || 0;
+            let pct = Math.round((entered / totalStudents) * 100) || 0;
+            container.innerHTML += createProgressHTML(cls, pct, entered, totalStudents, null);
+         });
+      }
     }
 
     // --- LOGIC FOR ENTERING MARKS ---
