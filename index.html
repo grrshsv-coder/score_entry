@@ -84,6 +84,14 @@
     .back-btn:active { transform: translateX(0) !important; }
 
     /* ------------------------------------- */
+    /* Progress Bar Styles                   */
+    /* ------------------------------------- */
+    .progress-box { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 12px; }
+    .progress-header { display: flex; justify-content: space-between; font-size: 14px; font-weight: bold; color: #475569; margin-bottom: 8px; }
+    .progress-track { background: #e2e8f0; border-radius: 10px; height: 14px; overflow: hidden; box-shadow: inset 0 1px 3px rgba(0,0,0,0.1); }
+    .progress-fill { background: #10b981; height: 100%; width: 0%; transition: width 1s ease-in-out; border-radius: 10px; }
+
+    /* ------------------------------------- */
     /* Page-Specific Division Button Colors  */
     /* ------------------------------------- */
     
@@ -249,13 +257,42 @@
 
   <!-- ENTRY FLOW CONTAINER -->
   <div class="container" id="mainContainer">
-    
-    <!-- PAGE 1: Select Division (Home Page) -->
-    <div id="page1" class="page active">
+
+    <!-- PAGE 0: Progress Dashboard (First Page) -->
+    <div id="page0" class="page active">
       <h1 class="school-name">SANSKRIT HS VATTOLI</h1>
       <h2 class="event-name">Vijayotsavam 2026-27</h2>
       <h3 class="test-name">SSLC Mid Term Examination</h3>
       <hr class="divider">
+      
+      <h2>Mark Entry Progress</h2>
+      
+      <div id="overallLoadingIndicator" style="text-align: center; color: #3b82f6; font-weight: bold; margin: 30px 0; font-size: 16px;">
+        Fetching latest progress... ⏳
+      </div>
+      
+      <div id="progressContent" style="display: none;">
+        <h3 style="margin-top: 10px;">Division-wise</h3>
+        <div id="divisionProgressContainer" class="list-grid"></div>
+        
+        <h3 style="margin-top: 25px;">Subject-wise</h3>
+        <div id="subjectProgressContainer" class="list-grid"></div>
+      </div>
+
+      <hr class="divider" style="margin-top: 25px;">
+      <button class="action-btn" onclick="showPage('page1')" style="margin-top: 0;">Proceed to Data Entry ➔</button>
+
+      <div class="developer-credit">Designed & Developed by GRR</div>
+    </div>
+    
+    <!-- PAGE 1: Select Division -->
+    <div id="page1" class="page">
+      <h1 class="school-name">SANSKRIT HS VATTOLI</h1>
+      <h2 class="event-name">Vijayotsavam 2026-27</h2>
+      <h3 class="test-name">SSLC Mid Term Examination</h3>
+      <hr class="divider">
+      
+      <button class="back-btn" onclick="showPage('page0')">← Back to Progress</button>
       
       <h2>Enter Marks</h2>
       <h3>Select Class 10 Division</h3>
@@ -382,6 +419,7 @@
     };
     
     const subjectsList = ['Language 1', 'Language 2', 'English', 'Hindi', 'Social Science', 'Physics', 'Chemistry', 'Biology', 'Mathematics'];
+    const divisionsList = ['10A', '10B', '10C', '10D', '10E', '10F', '10G', '10H'];
     const currentClass = "10"; 
     let currentDivision = "";
     let currentSubject = "";
@@ -391,6 +429,11 @@
 
     // REPLACE THIS WITH YOUR APPS SCRIPT URL!
     const scriptURL = 'https://script.google.com/macros/s/AKfycby05tkg3ElQdyLWsIwXICADRJgQYWkJQZkELLdvV-KArxfZNvWQXfgE9LRRrB3Bii-7lQ/exec';
+
+    // Auto-load Overall Progress when app starts
+    window.addEventListener('load', function() {
+      loadOverallProgress();
+    });
 
     // Prevent Back History and Close App when Phone's Hardware Back Button is Pressed
     window.history.pushState(null, null, window.location.href);
@@ -416,6 +459,91 @@
         document.getElementById('message').textContent = ""; 
         document.getElementById('message').style.backgroundColor = "transparent";
       }
+    }
+
+    // --- LOGIC FOR PROGRESS DASHBOARD (PAGE 0) ---
+    function loadOverallProgress() {
+      let allMarks = [];
+      let fetchPromises = divisionsList.map(cls => {
+        return fetch(scriptURL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+          body: JSON.stringify({ action: "getMarks", className: cls })
+        })
+        .then(res => res.json())
+        .then(data => {
+          if (data.status === "success" && data.data) {
+            allMarks = allMarks.concat(data.data);
+          }
+        })
+        .catch(err => console.error("Could not fetch " + cls));
+      });
+
+      Promise.all(fetchPromises).then(() => {
+        let divEntered = {};
+        divisionsList.forEach(d => divEntered[d] = 0);
+        let subEntered = {};
+        subjectsList.forEach(s => subEntered[s] = 0);
+
+        // Tally up entered marks
+        allMarks.forEach(row => {
+           if (row.mark !== "" && row.mark !== null && row.mark !== undefined) {
+              if (divEntered[row.className] !== undefined) divEntered[row.className]++;
+              if (subEntered[row.subject] !== undefined) subEntered[row.subject]++;
+           }
+        });
+
+        // DOM elements
+        const divContainer = document.getElementById('divisionProgressContainer');
+        const subContainer = document.getElementById('subjectProgressContainer');
+        divContainer.innerHTML = "";
+        subContainer.innerHTML = "";
+
+        // Build Division Progress
+        divisionsList.forEach(cls => {
+           let total = studentsData[cls].length * subjectsList.length;
+           let entered = divEntered[cls];
+           let pct = Math.round((entered / total) * 100) || 0;
+           divContainer.innerHTML += createProgressHTML(cls, pct, entered, total);
+        });
+
+        // Build Subject Progress
+        let totalStudents = 0;
+        divisionsList.forEach(cls => totalStudents += studentsData[cls].length);
+        
+        subjectsList.forEach(sub => {
+           let total = totalStudents;
+           let entered = subEntered[sub];
+           let pct = Math.round((entered / total) * 100) || 0;
+           subContainer.innerHTML += createProgressHTML(sub, pct, entered, total);
+        });
+
+        // Display
+        document.getElementById('overallLoadingIndicator').style.display = 'none';
+        document.getElementById('progressContent').style.display = 'block';
+      });
+    }
+
+    function createProgressHTML(label, pct, entered, total) {
+      // Small animation delay for smooth rendering
+      setTimeout(() => {
+        let bars = document.querySelectorAll('.progress-fill');
+        bars.forEach(bar => {
+          bar.style.width = bar.getAttribute('data-width');
+        });
+      }, 100);
+
+      return `
+        <div class="progress-box">
+          <div class="progress-header">
+            <span>${label}</span>
+            <span>${pct}% &nbsp;&nbsp; <span style="color:#94a3b8; font-weight:normal; font-size:12px;">(${entered}/${total})</span></span>
+          </div>
+          <div class="progress-track">
+            <div class="progress-fill" data-width="${pct}%" style="width: 0%;"></div>
+          </div>
+        </div>
+      `;
     }
 
     // --- LOGIC FOR ENTERING MARKS ---
