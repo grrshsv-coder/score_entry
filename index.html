@@ -89,7 +89,7 @@
     .progress-box { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 12px; }
     .progress-box.clickable { cursor: pointer; transition: transform 0.2s, box-shadow 0.2s; }
     .progress-box.clickable:hover { transform: translateY(-2px); box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
-    .progress-header { display: flex; justify-content: space-between; font-size: 14px; font-weight: bold; color: #475569; margin-bottom: 8px; }
+    .progress-header { display: flex; justify-content: space-between; font-size: 14px; font-weight: bold; margin-bottom: 8px; }
     .progress-track { background: #e2e8f0; border-radius: 10px; height: 14px; overflow: hidden; box-shadow: inset 0 1px 3px rgba(0,0,0,0.1); }
     .progress-fill { background: #10b981; height: 100%; width: 0%; transition: width 1s ease-in-out; border-radius: 10px; }
 
@@ -176,8 +176,8 @@
 
     #loadingIndicator { text-align: center; color: #3b82f6; font-weight: bold; margin: 30px 0; font-size: 18px; }
 
-    /* Developer Credit Styles (Updated to be darker & bolder) */
-    .developer-credit { text-align: center; margin-top: 20px; font-size: 14px; color: #1e293b; font-weight: 700; letter-spacing: 0.5px; }
+    /* Developer Credit Styles (Reverted to original) */
+    .developer-credit { text-align: center; margin-top: 20px; font-size: 13px; color: #94a3b8; font-weight: 500; letter-spacing: 0.3px; }
 
     /* ------------------------------------- */
     /* Native Print / PDF Generation Styles  */
@@ -581,12 +581,15 @@
 
       let clickableClass = type ? 'clickable' : '';
       let onClickAttr = type ? `onclick="showDrillDownProgress('${type}', '${label}')"` : '';
+      
+      let mainColor = pct === 0 ? '#ef4444' : '#475569';
+      let subColor = pct === 0 ? '#ef4444' : '#94a3b8';
 
       return `
         <div class="progress-box ${clickableClass}" ${onClickAttr}>
-          <div class="progress-header">
+          <div class="progress-header" style="color: ${mainColor};">
             <span>${label}</span>
-            <span>${pct}% &nbsp;&nbsp; <span style="color:#94a3b8; font-weight:normal; font-size:12px;">(${entered}/${total})</span></span>
+            <span>${pct}% &nbsp;&nbsp; <span style="color: ${subColor}; font-weight:normal; font-size:12px;">(${entered}/${total})</span></span>
           </div>
           <div class="progress-track">
             <div class="progress-fill" data-width="${pct}%" style="width: 0%;"></div>
