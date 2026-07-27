@@ -153,7 +153,7 @@
     
     #message { text-align: center; font-weight: bold; margin-top: 20px; min-height: 24px; padding: 10px; border-radius: 6px; }
 
-    /* Data Table Styles (Full Class & Top 10) */
+    /* Data Table Styles (Full Class, Top 10, & Consolidated) */
     .table-responsive { width: 100%; overflow-x: auto; margin-top: 15px; border-radius: 8px; border: 1px solid #e2e8f0; }
     .marks-table { width: 100%; border-collapse: collapse; font-size: 13px; }
     .marks-table th, .marks-table td { padding: 8px 4px; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; text-align: center; }
@@ -176,8 +176,8 @@
 
     #loadingIndicator { text-align: center; color: #3b82f6; font-weight: bold; margin: 30px 0; font-size: 18px; }
 
-    /* Developer Credit Styles */
-    .developer-credit { text-align: center; margin-top: 20px; font-size: 13px; color: #94a3b8; font-weight: 500; letter-spacing: 0.3px; }
+    /* Developer Credit Styles (Updated to be darker & bolder) */
+    .developer-credit { text-align: center; margin-top: 20px; font-size: 14px; color: #1e293b; font-weight: 700; letter-spacing: 0.5px; }
 
     /* ------------------------------------- */
     /* Native Print / PDF Generation Styles  */
@@ -202,7 +202,7 @@
       
       /* Hide standard UI elements during print */
       #mainContainer { display: none !important; }
-      .back-btn, #downloadPdfBtn, #downloadExcelBtn { display: none !important; }
+      .back-btn, #downloadPdfBtn, #downloadExcelBtn, .developer-credit { display: none !important; }
       
       /* 
          --- PRINTING PROGRESS REPORTS ---
@@ -275,10 +275,12 @@
       </div>
       
       <div id="progressContent" style="display: none;">
-        <h3 style="margin-top: 10px;">Division-wise</h3>
+        <h3 style="margin-top: 10px; margin-bottom: 5px;">Division-wise</h3>
+        <div style="text-align: center; font-size: 13px; color: #475569; margin-bottom: 15px;">Select to see the detailed progress.</div>
         <div id="divisionProgressContainer" class="list-grid"></div>
         
-        <h3 style="margin-top: 25px;">Subject-wise</h3>
+        <h3 style="margin-top: 25px; margin-bottom: 5px;">Subject-wise</h3>
+        <div style="text-align: center; font-size: 13px; color: #475569; margin-bottom: 15px;">Select to see the detailed progress.</div>
         <div id="subjectProgressContainer" class="list-grid"></div>
       </div>
 
@@ -334,6 +336,7 @@
         <button class="nav-btn sub-8" onclick="selectSubject('Biology')">Biology</button>
         <button class="nav-btn sub-9" onclick="selectSubject('Mathematics')">Mathematics</button>
       </div>
+      <div class="developer-credit">Designed & Developed by GRR</div>
     </div>
 
     <!-- PAGE 3: Enter Marks -->
@@ -347,6 +350,7 @@
       <button id="editBtn" class="edit-btn" onclick="enableEditing()">✏️ Edit Marks</button>
       
       <div id="message"></div>
+      <div class="developer-credit">Designed & Developed by GRR</div>
     </div>
 
     <!-- PAGE 4: Select Report Type -->
@@ -361,6 +365,7 @@
         <button class="nav-btn top10-div" style="width: 85%; max-width: 300px; padding: 20px;" onclick="selectReportType('top10')">🏆 Top 10 Students</button>
         <button class="nav-btn progress-div" style="width: 85%; max-width: 300px; padding: 20px;" onclick="selectReportType('progress')">📈 Progress Report</button>
       </div>
+      <div class="developer-credit">Designed & Developed by GRR</div>
     </div>
 
     <!-- PAGE 4a: Select Division for Report -->
@@ -383,6 +388,7 @@
       <div id="progressLoadingIndicator" style="display: none; text-align: center; color: #3b82f6; font-weight: bold; margin-top: 25px;">
         Generating Print PDF... Please wait ⏳
       </div>
+      <div class="developer-credit">Designed & Developed by GRR</div>
     </div>
   </div>
 
@@ -405,6 +411,7 @@
     <div class="table-responsive" id="tableWrapper" style="display: none;">
       <!-- Grid Table will be injected here -->
     </div>
+    <div class="developer-credit">Designed & Developed by GRR</div>
   </div>
 
   <!-- DRILL DOWN PROGRESS CONTAINER (Page 6) -->
@@ -412,6 +419,7 @@
     <button class="back-btn" onclick="showPage('page0')" style="margin-bottom: 10px;">← Back to Progress</button>
     <h2 id="drillDownTitle" style="margin-top: -10px;">Detailed Progress</h2>
     <div id="drillDownContainer" class="list-grid" style="margin-top: 20px;"></div>
+    <div class="developer-credit">Designed & Developed by GRR</div>
   </div>
 
   <!-- HIDDEN PRINT AREA FOR PROGRESS REPORTS -->
