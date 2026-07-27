@@ -86,7 +86,8 @@
     /* ------------------------------------- */
     /* Progress Bar Styles                   */
     /* ------------------------------------- */
-    .progress-box { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 12px; }
+    .progress-box { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 12px; cursor: pointer; transition: transform 0.2s, box-shadow 0.2s; }
+    .progress-box:hover { transform: translateY(-2px); box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
     .progress-header { display: flex; justify-content: space-between; font-size: 14px; font-weight: bold; color: #475569; margin-bottom: 8px; }
     .progress-track { background: #e2e8f0; border-radius: 10px; height: 14px; overflow: hidden; box-shadow: inset 0 1px 3px rgba(0,0,0,0.1); }
     .progress-fill { background: #10b981; height: 100%; width: 0%; transition: width 1s ease-in-out; border-radius: 10px; }
@@ -151,7 +152,7 @@
     
     #message { text-align: center; font-weight: bold; margin-top: 20px; min-height: 24px; padding: 10px; border-radius: 6px; }
 
-    /* Data Table Styles (Full Class & Top 10) */
+    /* Data Table Styles (Full Class, Top 10, & Consolidated) */
     .table-responsive { width: 100%; overflow-x: auto; margin-top: 15px; border-radius: 8px; border: 1px solid #e2e8f0; }
     .marks-table { width: 100%; border-collapse: collapse; font-size: 13px; }
     .marks-table th, .marks-table td { padding: 8px 4px; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; text-align: center; }
@@ -207,7 +208,7 @@
          These rules activate when we are directly printing Progress Reports.
          It hides the standard view container and ONLY shows the #printArea.
       */
-      body.print-progress #page5 { display: none !important; }
+      body.print-progress #page5, body.print-progress #page6 { display: none !important; }
       body.print-progress #printArea { display: block !important; }
 
       /* Force EXACT A4 Page height and push content to perfectly center with equal margins */
@@ -236,6 +237,7 @@
          These rules activate when printing Top 10 from Page 5.
       */
       body.print-top10 #page5 { display: block !important; }
+      body.print-top10 #page6 { display: none !important; }
       body.print-top10 #printArea { display: none !important; }
       body.print-top10 #reportTitle { display: none !important; } /* Removes "Class Report" Heading */
       body.print-top10 .table-container-wrapper { 
@@ -402,7 +404,18 @@
     <div class="table-responsive" id="tableWrapper" style="display: none;">
       <!-- Grid Table will be injected here -->
     </div>
+  </div>
 
+  <!-- CONSOLIDATED PROGRESS CONTAINER (Page 6) -->
+  <div class="table-container-wrapper page" id="page6">
+    <button class="back-btn" onclick="showPage('page0')" style="margin-bottom: 10px;">← Back to Progress</button>
+    <h2 style="margin-top: -10px;">Consolidated Progress</h2>
+    
+    <h3 style="margin-top: 15px; color: #1e3a8a; text-align: left; padding-left: 10px;">Class-wise Progress</h3>
+    <div class="table-responsive" id="classWiseProgressTable"></div>
+
+    <h3 style="margin-top: 30px; color: #1e3a8a; text-align: left; padding-left: 10px;">Subject-wise Progress</h3>
+    <div class="table-responsive" id="subjectWiseProgressTable"></div>
   </div>
 
   <!-- HIDDEN PRINT AREA FOR PROGRESS REPORTS -->
@@ -428,6 +441,9 @@
     
     let currentReportType = "full"; 
     let currentReportClass = "";
+    
+    // Global Matrix to hold specific mark counts for the Consolidated Table
+    let globalProgressMatrix = {};
 
     // REPLACE THIS WITH YOUR APPS SCRIPT URL!
     const scriptURL = 'https://script.google.com/macros/s/AKfycby05tkg3ElQdyLWsIwXICADRJgQYWkJQZkELLdvV-KArxfZNvWQXfgE9LRRrB3Bii-7lQ/exec';
@@ -451,7 +467,7 @@
       document.querySelectorAll('.page').forEach(page => page.classList.remove('active'));
       document.getElementById(pageId).classList.add('active');
       
-      if(pageId === 'page5') {
+      if(pageId === 'page5' || pageId === 'page6') {
         document.getElementById('mainContainer').style.display = 'none';
       } else {
         document.getElementById('mainContainer').style.display = 'block';
@@ -465,6 +481,12 @@
 
     // --- LOGIC FOR PROGRESS DASHBOARD (PAGE 0) ---
     function loadOverallProgress() {
+      // Initialize Matrix
+      divisionsList.forEach(c => {
+         globalProgressMatrix[c] = {};
+         subjectsList.forEach(s => globalProgressMatrix[c][s] = 0);
+      });
+
       let allMarks = [];
       let fetchPromises = divisionsList.map(cls => {
         return fetch(scriptURL, {
@@ -487,17 +509,26 @@
       });
 
       Promise.all(fetchPromises).then(() => {
-        let divEntered = {};
-        divisionsList.forEach(d => divEntered[d] = 0);
-        let subEntered = {};
-        subjectsList.forEach(s => subEntered[s] = 0);
-
-        // Tally up entered marks
+        // Tally up entered marks into the matrix
         allMarks.forEach(row => {
            if (row.mark !== "" && row.mark !== null && row.mark !== undefined) {
-              if (divEntered[row.className] !== undefined) divEntered[row.className]++;
-              if (subEntered[row.subject] !== undefined) subEntered[row.subject]++;
+               if (globalProgressMatrix[row.className] !== undefined && globalProgressMatrix[row.className][row.subject] !== undefined) {
+                   globalProgressMatrix[row.className][row.subject]++;
+               }
            }
+        });
+
+        // Compute flat lists for the progress bars
+        let divEntered = {};
+        divisionsList.forEach(d => {
+            divEntered[d] = 0;
+            subjectsList.forEach(s => divEntered[d] += globalProgressMatrix[d][s]);
+        });
+        
+        let subEntered = {};
+        subjectsList.forEach(s => {
+            subEntered[s] = 0;
+            divisionsList.forEach(d => subEntered[s] += globalProgressMatrix[d][s]);
         });
 
         // DOM elements
@@ -543,8 +574,9 @@
         });
       }, 100);
 
+      // Added onclick to open the consolidated report on clicking the progress box
       return `
-        <div class="progress-box">
+        <div class="progress-box" onclick="showConsolidatedProgress()">
           <div class="progress-header">
             <span>${label}</span>
             <span>${pct}% &nbsp;&nbsp; <span style="color:#94a3b8; font-weight:normal; font-size:12px;">(${entered}/${total})</span></span>
@@ -554,6 +586,49 @@
           </div>
         </div>
       `;
+    }
+
+    // --- LOGIC FOR CONSOLIDATED REPORT (PAGE 6) ---
+    function showConsolidatedProgress() {
+      showPage('page6');
+      
+      // 1. Build Class-wise Table (Rows: Classes, Cols: Subjects)
+      let classHtml = '<table class="marks-table"><thead><tr><th style="font-size: 14px;">Class</th>';
+      subjectsList.forEach(sub => classHtml += `<th>${sub}</th>`);
+      classHtml += '</tr></thead><tbody>';
+      
+      divisionsList.forEach(cls => {
+        classHtml += `<tr><td style="font-weight:bold; background-color:#f8fafc; font-size: 14px;">${cls}</td>`;
+        let totalStudents = studentsData[cls].length;
+        subjectsList.forEach(sub => {
+          let entered = globalProgressMatrix[cls][sub] || 0;
+          let pct = Math.round((entered / totalStudents) * 100) || 0;
+          let color = pct === 100 ? '#10b981' : (pct > 0 ? '#f59e0b' : '#ef4444');
+          classHtml += `<td><span style="color: ${color}; font-weight: bold; font-size: 14px;">${entered}/${totalStudents}</span><br><span style="font-size:10px; color:#64748b;">(${pct}%)</span></td>`;
+        });
+        classHtml += '</tr>';
+      });
+      classHtml += '</tbody></table>';
+      document.getElementById('classWiseProgressTable').innerHTML = classHtml;
+
+      // 2. Build Subject-wise Table (Rows: Subjects, Cols: Classes)
+      let subHtml = '<table class="marks-table"><thead><tr><th style="font-size: 14px;">Subject</th>';
+      divisionsList.forEach(cls => subHtml += `<th>${cls}</th>`);
+      subHtml += '</tr></thead><tbody>';
+      
+      subjectsList.forEach(sub => {
+        subHtml += `<tr><td style="font-weight:bold; background-color:#f8fafc; font-size: 14px;">${sub}</td>`;
+        divisionsList.forEach(cls => {
+          let totalStudents = studentsData[cls].length;
+          let entered = globalProgressMatrix[cls][sub] || 0;
+          let pct = Math.round((entered / totalStudents) * 100) || 0;
+          let color = pct === 100 ? '#10b981' : (pct > 0 ? '#f59e0b' : '#ef4444');
+          subHtml += `<td><span style="color: ${color}; font-weight: bold; font-size: 14px;">${entered}/${totalStudents}</span><br><span style="font-size:10px; color:#64748b;">(${pct}%)</span></td>`;
+        });
+        subHtml += '</tr>';
+      });
+      subHtml += '</tbody></table>';
+      document.getElementById('subjectWiseProgressTable').innerHTML = subHtml;
     }
 
     // --- LOGIC FOR ENTERING MARKS ---
