@@ -280,7 +280,9 @@
       </div>
 
       <hr class="divider" style="margin-top: 25px;">
-      <button class="action-btn" onclick="showPage('page1')" style="margin-top: 0;">Proceed to Data Entry ➔</button>
+      
+      <!-- Initially hidden, only shown after progress finishes loading -->
+      <button id="proceedBtn" class="action-btn" onclick="showPage('page1')" style="margin-top: 0; display: none;">Proceed to Data Entry ➔</button>
 
       <div class="developer-credit">Designed & Developed by GRR</div>
     </div>
@@ -473,7 +475,12 @@
         .then(res => res.json())
         .then(data => {
           if (data.status === "success" && data.data) {
-            allMarks = allMarks.concat(data.data);
+            // Attach the class name manually so tallying works perfectly
+            let processedData = data.data.map(row => {
+              row.className = cls;
+              return row;
+            });
+            allMarks = allMarks.concat(processedData);
           }
         })
         .catch(err => console.error("Could not fetch " + cls));
@@ -521,6 +528,9 @@
         // Display
         document.getElementById('overallLoadingIndicator').style.display = 'none';
         document.getElementById('progressContent').style.display = 'block';
+        
+        // Show Proceed Button only after fetching all progress
+        document.getElementById('proceedBtn').style.display = 'block'; 
       });
     }
 
