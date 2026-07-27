@@ -176,7 +176,7 @@
 
     #loadingIndicator { text-align: center; color: #3b82f6; font-weight: bold; margin: 30px 0; font-size: 18px; }
 
-    /* Developer Credit Styles (Reverted to original) */
+    /* Developer Credit Styles */
     .developer-credit { text-align: center; margin-top: 20px; font-size: 13px; color: #94a3b8; font-weight: 500; letter-spacing: 0.3px; }
 
     /* ------------------------------------- */
@@ -439,6 +439,46 @@
     
     const subjectsList = ['Language 1', 'Language 2', 'English', 'Hindi', 'Social Science', 'Physics', 'Chemistry', 'Biology', 'Mathematics'];
     const divisionsList = ['10A', '10B', '10C', '10D', '10E', '10F', '10G', '10H'];
+    
+    // Teacher Mapping
+    const teacherMapping = {
+      "Biology": {
+        "10A": "ASHITHA S P", "10B": "K ROOSY CONTRACTOR", "10C": "KK RINCY", 
+        "10D": "ASHITHA S P", "10E": "KK RINCY", "10F": "K ROOSY CONTRACTOR", 
+        "10H": "K ROOSY CONTRACTOR"
+      },
+      "Chemistry": {
+        "10A": "SREERAG GR", "10B": "SREERAG GR", "10C": "AMRUTHA R", 
+        "10D": "AMRUTHA R", "10E": "AMRUTHA R", "10F": "AMRUTHA R", 
+        "10G": "SREERAG GR", "10H": "SREERAG GR"
+      },
+      "English": {
+        "10A": "V BRIJISHA", "10B": "AP MUNEER", "10C": "KK SREENA", 
+        "10D": "P MIDHUN", "10E": "SANATH SN", "10F": "V BRIJISHA", 
+        "10G": "KK SREENA", "10H": "AP MUNEER"
+      },
+      "Hindi": {
+        "10A": "VK REEJA", "10B": "AMRUTHA S", "10C": "P K GOPIKA", 
+        "10D": "P K GOPIKA", "10E": "AMRUTHA S", "10F": "VK REEJA", 
+        "10G": "AMRUTHA S", "10H": "VK REEJA"
+      },
+      "Mathematics": {
+        "10A": "TP THULASIDAS", "10B": "VK FAHEEMA", "10C": "TP THULASIDAS", 
+        "10D": "VP RAGILA", "10E": "NK ABHINA", "10F": "NK ABHINA", 
+        "10G": "TP DIJA", "10H": "CB ABHILASH"
+      },
+      "Physics": {
+        "10A": "CP LIJO", "10B": "UR THRISALA", "10C": "INDULEKHA NR", 
+        "10D": "UR THRISALA", "10E": "CP LIJO", "10F": "CP LIJO", 
+        "10G": "INDULEKHA NR", "10H": "INDULEKHA NR"
+      },
+      "Social Science": {
+        "10A": "AP RAJEEVAN", "10B": "MP SREEKANTH", "10C": "AP RAJEEVAN", 
+        "10D": "NISAR EDATHIL", "10E": "NISAR EDATHIL", "10F": "MK BINDU", 
+        "10G": "MK BINDU", "10H": "NK NIJISHA"
+      }
+    };
+
     const currentClass = "10"; 
     let currentDivision = "";
     let currentSubject = "";
@@ -546,7 +586,7 @@
            let total = studentsData[cls].length * subjectsList.length;
            let entered = divEntered[cls];
            let pct = Math.round((entered / total) * 100) || 0;
-           divContainer.innerHTML += createProgressHTML(cls, pct, entered, total, 'class');
+           divContainer.innerHTML += createProgressHTML(cls, pct, entered, total, 'class', "");
         });
 
         // Build Subject Progress
@@ -557,7 +597,7 @@
            let total = totalStudents;
            let entered = subEntered[sub];
            let pct = Math.round((entered / total) * 100) || 0;
-           subContainer.innerHTML += createProgressHTML(sub, pct, entered, total, 'subject');
+           subContainer.innerHTML += createProgressHTML(sub, pct, entered, total, 'subject', "");
         });
 
         // Display
@@ -569,8 +609,8 @@
       });
     }
 
-    // Pass type ('class' or 'subject') to make it clickable to drill down
-    function createProgressHTML(label, pct, entered, total, type) {
+    // Includes teacherName parameter for drill-down view
+    function createProgressHTML(label, pct, entered, total, type, teacherName = "") {
       // Small animation delay for smooth rendering
       setTimeout(() => {
         let bars = document.querySelectorAll('.progress-fill');
@@ -584,11 +624,13 @@
       
       let mainColor = pct === 0 ? '#ef4444' : '#475569';
       let subColor = pct === 0 ? '#ef4444' : '#94a3b8';
+      
+      let teacherHtml = teacherName ? `<span style="color: #3b82f6; font-weight: normal;"> - ${teacherName}</span>` : '';
 
       return `
         <div class="progress-box ${clickableClass}" ${onClickAttr}>
           <div class="progress-header" style="color: ${mainColor};">
-            <span>${label}</span>
+            <span>${label} ${teacherHtml}</span>
             <span>${pct}% &nbsp;&nbsp; <span style="color: ${subColor}; font-weight:normal; font-size:12px;">(${entered}/${total})</span></span>
           </div>
           <div class="progress-track">
@@ -612,8 +654,8 @@
          subjectsList.forEach(sub => {
             let entered = globalProgressMatrix[cls][sub] || 0;
             let pct = Math.round((entered / totalStudents) * 100) || 0;
-            // Passing null as type so these specific drill-down bars are not clickable
-            container.innerHTML += createProgressHTML(sub, pct, entered, totalStudents, null);
+            let tName = teacherMapping[sub] && teacherMapping[sub][cls] ? teacherMapping[sub][cls] : "";
+            container.innerHTML += createProgressHTML(sub, pct, entered, totalStudents, null, tName);
          });
          
       } else if (type === 'subject') {
@@ -624,7 +666,8 @@
             let totalStudents = studentsData[cls].length;
             let entered = globalProgressMatrix[cls][sub] || 0;
             let pct = Math.round((entered / totalStudents) * 100) || 0;
-            container.innerHTML += createProgressHTML(cls, pct, entered, totalStudents, null);
+            let tName = teacherMapping[sub] && teacherMapping[sub][cls] ? teacherMapping[sub][cls] : "";
+            container.innerHTML += createProgressHTML(cls, pct, entered, totalStudents, null, tName);
          });
       }
     }
