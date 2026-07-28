@@ -3,6 +3,12 @@
 <head>
   <base target="_top">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  
+  <!-- Anti-Caching Meta Tags to force browser to load the latest GitHub changes -->
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
+  
   <title>Class Marks Entry</title>
 
   <!-- Excel Generation Library -->
@@ -426,6 +432,10 @@
   <div id="printArea"></div>
 
   <script>
+    // --- MASTER SWITCH FOR CLOSING DATA ENTRY ---
+    // Change this to true to allow saving/editing again.
+    const IS_DATA_ENTRY_OPEN = false;
+
     const studentsData = {
       "10A": ["ADHIDEV A S", "ADHISANKAR S R", "ALAN S N", "ALANKRISHNA V S", "ANUNANDA N P", "ANUNANDH P D", "ANVIK K C", "DEVANANDA K", "DEVARSH RAJEEV", "DHYANA SOJAV. V P", "FATHIMA RIZA MEHRIN", "FATHIMA ZAHRA K", "FILZA FATHIMA C H", "HANIYA FATHIMA N S", "HINA FARHEEN", "KARTHIK. B", "KOUSHIK PRAKASH", "LEZIN MUHAMMAD", "LIYA MEHAJABIN", "MADHUMATH SARANG", "MISBA MEHRIN", "MUHAMMED MUNEES P P", "MUHAMMED NASMIL V K", "MUHAMMED RIDAN.K.K", "MUHAMMED ZIDHAN T K", "NAADHIDEV S R", "NAVAMI A S", "NEERAJ R", "NIHA FATHIMA", "NIVEDITHA .D", "RAMONA ROSE", "RITHU S LAKSHMI", "SALMAN", "SARANNYA V K", "SHAJA FATHIMA K K", "SIVA PANCHAMI.M.K", "SIVAKESH", "SOORYAKIRAN V P", "SRAVAN KRISHNA", "SREEDARSH L L", "SREEHARSH L L", "SUHANA SAFREEN", "SURYADEV V BABU", "THANHARA C T", "VIVEK.R"],
       "10B": ["AGNEY S KUMAR", "AMAN MUHAMMAD P", "AMEN RIZA", "ANAGASREE.P.M", "ANHA ASLAM", "ANMIYA ROSE . J.R", "ARSHAWIN S AJITH", "B . HARY NIGAM", "BHAVIYUKTHA SURESH P S", "BHUVAN GOPAL J P", "DEVA NANDHA P", "DEVAMITHRA S", "DHYAN KRISHNA", "DILSHAN", "DIYA MEHRIN", "EHNA S DOYAL", "FATHIMA HAYA PARVEEN N K", "FIDA RATHNA C P", "FIDIN MINSHAD", "HADIYA NOURIN P P", "HANFA MEHFIN", "LEYA LINEESH", "MINHA FATHIMA G P", "MOHAMMED SHEES O", "MUHAMMAD IHSAN", "MUHAMMAD MIRSAH", "MUHAMMAD RASAL N", "MUHAMMAD RAZIN", "MUHAMMED RAJUL SHAN C K", "MUHAMMED SHABIN P P", "NAINA ZIYA", "NIYALAKSHMI M", "NUBHA FATHIMA K M", "PRANAV DEV", "RAIDA MEHEBIN", "SOUVIK MAJUMDER", "THARAK N", "THEERTHA R", "YASHIKA SINGH M", "ZAYBA DAANIYA JAMSHID"],
@@ -688,6 +698,16 @@
       
       // Move showPage here so it clears previous messages BEFORE we set the new loading message
       showPage('page3');
+
+      // --- MASTER SWITCH LOGIC ---
+      if (!IS_DATA_ENTRY_OPEN) {
+        document.getElementById('studentListContainer').innerHTML = "<div style='text-align:center; padding:40px 20px; font-size:22px; color:#ef4444; font-weight:bold; background:#fee2e2; border-radius:8px; margin-top:20px;'>Data entry is over.</div>";
+        document.getElementById('studentListContainer').style.display = "block";
+        document.getElementById('saveBtn').style.display = "none";
+        document.getElementById('editBtn').style.display = "none";
+        document.getElementById('message').textContent = "";
+        return; // Stops the rest of the function from running
+      }
       
       // Hide inputs while fetching from Google Sheets
       document.getElementById('studentListContainer').style.display = "none";
