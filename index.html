@@ -254,6 +254,25 @@
       tr { page-break-inside: avoid !important; break-inside: avoid !important; }
       * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
     }
+    /* --- DISABLE DATA ENTRY OVERRIDE --- */
+    #studentListContainer, 
+    #saveBtn, 
+    #editBtn {
+      display: none !important;
+    }
+    
+    #marksSubtitle::after {
+      content: "Data entry is over.";
+      display: block;
+      margin-top: 30px;
+      padding: 20px;
+      background-color: #fee2e2;
+      color: #b91c1c;
+      font-size: 20px;
+      font-weight: bold;
+      border: 2px dashed #ef4444;
+      border-radius: 8px;
+    }
   </style>
 </head>
 <body>
