@@ -215,7 +215,7 @@
          These rules activate when we are directly printing Progress Reports.
          It hides the standard view container and ONLY shows the #printArea.
       */
-      body.print-progress #page5, body.print-progress #page6 { display: none !important; }
+      body.print-progress #page5 { display: none !important; }
       body.print-progress #printArea { display: block !important; }
 
       /* Force EXACT A4 Page height and push content to perfectly center with equal margins */
@@ -244,7 +244,6 @@
          These rules activate when printing Top 10 from Page 5.
       */
       body.print-top10 #page5 { display: block !important; }
-      body.print-top10 #page6 { display: none !important; }
       body.print-top10 #printArea { display: none !important; }
       body.print-top10 #reportTitle { display: none !important; } /* Removes "Class Report" Heading */
       body.print-top10 .table-container-wrapper { 
@@ -266,46 +265,13 @@
 
   <!-- ENTRY FLOW CONTAINER -->
   <div class="container" id="mainContainer">
-
-    <!-- PAGE 0: Progress Dashboard (First Page) -->
-    <div id="page0" class="page active">
-      <h1 class="school-name">SANSKRIT HS VATTOLI</h1>
-      <h2 class="event-name">Vijayotsavam 2026-27</h2>
-      <h3 class="test-name">SSLC Mid Term Examination</h3>
-      <hr class="divider">
-      
-      <h2>Mark Entry Progress</h2>
-      
-      <div id="overallLoadingIndicator" style="text-align: center; color: #3b82f6; font-weight: bold; margin: 30px 0; font-size: 16px;">
-        Fetching latest progress... ⏳
-      </div>
-      
-      <div id="progressContent" style="display: none;">
-        <h3 style="margin-top: 10px; margin-bottom: 5px;">Division-wise</h3>
-        <div style="text-align: center; font-size: 13px; color: #475569; margin-bottom: 15px;">Select to see the detailed progress.</div>
-        <div id="divisionProgressContainer" class="list-grid"></div>
-        
-        <h3 style="margin-top: 25px; margin-bottom: 5px;">Subject-wise</h3>
-        <div style="text-align: center; font-size: 13px; color: #475569; margin-bottom: 15px;">Select to see the detailed progress.</div>
-        <div id="subjectProgressContainer" class="list-grid"></div>
-      </div>
-
-      <hr class="divider" style="margin-top: 25px;">
-      
-      <!-- Initially hidden, only shown after progress finishes loading -->
-      <button id="proceedBtn" class="action-btn" onclick="showPage('page1')" style="margin-top: 0; display: none;">Proceed to Data Entry ➔</button>
-
-      <div class="developer-credit">Designed & Developed by GRR</div>
-    </div>
     
     <!-- PAGE 1: Select Division -->
-    <div id="page1" class="page">
+    <div id="page1" class="page active">
       <h1 class="school-name">SANSKRIT HS VATTOLI</h1>
       <h2 class="event-name">Vijayotsavam 2026-27</h2>
       <h3 class="test-name">SSLC Mid Term Examination</h3>
       <hr class="divider">
-      
-      <button class="back-btn" onclick="showPage('page0')">← Back to Progress</button>
       
       <h2>Enter Marks</h2>
       <h3>Select Class 10 Division</h3>
@@ -420,14 +386,6 @@
     <div class="developer-credit">Designed & Developed by GRR</div>
   </div>
 
-  <!-- DRILL DOWN PROGRESS CONTAINER (Page 6) -->
-  <div class="table-container-wrapper page" id="page6">
-    <button class="back-btn" onclick="showPage('page0')" style="margin-bottom: 10px;">← Back to Progress</button>
-    <h2 id="drillDownTitle" style="margin-top: -10px;">Detailed Progress</h2>
-    <div id="drillDownContainer" class="list-grid" style="margin-top: 20px;"></div>
-    <div class="developer-credit">Designed & Developed by GRR</div>
-  </div>
-
   <!-- HIDDEN PRINT AREA FOR PROGRESS REPORTS -->
   <div id="printArea"></div>
 
@@ -449,45 +407,6 @@
     
     const subjectsList = ['Language 1', 'Language 2', 'English', 'Hindi', 'Social Science', 'Physics', 'Chemistry', 'Biology', 'Mathematics'];
     const divisionsList = ['10A', '10B', '10C', '10D', '10E', '10F', '10G', '10H'];
-    
-    // Teacher Mapping
-    const teacherMapping = {
-      "Biology": {
-        "10A": "ASHITHA S P", "10B": "K ROOSY CONTRACTOR", "10C": "KK RINCY", 
-        "10D": "ASHITHA S P", "10E": "KK RINCY", "10F": "K ROOSY CONTRACTOR", 
-        "10H": "K ROOSY CONTRACTOR"
-      },
-      "Chemistry": {
-        "10A": "SREERAG GR", "10B": "SREERAG GR", "10C": "AMRUTHA R", 
-        "10D": "AMRUTHA R", "10E": "AMRUTHA R", "10F": "AMRUTHA R", 
-        "10G": "SREERAG GR", "10H": "SREERAG GR"
-      },
-      "English": {
-        "10A": "V BRIJISHA", "10B": "AP MUNEER", "10C": "KK SREENA", 
-        "10D": "P MIDHUN", "10E": "SANATH SN", "10F": "V BRIJISHA", 
-        "10G": "KK SREENA", "10H": "AP MUNEER"
-      },
-      "Hindi": {
-        "10A": "VK REEJA", "10B": "AMRUTHA S", "10C": "P K GOPIKA", 
-        "10D": "P K GOPIKA", "10E": "AMRUTHA S", "10F": "VK REEJA", 
-        "10G": "AMRUTHA S", "10H": "VK REEJA"
-      },
-      "Mathematics": {
-        "10A": "TP THULASIDAS", "10B": "VK FAHEEMA", "10C": "TP THULASIDAS", 
-        "10D": "VP RAGILA", "10E": "NK ABHINA", "10F": "NK ABHINA", 
-        "10G": "TP DIJA", "10H": "CB ABHILASH"
-      },
-      "Physics": {
-        "10A": "CP LIJO", "10B": "UR THRISALA", "10C": "INDULEKHA NR", 
-        "10D": "UR THRISALA", "10E": "CP LIJO", "10F": "CP LIJO", 
-        "10G": "INDULEKHA NR", "10H": "INDULEKHA NR"
-      },
-      "Social Science": {
-        "10A": "AP RAJEEVAN", "10B": "MP SREEKANTH", "10C": "AP RAJEEVAN", 
-        "10D": "NISAR EDATHIL", "10E": "NISAR EDATHIL", "10F": "MK BINDU", 
-        "10G": "MK BINDU", "10H": "NK NIJISHA"
-      }
-    };
 
     const currentClass = "10"; 
     let currentDivision = "";
@@ -495,17 +414,9 @@
     
     let currentReportType = "full"; 
     let currentReportClass = "";
-    
-    // Global Matrix to hold specific mark counts for the Consolidated Table
-    let globalProgressMatrix = {};
 
     // REPLACE THIS WITH YOUR APPS SCRIPT URL!
     const scriptURL = 'https://script.google.com/macros/s/AKfycby05tkg3ElQdyLWsIwXICADRJgQYWkJQZkELLdvV-KArxfZNvWQXfgE9LRRrB3Bii-7lQ/exec';
-
-    // Auto-load Overall Progress when app starts
-    window.addEventListener('load', function() {
-      loadOverallProgress();
-    });
 
     // Prevent Back History and Close App when Phone's Hardware Back Button is Pressed
     window.history.pushState(null, null, window.location.href);
@@ -521,7 +432,7 @@
       document.querySelectorAll('.page').forEach(page => page.classList.remove('active'));
       document.getElementById(pageId).classList.add('active');
       
-      if(pageId === 'page5' || pageId === 'page6') {
+      if(pageId === 'page5') {
         document.getElementById('mainContainer').style.display = 'none';
       } else {
         document.getElementById('mainContainer').style.display = 'block';
@@ -530,155 +441,6 @@
       if(document.getElementById('message')) {
         document.getElementById('message').textContent = ""; 
         document.getElementById('message').style.backgroundColor = "transparent";
-      }
-    }
-
-    // --- LOGIC FOR PROGRESS DASHBOARD (PAGE 0) ---
-    function loadOverallProgress() {
-      // Initialize Matrix
-      divisionsList.forEach(c => {
-         globalProgressMatrix[c] = {};
-         subjectsList.forEach(s => globalProgressMatrix[c][s] = 0);
-      });
-
-      let allMarks = [];
-      let fetchPromises = divisionsList.map(cls => {
-        return fetch(scriptURL, {
-          method: 'POST',
-          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-          body: JSON.stringify({ action: "getMarks", className: cls })
-        })
-        .then(res => res.json())
-        .then(data => {
-          if (data.status === "success" && data.data) {
-            // Attach the class name manually so tallying works perfectly
-            let processedData = data.data.map(row => {
-              row.className = cls;
-              return row;
-            });
-            allMarks = allMarks.concat(processedData);
-          }
-        })
-        .catch(err => console.error("Could not fetch " + cls));
-      });
-
-      Promise.all(fetchPromises).then(() => {
-        // Tally up entered marks into the matrix
-        allMarks.forEach(row => {
-           if (row.mark !== "" && row.mark !== null && row.mark !== undefined) {
-               if (globalProgressMatrix[row.className] !== undefined && globalProgressMatrix[row.className][row.subject] !== undefined) {
-                   globalProgressMatrix[row.className][row.subject]++;
-               }
-           }
-        });
-
-        // Compute flat lists for the progress bars
-        let divEntered = {};
-        divisionsList.forEach(d => {
-            divEntered[d] = 0;
-            subjectsList.forEach(s => divEntered[d] += globalProgressMatrix[d][s]);
-        });
-        
-        let subEntered = {};
-        subjectsList.forEach(s => {
-            subEntered[s] = 0;
-            divisionsList.forEach(d => subEntered[s] += globalProgressMatrix[d][s]);
-        });
-
-        // DOM elements
-        const divContainer = document.getElementById('divisionProgressContainer');
-        const subContainer = document.getElementById('subjectProgressContainer');
-        divContainer.innerHTML = "";
-        subContainer.innerHTML = "";
-
-        // Build Division Progress
-        divisionsList.forEach(cls => {
-           let total = studentsData[cls].length * subjectsList.length;
-           let entered = divEntered[cls];
-           let pct = Math.round((entered / total) * 100) || 0;
-           divContainer.innerHTML += createProgressHTML(cls, pct, entered, total, 'class', "");
-        });
-
-        // Build Subject Progress
-        let totalStudents = 0;
-        divisionsList.forEach(cls => totalStudents += studentsData[cls].length);
-        
-        subjectsList.forEach(sub => {
-           let total = totalStudents;
-           let entered = subEntered[sub];
-           let pct = Math.round((entered / total) * 100) || 0;
-           subContainer.innerHTML += createProgressHTML(sub, pct, entered, total, 'subject', "");
-        });
-
-        // Display
-        document.getElementById('overallLoadingIndicator').style.display = 'none';
-        document.getElementById('progressContent').style.display = 'block';
-        
-        // Show Proceed Button only after fetching all progress
-        document.getElementById('proceedBtn').style.display = 'block'; 
-      });
-    }
-
-    // Includes teacherName parameter for drill-down view
-    function createProgressHTML(label, pct, entered, total, type, teacherName = "") {
-      // Small animation delay for smooth rendering
-      setTimeout(() => {
-        let bars = document.querySelectorAll('.progress-fill');
-        bars.forEach(bar => {
-          bar.style.width = bar.getAttribute('data-width');
-        });
-      }, 100);
-
-      let clickableClass = type ? 'clickable' : '';
-      let onClickAttr = type ? `onclick="showDrillDownProgress('${type}', '${label}')"` : '';
-      
-      let mainColor = pct === 0 ? '#ef4444' : '#475569';
-      let subColor = pct === 0 ? '#ef4444' : '#94a3b8';
-      
-      let teacherHtml = teacherName ? `<span style="color: #3b82f6; font-weight: bold;"> - ${teacherName}</span>` : '';
-
-      return `
-        <div class="progress-box ${clickableClass}" ${onClickAttr}>
-          <div class="progress-header" style="color: ${mainColor};">
-            <span>${label} ${teacherHtml}</span>
-            <span>${pct}% &nbsp;&nbsp; <span style="color: ${subColor}; font-weight:normal; font-size:12px;">(${entered}/${total})</span></span>
-          </div>
-          <div class="progress-track">
-            <div class="progress-fill" data-width="${pct}%" style="width: 0%;"></div>
-          </div>
-        </div>
-      `;
-    }
-
-    // --- LOGIC FOR DRILL DOWN REPORT (PAGE 6) ---
-    function showDrillDownProgress(type, label) {
-      showPage('page6');
-      const container = document.getElementById('drillDownContainer');
-      container.innerHTML = "";
-      
-      if (type === 'class') {
-         document.getElementById('drillDownTitle').textContent = `Progress for Class ${label}`;
-         let cls = label;
-         let totalStudents = studentsData[cls].length;
-         
-         subjectsList.forEach(sub => {
-            let entered = globalProgressMatrix[cls][sub] || 0;
-            let pct = Math.round((entered / totalStudents) * 100) || 0;
-            let tName = teacherMapping[sub] && teacherMapping[sub][cls] ? teacherMapping[sub][cls] : "";
-            container.innerHTML += createProgressHTML(sub, pct, entered, totalStudents, null, tName);
-         });
-         
-      } else if (type === 'subject') {
-         document.getElementById('drillDownTitle').textContent = `Progress for ${label}`;
-         let sub = label;
-         
-         divisionsList.forEach(cls => {
-            let totalStudents = studentsData[cls].length;
-            let entered = globalProgressMatrix[cls][sub] || 0;
-            let pct = Math.round((entered / totalStudents) * 100) || 0;
-            let tName = teacherMapping[sub] && teacherMapping[sub][cls] ? teacherMapping[sub][cls] : "";
-            container.innerHTML += createProgressHTML(cls, pct, entered, totalStudents, null, tName);
-         });
       }
     }
 
