@@ -434,7 +434,7 @@
   <script>
     // --- MASTER SWITCH FOR CLOSING DATA ENTRY ---
     // Change this to true to allow saving/editing again.
-    const IS_DATA_ENTRY_OPEN = true;
+    const IS_DATA_ENTRY_OPEN = false;
 
     const studentsData = {
       "10A": ["ADHIDEV A S", "ADHISANKAR S R", "ALAN S N", "ALANKRISHNA V S", "ANUNANDA N P", "ANUNANDH P D", "ANVIK K C", "DEVANANDA K", "DEVARSH RAJEEV", "DHYANA SOJAV. V P", "FATHIMA RIZA MEHRIN", "FATHIMA ZAHRA K", "FILZA FATHIMA C H", "HANIYA FATHIMA N S", "HINA FARHEEN", "KARTHIK. B", "KOUSHIK PRAKASH", "LEZIN MUHAMMAD", "LIYA MEHAJABIN", "MADHUMATH SARANG", "MISBA MEHRIN", "MUHAMMED MUNEES P P", "MUHAMMED NASMIL V K", "MUHAMMED RIDAN.K.K", "MUHAMMED ZIDHAN T K", "NAADHIDEV S R", "NAVAMI A S", "NEERAJ R", "NIHA FATHIMA", "NIVEDITHA .D", "RAMONA ROSE", "RITHU S LAKSHMI", "SALMAN", "SARANNYA V K", "SHAJA FATHIMA K K", "SIVA PANCHAMI.M.K", "SIVAKESH", "SOORYAKIRAN V P", "SRAVAN KRISHNA", "SREEDARSH L L", "SREEHARSH L L", "SUHANA SAFREEN", "SURYADEV V BABU", "THANHARA C T", "VIVEK.R"],
@@ -932,7 +932,28 @@
       let displayStudents = [];
       if (currentReportType === 'top10') {
         displayStudents = [...students]
-          .filter(a => pivot[a].total > 0)
+          .filter(a => {
+             if (pivot[a].total === 0) return false;
+             
+             // Check < 30% condition across all subjects
+             for (let i = 0; i < subjectsList.length; i++) {
+                 let sub = subjectsList[i];
+                 let mark = pivot[a][sub] !== undefined ? pivot[a][sub] : 0;
+                 
+                 let maxMark = 25;
+                 if (sub === 'Social Science' || sub === 'Mathematics') {
+                   maxMark = 40;
+                 } else if (sub === 'English') {
+                   maxMark = (className === '10B' || className === '10H') ? 31 : 40;
+                 }
+                 
+                 let percentage = Math.round((parseFloat(mark) / maxMark) * 100);
+                 if (percentage < 30) {
+                     return false; // Disqualified if ANY subject is below 30%
+                 }
+             }
+             return true;
+          })
           .sort((a, b) => pivot[b].total - pivot[a].total)
           .slice(0, 10);
       } else {
