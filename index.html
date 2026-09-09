@@ -172,7 +172,7 @@
 
     #loadingIndicator { text-align: center; color: #3b82f6; font-weight: bold; margin: 30px 0; font-size: 18px; }
 
-    /* Developer Credit Styles (Reverted to original) */
+    /* Developer Credit Styles */
     .developer-credit { text-align: center; margin-top: 20px; font-size: 13px; color: #94a3b8; font-weight: 500; letter-spacing: 0.3px; }
 
     /* ------------------------------------- */
@@ -604,8 +604,8 @@
         } else { // SSLC Mid Term Examination (Default)
             if (subject === 'Social Science' || subject === 'Mathematics') return 40;
             if (subject === 'English') {
-                if (division === '10A' || division === '10F') return 40; // Requested update to 40
-                if (division === '10B' || division === '10H') return 31; // Requested update to 31
+                if (division === '10A' || division === '10F') return 40; 
+                if (division === '10B' || division === '10H') return 31; 
                 return 40;
             }
             return 25;
@@ -762,10 +762,14 @@
              <table class="progress-table">
                <thead>
                  <tr>
-                   <th>Subject</th>
-                   <th>Term 1 Mark</th>
+                   <th rowspan="2" style="border-bottom: 2px solid #000000;">Subject</th>
+                   <th colspan="2" style="border-bottom: 1px solid #000000;">Mid Term</th>
+                   <th colspan="2" style="border-bottom: 1px solid #000000;">First Term</th>
+                 </tr>
+                 <tr>
+                   <th>Score</th>
                    <th>Grade</th>
-                   <th>Mid Term</th>
+                   <th>Score</th>
                    <th>Grade</th>
                  </tr>
                </thead>
@@ -783,10 +787,10 @@
 
              html += `<tr>
                         <td>${sub}</td>
-                        <td>${ftMark}</td>
-                        <td style="font-weight: bold;">${ftGrade}</td>
                         <td>${mtMark}</td>
                         <td style="font-weight: bold;">${mtGrade}</td>
+                        <td>${ftMark}</td>
+                        <td style="font-weight: bold;">${ftGrade}</td>
                       </tr>`;
           });
           html += `
