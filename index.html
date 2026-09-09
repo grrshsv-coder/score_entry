@@ -90,16 +90,6 @@
     .back-btn:active { transform: translateX(0) !important; }
 
     /* ------------------------------------- */
-    /* Progress Bar Styles                   */
-    /* ------------------------------------- */
-    .progress-box { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 12px; }
-    .progress-box.clickable { cursor: pointer; transition: transform 0.2s, box-shadow 0.2s; }
-    .progress-box.clickable:hover { transform: translateY(-2px); box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
-    .progress-header { display: flex; justify-content: space-between; font-size: 14px; font-weight: bold; margin-bottom: 8px; }
-    .progress-track { background: #e2e8f0; border-radius: 10px; height: 14px; overflow: hidden; box-shadow: inset 0 1px 3px rgba(0,0,0,0.1); }
-    .progress-fill { background: #10b981; height: 100%; width: 0%; transition: width 1s ease-in-out; border-radius: 10px; }
-
-    /* ------------------------------------- */
     /* Page-Specific Division Button Colors  */
     /* ------------------------------------- */
     
@@ -159,7 +149,7 @@
     
     #message { text-align: center; font-weight: bold; margin-top: 20px; min-height: 24px; padding: 10px; border-radius: 6px; }
 
-    /* Data Table Styles (Full Class, Top 10, & Consolidated) */
+    /* Data Table Styles (Full Class, Top 10) */
     .table-responsive { width: 100%; overflow-x: auto; margin-top: 15px; border-radius: 8px; border: 1px solid #e2e8f0; }
     .marks-table { width: 100%; border-collapse: collapse; font-size: 13px; }
     .marks-table th, .marks-table td { padding: 8px 4px; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; text-align: center; }
@@ -174,10 +164,10 @@
     /* Dedicated Progress Report Table Style */
     /* ------------------------------------- */
     .progress-table { width: 100%; border-collapse: collapse; border: 2px solid #000000; margin-bottom: 15px; }
-    .progress-table th, .progress-table td { padding: 16px; font-size: 24px; border: 1px solid #000000; text-align: center; color: #000000; }
+    /* Slightly smaller font to fit 5 columns neatly on A4 */
+    .progress-table th, .progress-table td { padding: 12px; font-size: 18px; border: 1px solid #000000; text-align: center; color: #000000; }
     .progress-table th { background-color: #ffffff; font-weight: bold; border-bottom: 2px solid #000000; color: #000000; }
-    .progress-table td:first-child, .progress-table th:first-child { text-align: left; padding-left: 20px; }
-    /* Removes the highlighted/colored row specifically for this table */
+    .progress-table td:first-child, .progress-table th:first-child { text-align: left; padding-left: 15px; }
     .progress-table tbody tr { background-color: #ffffff !important; } 
 
     #loadingIndicator { text-align: center; color: #3b82f6; font-weight: bold; margin: 30px 0; font-size: 18px; }
@@ -193,12 +183,10 @@
     }
     
     @media print {
-      /* Remove browser's default URL, Page Numbers, Date and FORCE A4 Portrait */
       @page { 
         margin: 0; 
         size: A4 portrait; 
       }
-      
       body, html { 
         background-color: #ffffff !important; 
         margin: 0 !important; 
@@ -206,24 +194,16 @@
         height: auto; 
       }
       
-      /* Hide standard UI elements during print */
       #mainContainer { display: none !important; }
       .back-btn, #downloadPdfBtn, #downloadExcelBtn, .developer-credit { display: none !important; }
       
-      /* 
-         --- PRINTING PROGRESS REPORTS ---
-         These rules activate when we are directly printing Progress Reports.
-         It hides the standard view container and ONLY shows the #printArea.
-      */
       body.print-progress #page5 { display: none !important; }
       body.print-progress #printArea { display: block !important; }
 
-      /* Force EXACT A4 Page height and push content to perfectly center with equal margins */
       .report-card { 
         height: 296mm !important; 
         width: 100% !important;
         box-sizing: border-box !important;
-        /* 40mm Top & Bottom padding shifts table down and ensures equal margins */
         padding: 40mm 20mm 40mm 20mm !important; 
         page-break-after: always !important; 
         break-after: page !important; 
@@ -233,19 +213,14 @@
         flex-direction: column !important;
       }
       
-      /* Prevents an empty trailing page at the very end of the PDF */
       .report-card:last-child {
         page-break-after: auto !important;
         break-after: auto !important;
       }
 
-      /* 
-         --- PRINTING TOP 10 REPORTS ---
-         These rules activate when printing Top 10 from Page 5.
-      */
       body.print-top10 #page5 { display: block !important; }
       body.print-top10 #printArea { display: none !important; }
-      body.print-top10 #reportTitle { display: none !important; } /* Removes "Class Report" Heading */
+      body.print-top10 #reportTitle { display: none !important; } 
       body.print-top10 .table-container-wrapper { 
         box-shadow: none !important; 
         border: none !important; 
@@ -255,7 +230,6 @@
         max-width: 100%; 
       }
       
-      /* General Print Protection */
       tr { page-break-inside: avoid !important; break-inside: avoid !important; }
       * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
     }
@@ -265,13 +239,30 @@
 
   <!-- ENTRY FLOW CONTAINER -->
   <div class="container" id="mainContainer">
-    
-    <!-- PAGE 1: Select Division -->
-    <div id="page1" class="page active">
+
+    <!-- PAGE 0: Select Examination -->
+    <div id="page0" class="page active">
       <h1 class="school-name">SANSKRIT HS VATTOLI</h1>
       <h2 class="event-name">Vijayotsavam 2026-27</h2>
-      <h3 class="test-name">SSLC Mid Term Examination</h3>
       <hr class="divider">
+      
+      <h2>Select Examination</h2>
+      <div class="list-grid" style="margin-top: 25px;">
+        <button class="nav-btn sub-6" onclick="selectExam('First Term Exam')" style="padding: 20px; font-size: 18px;">📄 First Term Exam</button>
+        <button class="nav-btn sub-3" onclick="selectExam('SSLC Mid Term Examination')" style="padding: 20px; font-size: 18px;">📄 SSLC Mid Term Examination</button>
+      </div>
+
+      <div class="developer-credit">Designed & Developed by GRR</div>
+    </div>
+    
+    <!-- PAGE 1: Select Division -->
+    <div id="page1" class="page">
+      <h1 class="school-name">SANSKRIT HS VATTOLI</h1>
+      <h2 class="event-name">Vijayotsavam 2026-27</h2>
+      <h3 class="test-name"></h3>
+      <hr class="divider">
+      
+      <button class="back-btn" onclick="showPage('page0')">← Back to Exams</button>
       
       <h2>Enter Marks</h2>
       <h3>Select Class 10 Division</h3>
@@ -295,7 +286,7 @@
     <!-- PAGE 2: Select Subject -->
     <div id="page2" class="page">
       <button class="back-btn" onclick="showPage('page1')">← Back to Divisions</button>
-      <h2>Select Subject</h2>
+      <h2 class="test-name"></h2>
       <h3 id="subjectTitleClass"></h3>
       <div class="list-grid">
         <button class="nav-btn sub-1" onclick="selectSubject('Language 1')">Language 1</button>
@@ -328,14 +319,14 @@
     <!-- PAGE 4: Select Report Type -->
     <div id="page4" class="page">
       <button class="back-btn" onclick="showPage('page1')">← Back to Home</button>
-      <h2>Class Reports</h2>
+      <h2 class="test-name"></h2>
       <h3>Select report type</h3>
       
       <!-- Centered Report Type Buttons -->
       <div style="display: flex; flex-direction: column; align-items: center; gap: 20px; margin-top: 30px;">
         <button class="nav-btn full-div" style="width: 85%; max-width: 300px; padding: 20px;" onclick="selectReportType('full')">📄 Full Class Report</button>
         <button class="nav-btn top10-div" style="width: 85%; max-width: 300px; padding: 20px;" onclick="selectReportType('top10')">🏆 Top 10 Students</button>
-        <button class="nav-btn progress-div" style="width: 85%; max-width: 300px; padding: 20px;" onclick="selectReportType('progress')">📈 Progress Report</button>
+        <button class="nav-btn progress-div" style="width: 85%; max-width: 300px; padding: 20px;" onclick="selectReportType('progress')">📈 Combined Progress Report</button>
       </div>
       <div class="developer-credit">Designed & Developed by GRR</div>
     </div>
@@ -377,6 +368,7 @@
     </div>
 
     <h2 id="reportTitle" style="margin-top: -10px;">Class Report</h2>
+    <h3 class="test-name" style="margin-top: 0;"></h3>
     
     <div id="loadingIndicator" style="display: none;">Generating... ⏳</div>
     
@@ -392,7 +384,7 @@
   <script>
     // --- MASTER SWITCH FOR CLOSING DATA ENTRY ---
     // Change this to true to allow saving/editing again.
-    const IS_DATA_ENTRY_OPEN = false;
+    const IS_DATA_ENTRY_OPEN = true;
 
     const studentsData = {
       "10A": ["ADHIDEV A S", "ADHISANKAR S R", "ALAN S N", "ALANKRISHNA V S", "ANUNANDA N P", "ANUNANDH P D", "ANVIK K C", "DEVANANDA K", "DEVARSH RAJEEV", "DHYANA SOJAV. V P", "FATHIMA RIZA MEHRIN", "FATHIMA ZAHRA K", "FILZA FATHIMA C H", "HANIYA FATHIMA N S", "HINA FARHEEN", "KARTHIK. B", "KOUSHIK PRAKASH", "LEZIN MUHAMMAD", "LIYA MEHAJABIN", "MADHUMATH SARANG", "MISBA MEHRIN", "MUHAMMED MUNEES P P", "MUHAMMED NASMIL V K", "MUHAMMED RIDAN.K.K", "MUHAMMED ZIDHAN T K", "NAADHIDEV S R", "NAVAMI A S", "NEERAJ R", "NIHA FATHIMA", "NIVEDITHA .D", "RAMONA ROSE", "RITHU S LAKSHMI", "SALMAN", "SARANNYA V K", "SHAJA FATHIMA K K", "SIVA PANCHAMI.M.K", "SIVAKESH", "SOORYAKIRAN V P", "SRAVAN KRISHNA", "SREEDARSH L L", "SREEHARSH L L", "SUHANA SAFREEN", "SURYADEV V BABU", "THANHARA C T", "VIVEK.R"],
@@ -406,9 +398,10 @@
     };
     
     const subjectsList = ['Language 1', 'Language 2', 'English', 'Hindi', 'Social Science', 'Physics', 'Chemistry', 'Biology', 'Mathematics'];
-    const divisionsList = ['10A', '10B', '10C', '10D', '10E', '10F', '10G', '10H'];
-
     const currentClass = "10"; 
+    
+    // Exam State Variable
+    let currentExam = "";
     let currentDivision = "";
     let currentSubject = "";
     
@@ -424,7 +417,7 @@
       window.close(); // Attempts to securely close the window
       document.body.innerHTML = "<h2 style='text-align:center; margin-top:50px; color:#334155;'>App closed. You can exit this tab.</h2>";
       setTimeout(function() {
-        window.location.href = "about:blank"; // Fallback empty page if close() is blocked
+        window.location.href = "about:blank"; 
       }, 300);
     });
 
@@ -444,7 +437,13 @@
       }
     }
 
-    // --- LOGIC FOR ENTERING MARKS ---
+    // --- LOGIC FOR EXAM & ENTRY FLOW ---
+    function selectExam(exam) {
+      currentExam = exam;
+      document.querySelectorAll('.test-name').forEach(el => el.textContent = currentExam);
+      showPage('page1');
+    }
+
     function selectDivision(div) {
       currentDivision = div;
       const fullClassName = currentClass + currentDivision;
@@ -458,7 +457,6 @@
       document.getElementById('marksTitle').textContent = "Class " + fullClassName;
       document.getElementById('marksSubtitle').textContent = sub;
       
-      // Move showPage here so it clears previous messages BEFORE we set the new loading message
       showPage('page3');
 
       // --- MASTER SWITCH LOGIC ---
@@ -468,10 +466,9 @@
         document.getElementById('saveBtn').style.display = "none";
         document.getElementById('editBtn').style.display = "none";
         document.getElementById('message').textContent = "";
-        return; // Stops the rest of the function from running
+        return; 
       }
       
-      // Hide inputs while fetching from Google Sheets
       document.getElementById('studentListContainer').style.display = "none";
       document.getElementById('saveBtn').style.display = "none";
       document.getElementById('editBtn').style.display = "none";
@@ -481,7 +478,6 @@
       msg.style.backgroundColor = "transparent";
       msg.textContent = "Loading, Please Wait........";
       
-      // Fetch marks from Google Sheet
       fetch(scriptURL, {
         method: 'POST',
         headers: { 'Content-Type': 'text/plain;charset=utf-8' },
@@ -490,10 +486,11 @@
       .then(response => response.json())
       .then(data => {
         if (data.status === "success") {
-           // Filter for current subject
            let subjectMarks = {};
            data.data.forEach(row => {
-             if (row.subject === currentSubject) {
+             // Default to Mid Term if the row doesn't have an exam specified yet
+             let rowExam = row.exam || "SSLC Mid Term Examination";
+             if (rowExam === currentExam && row.subject === currentSubject) {
                subjectMarks[row.student] = row.mark;
              }
            });
@@ -554,7 +551,7 @@
       inputs.forEach(input => {
         const markValue = input.value.trim();
         if (markValue !== "") {
-          marksToSave.push({ className: fullClassName, subject: currentSubject, student: input.dataset.studentName, mark: markValue });
+          marksToSave.push({ exam: currentExam, className: fullClassName, subject: currentSubject, student: input.dataset.studentName, mark: markValue });
         }
       });
 
@@ -574,11 +571,7 @@
           btn.disabled = false; btn.textContent = "Save All Marks";
         } else {
           msg.style.color = "#15803d"; msg.style.backgroundColor = "#dcfce3"; msg.textContent = data.message;
-          
-          // Lock inputs and keep marks visible
           inputs.forEach(input => input.disabled = true);
-          
-          // Swap Save button for Edit button
           btn.style.display = "none";
           document.getElementById('editBtn').style.display = "block";
         }
@@ -591,21 +584,45 @@
 
     function enableEditing() {
       const inputs = document.querySelectorAll('.mark-input');
-      
-      // Unlock inputs
       inputs.forEach(input => input.disabled = false);
-      
-      // Hide Edit button, restore Save button
       document.getElementById('editBtn').style.display = "none";
       const saveBtn = document.getElementById('saveBtn');
       saveBtn.style.display = "block";
       saveBtn.disabled = false;
       saveBtn.textContent = "Save All Marks";
       
-      // Clear success message
       const msg = document.getElementById('message');
       msg.textContent = ""; 
       msg.style.backgroundColor = "transparent";
+    }
+
+    // --- GRADING AND MAX MARKS HELPERS ---
+    function getMaxMark(exam, subject, division) {
+        if (exam === "First Term Exam") {
+            if (subject === 'English' || subject === 'Social Science' || subject === 'Mathematics') return 80;
+            return 40;
+        } else { // SSLC Mid Term Examination (Default)
+            if (subject === 'Social Science' || subject === 'Mathematics') return 40;
+            if (subject === 'English') {
+                if (division === '10A' || division === '10F') return 40; // Requested update to 40
+                if (division === '10B' || division === '10H') return 31; // Requested update to 31
+                return 40;
+            }
+            return 25;
+        }
+    }
+
+    function getGrade(mark, maxMark) {
+        let percentage = Math.round((parseFloat(mark) / maxMark) * 100);
+        if (percentage >= 90) return 'A+';
+        if (percentage >= 80) return 'A';
+        if (percentage >= 70) return 'B+';
+        if (percentage >= 60) return 'B';
+        if (percentage >= 50) return 'C+';
+        if (percentage >= 40) return 'C';
+        if (percentage >= 30) return 'D+';
+        if (percentage >= 20) return 'D';
+        return 'E';
     }
 
     // --- LOGIC FOR VIEWING/PRINTING REPORTS ---
@@ -615,12 +632,11 @@
       if (type === 'top10') {
         document.getElementById('reportDivisionTitle').textContent = "Top 10 - Select Division";
       } else if (type === 'progress') {
-        document.getElementById('reportDivisionTitle').textContent = "Progress Report - Select Division";
+        document.getElementById('reportDivisionTitle').textContent = "Combined Progress Report";
       } else {
         document.getElementById('reportDivisionTitle').textContent = "Full Report - Select Division";
       }
       
-      // Update buttons colors based on report type
       const reportBtns = document.querySelectorAll('#page4a .report-class-btn');
       reportBtns.forEach(btn => {
         btn.className = 'nav-btn report-class-btn ' + (type === 'top10' ? 'top10-div' : (type === 'progress' ? 'progress-div' : 'full-div'));
@@ -633,10 +649,8 @@
       currentReportClass = className;
       
       if (currentReportType === 'progress') {
-        // For Progress Reports, skip viewing and go directly to generation/printing
         document.getElementById('progressLoadingIndicator').style.display = 'block';
       } else {
-        // Standard viewing logic for Top 10 and Full Report
         document.getElementById('reportTitle').textContent = "Class " + className + " Report";
         showPage('page5');
         document.getElementById('loadingIndicator').style.display = 'block';
@@ -677,16 +691,28 @@
       // Pivot data and calculate totals
       let pivot = {};
       students.forEach(s => { 
-        pivot[s] = { total: 0 }; 
+        pivot[s] = { 
+            total: 0, // Total for the CURRENT selected exam only
+            marks: {
+                "First Term Exam": {},
+                "SSLC Mid Term Examination": {}
+            }
+        }; 
       }); 
       
       fetchedData.forEach(row => {
         if(pivot[row.student]) {
-          // If the mark is a valid number, round it. E.g. 6.5 becomes 7
+          let ex = row.exam || "SSLC Mid Term Examination"; // Fallback
           let parsedMark = parseFloat(row.mark);
           let mark = isNaN(parsedMark) ? 0 : Math.round(parsedMark);
-          pivot[row.student][row.subject] = mark;
-          pivot[row.student].total += mark;
+          
+          if(pivot[row.student].marks[ex]) {
+             pivot[row.student].marks[ex][row.subject] = mark;
+             // Only add to total if it's the currently selected exam
+             if (ex === currentExam) {
+                 pivot[row.student].total += mark;
+             }
+          }
         }
       });
 
@@ -697,17 +723,11 @@
           .filter(a => {
              if (pivot[a].total === 0) return false;
              
-             // Check < 30% condition across all subjects
+             // Check < 30% condition across all subjects for CURRENT EXAM
              for (let i = 0; i < subjectsList.length; i++) {
                  let sub = subjectsList[i];
-                 let mark = pivot[a][sub] !== undefined ? pivot[a][sub] : 0;
-                 
-                 let maxMark = 25;
-                 if (sub === 'Social Science' || sub === 'Mathematics') {
-                   maxMark = 40;
-                 } else if (sub === 'English') {
-                   maxMark = (className === '10B' || className === '10H') ? 31 : 40;
-                 }
+                 let mark = pivot[a].marks[currentExam][sub] !== undefined ? pivot[a].marks[currentExam][sub] : 0;
+                 let maxMark = getMaxMark(currentExam, sub, className);
                  
                  let percentage = Math.round((parseFloat(mark) / maxMark) * 100);
                  if (percentage < 30) {
@@ -732,8 +752,8 @@
           <div class="report-card">
              <h3 style="text-align: center; color: #000000; margin: 0 0 10px 0; font-size: 28px;">SANSKRIT HS VATTOLI</h3>
              <div style="text-align: center; font-size: 24px; color: #000000; margin-bottom: 15px; text-transform: uppercase; letter-spacing: 1px;">
-               SSLC Mid Term Examination 2026-27<br><br>
-               <span style="color: #000000; font-weight: bold; font-size: 26px;">Progress Report</span>
+               Academic Year 2026-27<br><br>
+               <span style="color: #000000; font-weight: bold; font-size: 26px;">Combined Progress Report</span>
              </div>
              <div style="font-weight: bold; font-size: 22px; margin-bottom: 10px; color: #000000; border-bottom: 2px solid #000000; padding-bottom: 10px; display: flex; justify-content: space-between;">
                <span>Name: <span style="color: #000000;">${student}</span></span>
@@ -743,41 +763,30 @@
                <thead>
                  <tr>
                    <th>Subject</th>
-                   <th>Mark</th>
+                   <th>Term 1 Mark</th>
+                   <th>Grade</th>
+                   <th>Mid Term</th>
                    <th>Grade</th>
                  </tr>
                </thead>
                <tbody>
           `;
           subjectsList.forEach(sub => {
-             let mark = pivot[student][sub] !== undefined ? pivot[student][sub] : '-';
-             let grade = '-';
+             let ftMarkVal = pivot[student].marks["First Term Exam"][sub];
+             let mtMarkVal = pivot[student].marks["SSLC Mid Term Examination"][sub];
              
-             if (mark !== '-') {
-               let maxMark = 25;
-               if (sub === 'Social Science' || sub === 'Mathematics') {
-                 maxMark = 40;
-               } else if (sub === 'English') {
-                 maxMark = (className === '10B' || className === '10H') ? 31 : 40;
-               }
-               
-               let percentage = Math.round((parseFloat(mark) / maxMark) * 100);
-               
-               if (percentage >= 90) grade = 'A+';
-               else if (percentage >= 80) grade = 'A';
-               else if (percentage >= 70) grade = 'B+';
-               else if (percentage >= 60) grade = 'B';
-               else if (percentage >= 50) grade = 'C+';
-               else if (percentage >= 40) grade = 'C';
-               else if (percentage >= 30) grade = 'D+';
-               else if (percentage >= 20) grade = 'D';
-               else grade = 'E';
-             }
+             let ftMark = ftMarkVal !== undefined ? ftMarkVal : '-';
+             let mtMark = mtMarkVal !== undefined ? mtMarkVal : '-';
+             
+             let ftGrade = ftMark !== '-' ? getGrade(ftMark, getMaxMark("First Term Exam", sub, className)) : '-';
+             let mtGrade = mtMark !== '-' ? getGrade(mtMark, getMaxMark("SSLC Mid Term Examination", sub, className)) : '-';
 
              html += `<tr>
                         <td>${sub}</td>
-                        <td>${mark}</td>
-                        <td style="font-weight: bold;">${grade}</td>
+                        <td>${ftMark}</td>
+                        <td style="font-weight: bold;">${ftGrade}</td>
+                        <td>${mtMark}</td>
+                        <td style="font-weight: bold;">${mtGrade}</td>
                       </tr>`;
           });
           html += `
@@ -822,7 +831,7 @@
           let rankOrNo = currentReportType === 'top10' ? (index + 1) : (students.indexOf(student) + 1);
           html += `<tr><td>${rankOrNo}. ${student}</td>`;
           subjectsList.forEach(sub => {
-            let mark = pivot[student][sub] !== undefined ? pivot[student][sub] : '-'; 
+            let mark = pivot[student].marks[currentExam][sub] !== undefined ? pivot[student].marks[currentExam][sub] : '-'; 
             html += `<td>${mark}</td>`;
           });
           html += `<td style="font-weight: bold; background-color: #f8fafc;">${pivot[student].total}</td></tr>`;
@@ -856,7 +865,7 @@
     function downloadExcel() {
       const table = document.querySelector('#tableWrapper table');
       const workbook = XLSX.utils.table_to_book(table, {sheet: "Class Report"});
-      XLSX.writeFile(workbook, 'Class_' + currentReportClass + '_Full_Report.xlsx');
+      XLSX.writeFile(workbook, 'Class_' + currentReportClass + '_' + currentExam.replace(/ /g, '_') + '.xlsx');
     }
   </script>
 </body>
