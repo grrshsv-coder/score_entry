@@ -114,11 +114,12 @@
     .back-btn:hover { color: #2563eb; transform: translateX(-3px) !important; box-shadow: none !important; }
     .back-btn:active { transform: translateX(0) !important; }
 
-    /* Logout Button Styling */
-    .logout-btn { 
-        position: absolute; top: 15px; right: 20px; color: #dc2626; font-size: 13px; font-weight: bold; background: #fee2e2; border: 1px solid #fca5a5; padding: 8px 12px; border-radius: 6px; box-shadow: none; z-index: 10;
+    /* Text-Only Logout Button Styling */
+    .logout-text-btn { 
+        display: block; width: 100%; text-align: right; color: #ef4444; font-size: 14px; font-weight: bold; 
+        background: transparent; border: none; box-shadow: none; padding: 0; margin-bottom: 15px; cursor: pointer; 
     }
-    .logout-btn:hover { background-color: #fecaca; transform: none; box-shadow:none; }
+    .logout-text-btn:hover { text-decoration: underline; color: #dc2626; transform: none; box-shadow: none; }
 
     /* ------------------------------------- */
     /* Student List Form */
@@ -267,10 +268,10 @@
 
     <!-- PAGE 0: Select Examination -->
     <div id="page0" class="page">
-      <button class="logout-btn" id="logoutBtn" onclick="logoutDevice()" style="display:none;">Logout Device</button>
-      <h1 class="school-name">SANSKRIT HS VATTOLI</h1>
+      <button class="logout-text-btn" id="logoutBtn" onclick="logoutDevice()" style="display:none;">Logout Device</button>
+      <h1 class="school-name" style="margin-top: 0;">SANSKRIT HS VATTOLI</h1>
       <h2 class="event-name">Vijayotsavam 2026-27</h2>
-      <hr class="divider" style="margin-top: 40px;"> <!-- Push down to avoid logout button -->
+      <hr class="divider">
       
       <h3 id="teacherGreeting" style="color:#3b82f6; font-weight:bold; margin-bottom:25px;"></h3>
       
@@ -477,6 +478,13 @@
       }
     });
 
+    window.history.pushState(null, null, window.location.href);
+    window.addEventListener("popstate", function(event) {
+      window.close(); 
+      document.body.innerHTML = "<h2 style='text-align:center; margin-top:50px; color:#334155;'>App closed. You can exit this tab.</h2>";
+      setTimeout(function() { window.location.href = "about:blank"; }, 300);
+    });
+
     function showPage(pageId) {
       document.querySelectorAll('.page').forEach(page => page.classList.remove('active'));
       document.getElementById(pageId).classList.add('active');
@@ -514,7 +522,7 @@
         })
         .then(res => res.json())
         .then(data => {
-            btn.textContent = "Save Device & Login"; btn.disabled = false;
+            btn.textContent = "Login"; btn.disabled = false;
             if (data.status === "success") {
                 if (data.requiresReset) {
                     tempLoginUser = user;
@@ -529,7 +537,7 @@
             }
         })
         .catch(err => {
-            btn.textContent = "Save Device & Login"; btn.disabled = false;
+            btn.textContent = "Login"; btn.disabled = false;
             msg.style.color = "#ef4444"; msg.style.backgroundColor = "#fee2e2"; msg.textContent = "Network error connecting to server.";
         });
     }
@@ -624,6 +632,17 @@
     }
 
     function resetToDefaultPin() {
+        const targetTeacher = document.getElementById('adminTeacherSelect').value;
+        const msg = document.getElementById('adminDashMessage');
+        
+        // Block Admin from resetting their own PIN to the 1234 default
+        if (targetTeacher === "Admin") {
+            msg.style.color = "#ef4444"; 
+            msg.style.backgroundColor = "#fee2e2"; 
+            msg.textContent = "Admin PIN cannot be reset to the 1234 default.";
+            return;
+        }
+
         document.getElementById('newTeacherPin').value = "1234";
         setTeacherPin();
     }
@@ -928,6 +947,10 @@
       else if (type === 'progress') { document.getElementById('reportDivisionTitle').textContent = "Progress Report - Select Division"; } 
       else { document.getElementById('reportDivisionTitle').textContent = "Class Report - Select Division"; }
       showPage('page4a');
+    }
+
+    function goBackFromReports() {
+        showPage('page1');
     }
 
     function fetchAndShowReport(className) {
