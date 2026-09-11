@@ -410,8 +410,8 @@
     const IS_FIRST_TERM_ENTRY_OPEN = true;
     const IS_MID_TERM_ENTRY_OPEN = false; 
 
-    // REPLACE THIS WITH YOUR APPS SCRIPT URL!
-    const scriptURL = 'YOUR_WEB_APP_URL_HERE';
+    // THE CORRECT APPS SCRIPT URL HAS BEEN RESTORED HERE!
+    const scriptURL = 'https://script.google.com/macros/s/AKfycby05tkg3ElQdyLWsIwXICADRJgQYWkJQZkELLdvV-KArxfZNvWQXfgE9LRRrB3Bii-7lQ/exec';
 
     const studentsData = {
       "10A": ["ADHIDEV A S", "ADHISANKAR S R", "ALAN S N", "ALANKRISHNA V S", "ANUNANDA N P", "ANUNANDH P D", "ANVIK K C", "DEVANANDA K", "DEVARSH RAJEEV", "DHYANA SOJAV. V P", "FATHIMA RIZA MEHRIN", "FATHIMA ZAHRA K", "FILZA FATHIMA C H", "HANIYA FATHIMA N S", "HINA FARHEEN", "KARTHIK. B", "KOUSHIK PRAKASH", "LEZIN MUHAMMAD", "LIYA MEHAJABIN", "MADHUMATH SARANG", "MISBA MEHRIN", "MUHAMMED MUNEES P P", "MUHAMMED NASMIL V K", "MUHAMMED RIDAN.K.K", "MUHAMMED ZIDHAN T K", "NAADHIDEV S R", "NAVAMI A S", "NEERAJ R", "NIHA FATHIMA", "NIVEDITHA .D", "RAMONA ROSE", "RITHU S LAKSHMI", "SALMAN", "SARANNYA V K", "SHAJA FATHIMA K K", "SIVA PANCHAMI.M.K", "SIVAKESH", "SOORYAKIRAN V P", "SRAVAN KRISHNA", "SREEDARSH L L", "SREEHARSH L L", "SUHANA SAFREEN", "SURYADEV V BABU", "THANHARA C T", "VIVEK.R"],
@@ -454,7 +454,7 @@
 
     // Initialize Dropdowns and Auto-Login
     window.addEventListener('load', function() {
-      const teacherSet = new Set(languageTeachers); // Include language teachers automatically
+      const teacherSet = new Set(languageTeachers); 
       for (let sub in teacherMapping) {
         for (let div in teacherMapping[sub]) {
           teacherSet.add(teacherMapping[sub][div]);
