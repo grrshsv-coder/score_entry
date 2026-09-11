@@ -361,7 +361,7 @@
     let currentReportClass = "";
 
     // REPLACE THIS WITH YOUR APPS SCRIPT URL!
-    const scriptURL = "https://script.google.com/macros/s/AKfycby05tkg3ElQdyLWsIwXICADRJgQYWkJQZkELLdvV-KArxfZNvWQXfgE9LRRrB3Bii-7lQ/exec";
+    const scriptURL = 'https://script.google.com/macros/s/AKfycby05tkg3ElQdyLWsIwXICADRJgQYWkJQZkELLdvV-KArxfZNvWQXfgE9LRRrB3Bii-7lQ/exec';
 
     // Prevent Back History and Close App when Phone's Hardware Back Button is Pressed
     window.history.pushState(null, null, window.location.href);
@@ -453,7 +453,10 @@
         if (data.status === "success") {
            let subjectMarks = {};
            data.data.forEach(row => {
+             // Default to Mid Term if the row doesn't have an exam specified yet
              let rowExam = row.exam || "First Mid Term Exam";
+             if (rowExam === "SSLC Mid Term Examination") rowExam = "First Mid Term Exam"; // Normalizer
+             
              if (rowExam === currentExam && row.subject === currentSubject) {
                subjectMarks[row.student] = row.mark;
              }
@@ -565,7 +568,7 @@
         if (exam === "First Term Exam") {
             if (subject === 'English' || subject === 'Social Science' || subject === 'Mathematics') return 80;
             return 40;
-        } else { // First Mid Term Exam (Default)
+        } else { // First Mid Term Exam
             if (subject === 'Social Science' || subject === 'Mathematics') return 40;
             if (subject === 'English') {
                 if (division === '10A' || division === '10F') return 40; 
@@ -667,6 +670,8 @@
       fetchedData.forEach(row => {
         if(pivot[row.student]) {
           let ex = row.exam || "First Mid Term Exam"; // Fallback
+          if (ex === "SSLC Mid Term Examination") ex = "First Mid Term Exam"; // Normalizer
+
           let parsedMark = parseFloat(row.mark);
           let mark = isNaN(parsedMark) ? 0 : Math.round(parsedMark);
           
