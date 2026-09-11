@@ -3,13 +3,11 @@
 <head>
   <base target="_top">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  
-  <!-- Anti-Caching Meta Tags to force browser to load the latest GitHub changes -->
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
   
-  <title>Class Marks Entry</title>
+  <title>Class Marks Entry System</title>
 
   <!-- Excel Generation Library -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
@@ -41,6 +39,12 @@
     .button-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 15px; }
     .list-grid { display: grid; grid-template-columns: 1fr; gap: 12px; margin-top: 15px; }
     
+    /* Input Elements for Login/Admin */
+    select, input[type="password"], input[type="text"], input[type="number"] {
+        width: 100%; padding: 14px; margin-bottom: 15px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 16px; box-sizing: border-box; background-color: #f8fafc;
+    }
+    select:focus, input:focus { outline: none; border-color: #3b82f6; background-color: #ffffff; }
+    
     /* ------------------------------------- */
     /* UNIFORM WHITE BUTTON STYLES           */
     /* ------------------------------------- */
@@ -49,27 +53,44 @@
       transition: all 0.15s ease; position: relative;
     }
     
-    /* Default Navigation & Colored Div classes overridden to all be white */
     .nav-btn, .page1-div, .full-div, .top10-div, .progress-div, .sub-1, .sub-2, .sub-3, .sub-4, .sub-5, .sub-6, .sub-7, .sub-8, .sub-9 { 
       background-color: #ffffff !important; color: #334155; border: 1px solid #cbd5e1; 
       box-shadow: 0 4px 0 #94a3b8, 0 5px 10px rgba(0,0,0,0.05); 
     }
-    .nav-btn:hover, .page1-div:hover, .full-div:hover, .top10-div:hover, .progress-div:hover, .sub-1:hover, .sub-2:hover, .sub-3:hover, .sub-4:hover, .sub-5:hover, .sub-6:hover, .sub-7:hover, .sub-8:hover, .sub-9:hover { 
+    .nav-btn:hover:not(.disabled-btn) { 
       transform: translateY(-2px); box-shadow: 0 6px 0 #94a3b8, 0 8px 15px rgba(0,0,0,0.1); 
     }
-    .nav-btn:active, .page1-div:active, .full-div:active, .top10-div:active, .progress-div:active, .sub-1:active, .sub-2:active, .sub-3:active, .sub-4:active, .sub-5:active, .sub-6:active, .sub-7:active, .sub-8:active, .sub-9:active { 
+    .nav-btn:active:not(.disabled-btn) { 
       transform: translateY(4px); box-shadow: 0 0 0 transparent !important; 
     }
+
+    /* Disabled Button State for unassigned teachers */
+    .disabled-btn {
+      background-color: #f1f5f9 !important;
+      color: #94a3b8 !important;
+      border-color: #e2e8f0 !important;
+      box-shadow: none !important;
+      cursor: not-allowed !important;
+      transform: none !important;
+    }
     
-    /* Action Button (Save) */
+    /* Action Button (Save/Login) */
     .action-btn { 
-      background-color: #ffffff; color: #3b82f6; width: 100%; margin-top: 25px; font-size: 18px; border: 2px solid #3b82f6;
+      background-color: #ffffff; color: #3b82f6; width: 100%; margin-top: 15px; font-size: 18px; border: 2px solid #3b82f6;
       box-shadow: 0 4px 0 #2563eb, 0 5px 15px rgba(59, 130, 246, 0.2); 
     }
     .action-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 0 #2563eb, 0 8px 20px rgba(59, 130, 246, 0.3); }
     .action-btn:active { transform: translateY(4px); box-shadow: 0 0 0 transparent; }
     
-    /* Edit Button */
+    /* Admin/Utility Button */
+    .admin-btn { 
+      background-color: #ffffff; color: #64748b; border: 2px solid #94a3b8; width: 100%; font-size: 16px; margin-top: 15px;
+      box-shadow: 0 4px 0 #cbd5e1, 0 5px 10px rgba(0,0,0,0.05); 
+    }
+    .admin-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 0 #cbd5e1, 0 8px 15px rgba(0,0,0,0.1); }
+    .admin-btn:active { transform: translateY(4px); box-shadow: 0 0 0 transparent; }
+
+    /* Yellow Edit Button */
     .edit-btn { 
       background-color: #ffffff; color: #f59e0b; width: 100%; margin-top: 25px; font-size: 18px; display: none; border: 2px solid #f59e0b;
       box-shadow: 0 4px 0 #d97706, 0 5px 15px rgba(245, 158, 11, 0.2); 
@@ -93,6 +114,9 @@
     .back-btn:hover { color: #2563eb; transform: translateX(-3px) !important; box-shadow: none !important; }
     .back-btn:active { transform: translateX(0) !important; }
 
+    .logout-btn { float: right; color: #ef4444; font-size: 14px; font-weight: bold; background: none; border: none; box-shadow: none; padding:0;}
+    .logout-btn:hover { text-decoration: underline; color: #dc2626; transform: none; box-shadow:none;}
+
     /* ------------------------------------- */
     /* Student List Form */
     .student-row { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid #f1f5f9; }
@@ -101,7 +125,7 @@
     .mark-input:focus { outline: none; border-color: #3b82f6; background-color: #ffffff; }
     .mark-input:disabled { background-color: #e2e8f0; color: #64748b; border-color: #e2e8f0; cursor: not-allowed; }
     
-    #message { text-align: center; font-weight: bold; margin-top: 20px; min-height: 24px; padding: 10px; border-radius: 6px; }
+    #message, #loginMessage, #adminMessage { text-align: center; font-weight: bold; margin-top: 20px; min-height: 24px; padding: 10px; border-radius: 6px; }
 
     /* Data Table Styles (Class, Top 10) */
     .table-responsive { width: 100%; overflow-x: auto; margin-top: 15px; border-radius: 8px; border: 1px solid #e2e8f0; }
@@ -135,53 +159,22 @@
     }
     
     @media print {
-      @page { 
-        margin: 0; 
-        size: A4 portrait; 
-      }
-      body, html { 
-        background-color: #ffffff !important; 
-        margin: 0 !important; 
-        padding: 0 !important; 
-        height: auto; 
-      }
-      
+      @page { margin: 0; size: A4 portrait; }
+      body, html { background-color: #ffffff !important; margin: 0 !important; padding: 0 !important; height: auto; }
       #mainContainer { display: none !important; }
       .back-btn, #downloadPdfBtn, #downloadExcelBtn, .developer-credit { display: none !important; }
-      
       body.print-progress #page5 { display: none !important; }
       body.print-progress #printArea { display: block !important; }
-
       .report-card { 
-        height: 296mm !important; 
-        width: 100% !important;
-        box-sizing: border-box !important;
-        padding: 40mm 20mm 40mm 20mm !important; 
-        page-break-after: always !important; 
-        break-after: page !important; 
-        margin: 0 !important; 
-        border: none !important; 
-        display: flex !important;
-        flex-direction: column !important;
+        height: 296mm !important; width: 100% !important; box-sizing: border-box !important;
+        padding: 40mm 20mm 40mm 20mm !important; page-break-after: always !important; break-after: page !important; 
+        margin: 0 !important; border: none !important; display: flex !important; flex-direction: column !important;
       }
-      
-      .report-card:last-child {
-        page-break-after: auto !important;
-        break-after: auto !important;
-      }
-
+      .report-card:last-child { page-break-after: auto !important; break-after: auto !important; }
       body.print-top10 #page5 { display: block !important; }
       body.print-top10 #printArea { display: none !important; }
       body.print-top10 #reportTitle { display: none !important; } 
-      body.print-top10 .table-container-wrapper { 
-        box-shadow: none !important; 
-        border: none !important; 
-        padding: 10mm !important; 
-        margin: 0 !important; 
-        width: 100%; 
-        max-width: 100%; 
-      }
-      
+      body.print-top10 .table-container-wrapper { box-shadow: none !important; border: none !important; padding: 10mm !important; margin: 0 !important; width: 100%; max-width: 100%; }
       tr { page-break-inside: avoid !important; break-inside: avoid !important; }
       * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
     }
@@ -189,11 +182,78 @@
 </head>
 <body>
 
-  <!-- ENTRY FLOW CONTAINER -->
   <div class="container" id="mainContainer">
 
+    <!-- PAGE HOME: Landing Page -->
+    <div id="pageHome" class="page active">
+      <h1 class="school-name">SANSKRIT HS VATTOLI</h1>
+      <h2 class="event-name">Vijayotsavam 2026-27</h2>
+      <hr class="divider">
+      
+      <h2>Welcome</h2>
+      <div class="list-grid" style="margin-top: 25px;">
+        <button class="nav-btn" style="border-color:#3b82f6; color:#3b82f6;" onclick="showPage('pageLogin')">👨‍🏫 Teacher Login (Enter Marks)</button>
+        <button class="nav-btn" style="border-color:#10b981; color:#10b981;" onclick="startPublicReports()">📊 View Public Reports</button>
+        <button class="admin-btn" onclick="showPage('pageAdminLogin')">⚙️ Admin Console</button>
+      </div>
+
+      <div class="developer-credit">Designed & Developed by GRR</div>
+    </div>
+
+    <!-- PAGE LOGIN: Teacher Authentication -->
+    <div id="pageLogin" class="page">
+      <button class="back-btn" onclick="showPage('pageHome')">← Back to Home</button>
+      <h1 class="school-name">Teacher Login</h1>
+      <hr class="divider">
+      
+      <label style="font-weight:bold; color:#475569; display:block; margin-bottom:5px;">Select Name</label>
+      <select id="teacherSelect">
+          <!-- Populated via JS -->
+      </select>
+      
+      <label style="font-weight:bold; color:#475569; display:block; margin-bottom:5px;">Enter PIN</label>
+      <input type="password" id="teacherPin" placeholder="4-digit PIN" pattern="[0-9]*" inputmode="numeric">
+      
+      <button class="action-btn" id="loginBtn" onclick="attemptLogin()">Login</button>
+      <div id="loginMessage"></div>
+    </div>
+
+    <!-- PAGE ADMIN LOGIN: Admin Authentication -->
+    <div id="pageAdminLogin" class="page">
+      <button class="back-btn" onclick="showPage('pageHome')">← Back to Home</button>
+      <h1 class="school-name" style="color:#dc2626;">Admin Access</h1>
+      <hr class="divider">
+      
+      <label style="font-weight:bold; color:#475569; display:block; margin-bottom:5px;">Admin PIN</label>
+      <input type="password" id="adminPinInput" placeholder="Enter Admin PIN">
+      <div style="font-size:12px; color:#94a3b8; text-align:center; margin-bottom:15px;">Default PIN is 12345</div>
+      
+      <button class="action-btn" style="border-color:#dc2626; color:#dc2626;" id="adminAuthBtn" onclick="verifyAdmin()">Enter Console</button>
+      <div id="adminAuthMessage"></div>
+    </div>
+
+    <!-- PAGE ADMIN DASHBOARD: Set/Reset PINs -->
+    <div id="pageAdminDash" class="page">
+      <button class="back-btn" onclick="showPage('pageHome')">← Logout Admin</button>
+      <h1 class="school-name">Admin Console</h1>
+      <h2>Set Teacher PINs</h2>
+      <hr class="divider">
+      
+      <label style="font-weight:bold; color:#475569; display:block; margin-bottom:5px;">Select Teacher</label>
+      <select id="adminTeacherSelect">
+          <!-- Populated via JS -->
+      </select>
+      
+      <label style="font-weight:bold; color:#475569; display:block; margin-bottom:5px;">Assign New PIN</label>
+      <input type="number" id="newTeacherPin" placeholder="e.g. 1234" pattern="[0-9]*" inputmode="numeric">
+      
+      <button class="action-btn" id="setPinBtn" onclick="setTeacherPin()">Save PIN</button>
+      <div id="adminDashMessage"></div>
+    </div>
+
     <!-- PAGE 0: Select Examination -->
-    <div id="page0" class="page active">
+    <div id="page0" class="page">
+      <button class="logout-btn" id="logoutBtn" onclick="logout()" style="display:none;">Logout</button>
       <h1 class="school-name">SANSKRIT HS VATTOLI</h1>
       <h2 class="event-name">Vijayotsavam 2026-27</h2>
       <hr class="divider">
@@ -209,28 +269,24 @@
     
     <!-- PAGE 1: Select Division -->
     <div id="page1" class="page">
+      <button class="back-btn" onclick="showPage('page0')">← Back to Exams</button>
       <h1 class="school-name">SANSKRIT HS VATTOLI</h1>
-      <h2 class="event-name">Vijayotsavam 2026-27</h2>
       <h3 class="test-name"></h3>
       <hr class="divider">
       
-      <button class="back-btn" onclick="showPage('page0')">← Back to Exams</button>
-      
       <h2>Enter Marks</h2>
+      <h3 id="teacherGreeting" style="color:#3b82f6; font-weight:bold;"></h3>
       <h3>Select Class 10 Division</h3>
-      <div class="button-grid">
-        <button class="nav-btn page1-div" onclick="selectDivision('A')">10 A</button>
-        <button class="nav-btn page1-div" onclick="selectDivision('B')">10 B</button>
-        <button class="nav-btn page1-div" onclick="selectDivision('C')">10 C</button>
-        <button class="nav-btn page1-div" onclick="selectDivision('D')">10 D</button>
-        <button class="nav-btn page1-div" onclick="selectDivision('E')">10 E</button>
-        <button class="nav-btn page1-div" onclick="selectDivision('F')">10 F</button>
-        <button class="nav-btn page1-div" onclick="selectDivision('G')">10 G</button>
-        <button class="nav-btn page1-div" onclick="selectDivision('H')">10 H</button>
+      <div class="button-grid" id="divisionGrid">
+        <button class="nav-btn page1-div" id="btn-div-A" onclick="selectDivision('A')">10 A</button>
+        <button class="nav-btn page1-div" id="btn-div-B" onclick="selectDivision('B')">10 B</button>
+        <button class="nav-btn page1-div" id="btn-div-C" onclick="selectDivision('C')">10 C</button>
+        <button class="nav-btn page1-div" id="btn-div-D" onclick="selectDivision('D')">10 D</button>
+        <button class="nav-btn page1-div" id="btn-div-E" onclick="selectDivision('E')">10 E</button>
+        <button class="nav-btn page1-div" id="btn-div-F" onclick="selectDivision('F')">10 F</button>
+        <button class="nav-btn page1-div" id="btn-div-G" onclick="selectDivision('G')">10 G</button>
+        <button class="nav-btn page1-div" id="btn-div-H" onclick="selectDivision('H')">10 H</button>
       </div>
-
-      <hr class="divider">
-      <button class="report-btn" onclick="showPage('page4')">View Class Reports</button>
 
       <div class="developer-credit">Designed & Developed by GRR</div>
     </div>
@@ -240,16 +296,16 @@
       <button class="back-btn" onclick="showPage('page1')">← Back to Divisions</button>
       <h2 class="test-name"></h2>
       <h3 id="subjectTitleClass"></h3>
-      <div class="list-grid">
-        <button class="nav-btn sub-1" onclick="selectSubject('Language 1')">Language 1</button>
-        <button class="nav-btn sub-2" onclick="selectSubject('Language 2')">Language 2</button>
-        <button class="nav-btn sub-3" onclick="selectSubject('English')">English</button>
-        <button class="nav-btn sub-4" onclick="selectSubject('Hindi')">Hindi</button>
-        <button class="nav-btn sub-5" onclick="selectSubject('Social Science')">Social Science</button>
-        <button class="nav-btn sub-6" onclick="selectSubject('Physics')">Physics</button>
-        <button class="nav-btn sub-7" onclick="selectSubject('Chemistry')">Chemistry</button>
-        <button class="nav-btn sub-8" onclick="selectSubject('Biology')">Biology</button>
-        <button class="nav-btn sub-9" onclick="selectSubject('Mathematics')">Mathematics</button>
+      <div class="list-grid" id="subjectGrid">
+        <button class="nav-btn sub-1" id="btn-sub-Language1" onclick="selectSubject('Language 1')">Language 1</button>
+        <button class="nav-btn sub-2" id="btn-sub-Language2" onclick="selectSubject('Language 2')">Language 2</button>
+        <button class="nav-btn sub-3" id="btn-sub-English" onclick="selectSubject('English')">English</button>
+        <button class="nav-btn sub-4" id="btn-sub-Hindi" onclick="selectSubject('Hindi')">Hindi</button>
+        <button class="nav-btn sub-5" id="btn-sub-SocialScience" onclick="selectSubject('Social Science')">Social Science</button>
+        <button class="nav-btn sub-6" id="btn-sub-Physics" onclick="selectSubject('Physics')">Physics</button>
+        <button class="nav-btn sub-7" id="btn-sub-Chemistry" onclick="selectSubject('Chemistry')">Chemistry</button>
+        <button class="nav-btn sub-8" id="btn-sub-Biology" onclick="selectSubject('Biology')">Biology</button>
+        <button class="nav-btn sub-9" id="btn-sub-Mathematics" onclick="selectSubject('Mathematics')">Mathematics</button>
       </div>
       <div class="developer-credit">Designed & Developed by GRR</div>
     </div>
@@ -268,9 +324,9 @@
       <div class="developer-credit">Designed & Developed by GRR</div>
     </div>
 
-    <!-- PAGE 4: Select Report Type -->
+    <!-- PAGE 4: Select Report Type (Public Mode) -->
     <div id="page4" class="page">
-      <button class="back-btn" onclick="showPage('page1')">← Back to Home</button>
+      <button class="back-btn" onclick="showPage('page0')">← Back to Exams</button>
       <h2 class="test-name"></h2>
       <h3>Select report type</h3>
       
@@ -309,7 +365,6 @@
 
   <!-- VIEW REPORT CONTAINER (Page 5) -->
   <div class="table-container-wrapper page" id="page5">
-    
     <!-- Top Bar with Back Button and Download Buttons -->
     <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px;">
       <button class="back-btn" onclick="showPage('page4a')" style="margin-bottom: 0;">← Back to Divisions</button>
@@ -318,15 +373,10 @@
         <button id="downloadExcelBtn" class="nav-btn" style="display: none; border-color: #10b981; color: #10b981; padding: 10px 15px; font-size: 14px; margin-bottom: 10px;" onclick="downloadExcel()">📊 Download as Excel</button>
       </div>
     </div>
-
     <h2 id="reportTitle" style="margin-top: -10px;">Class Report</h2>
     <h3 class="test-name" style="margin-top: 0;"></h3>
-    
     <div id="loadingIndicator" style="display: none;">Generating... ⏳</div>
-    
-    <div class="table-responsive" id="tableWrapper" style="display: none;">
-      <!-- Grid Table will be injected here -->
-    </div>
+    <div class="table-responsive" id="tableWrapper" style="display: none;"></div>
     <div class="developer-credit">Designed & Developed by GRR</div>
   </div>
 
@@ -335,9 +385,11 @@
 
   <script>
     // --- MASTER SWITCHES FOR CLOSING DATA ENTRY ---
-    // Change to 'false' to close data entry for that specific exam.
     const IS_FIRST_TERM_ENTRY_OPEN = true;
     const IS_MID_TERM_ENTRY_OPEN = false; 
+
+    // REPLACE THIS WITH YOUR APPS SCRIPT URL!
+    const scriptURL = 'https://script.google.com/macros/s/AKfycby05tkg3ElQdyLWsIwXICADRJgQYWkJQZkELLdvV-KArxfZNvWQXfgE9LRRrB3Bii-7lQ/exec';
 
     const studentsData = {
       "10A": ["ADHIDEV A S", "ADHISANKAR S R", "ALAN S N", "ALANKRISHNA V S", "ANUNANDA N P", "ANUNANDH P D", "ANVIK K C", "DEVANANDA K", "DEVARSH RAJEEV", "DHYANA SOJAV. V P", "FATHIMA RIZA MEHRIN", "FATHIMA ZAHRA K", "FILZA FATHIMA C H", "HANIYA FATHIMA N S", "HINA FARHEEN", "KARTHIK. B", "KOUSHIK PRAKASH", "LEZIN MUHAMMAD", "LIYA MEHAJABIN", "MADHUMATH SARANG", "MISBA MEHRIN", "MUHAMMED MUNEES P P", "MUHAMMED NASMIL V K", "MUHAMMED RIDAN.K.K", "MUHAMMED ZIDHAN T K", "NAADHIDEV S R", "NAVAMI A S", "NEERAJ R", "NIHA FATHIMA", "NIVEDITHA .D", "RAMONA ROSE", "RITHU S LAKSHMI", "SALMAN", "SARANNYA V K", "SHAJA FATHIMA K K", "SIVA PANCHAMI.M.K", "SIVAKESH", "SOORYAKIRAN V P", "SRAVAN KRISHNA", "SREEDARSH L L", "SREEHARSH L L", "SUHANA SAFREEN", "SURYADEV V BABU", "THANHARA C T", "VIVEK.R"],
@@ -353,33 +405,60 @@
     const subjectsList = ['Language 1', 'Language 2', 'English', 'Hindi', 'Social Science', 'Physics', 'Chemistry', 'Biology', 'Mathematics'];
     const currentClass = "10"; 
     
-    // Exam State Variable
+    // Teacher Mapping
+    const teacherMapping = {
+      "Biology": { "10A": "ASHITHA S P", "10B": "K ROOSY CONTRACTOR", "10C": "KK RINCY", "10D": "ASHITHA S P", "10E": "KK RINCY", "10F": "K ROOSY CONTRACTOR", "10H": "K ROOSY CONTRACTOR" },
+      "Chemistry": { "10A": "SREERAG GR", "10B": "SREERAG GR", "10C": "AMRUTHA R", "10D": "AMRUTHA R", "10E": "AMRUTHA R", "10F": "AMRUTHA R", "10G": "SREERAG GR", "10H": "SREERAG GR" },
+      "English": { "10A": "V BRIJISHA", "10B": "AP MUNEER", "10C": "KK SREENA", "10D": "P MIDHUN", "10E": "SANATH SN", "10F": "V BRIJISHA", "10G": "KK SREENA", "10H": "AP MUNEER" },
+      "Hindi": { "10A": "VK REEJA", "10B": "AMRUTHA S", "10C": "P K GOPIKA", "10D": "P K GOPIKA", "10E": "AMRUTHA S", "10F": "VK REEJA", "10G": "AMRUTHA S", "10H": "VK REEJA" },
+      "Mathematics": { "10A": "TP THULASIDAS", "10B": "VK FAHEEMA", "10C": "TP THULASIDAS", "10D": "VP RAGILA", "10E": "NK ABHINA", "10F": "NK ABHINA", "10G": "TP DIJA", "10H": "CB ABHILASH" },
+      "Physics": { "10A": "CP LIJO", "10B": "UR THRISALA", "10C": "INDULEKHA NR", "10D": "UR THRISALA", "10E": "CP LIJO", "10F": "CP LIJO", "10G": "INDULEKHA NR", "10H": "INDULEKHA NR" },
+      "Social Science": { "10A": "AP RAJEEVAN", "10B": "MP SREEKANTH", "10C": "AP RAJEEVAN", "10D": "NISAR EDATHIL", "10E": "NISAR EDATHIL", "10F": "MK BINDU", "10G": "MK BINDU", "10H": "NK NIJISHA" }
+    };
+    
+    // Auth & App State
+    let loggedInUser = null; 
+    let appMode = ""; // "entry" or "report"
     let currentExam = "";
     let currentDivision = "";
     let currentSubject = "";
-    
     let currentReportType = "full"; 
     let currentReportClass = "";
+    let adminToken = ""; // Store temp admin token
 
-    // REPLACE THIS WITH YOUR APPS SCRIPT URL!
-    const scriptURL = 'https://script.google.com/macros/s/AKfycby05tkg3ElQdyLWsIwXICADRJgQYWkJQZkELLdvV-KArxfZNvWQXfgE9LRRrB3Bii-7lQ/exec';
+    // Initialize Dropdowns
+    window.addEventListener('load', function() {
+      const teacherSet = new Set();
+      for (let sub in teacherMapping) {
+        for (let div in teacherMapping[sub]) {
+          teacherSet.add(teacherMapping[sub][div]);
+        }
+      }
+      const sortedTeachers = Array.from(teacherSet).sort();
+      
+      const selectLogin = document.getElementById('teacherSelect');
+      const selectAdmin = document.getElementById('adminTeacherSelect');
+      
+      sortedTeachers.forEach(t => {
+          let opt1 = document.createElement('option'); opt1.value = t; opt1.textContent = t;
+          let opt2 = document.createElement('option'); opt2.value = t; opt2.textContent = t;
+          selectLogin.appendChild(opt1);
+          selectAdmin.appendChild(opt2);
+      });
+    });
 
-    // Prevent Back History and Close App when Phone's Hardware Back Button is Pressed
     window.history.pushState(null, null, window.location.href);
     window.addEventListener("popstate", function(event) {
-      window.close(); // Attempts to securely close the window
+      window.close(); 
       document.body.innerHTML = "<h2 style='text-align:center; margin-top:50px; color:#334155;'>App closed. You can exit this tab.</h2>";
-      setTimeout(function() {
-        window.location.href = "about:blank"; 
-      }, 300);
+      setTimeout(function() { window.location.href = "about:blank"; }, 300);
     });
 
     function showPage(pageId) {
       document.querySelectorAll('.page').forEach(page => page.classList.remove('active'));
       document.getElementById(pageId).classList.add('active');
       
-      // Theme logic fallback
-      if (pageId === 'page0') {
+      if (pageId === 'pageHome' || pageId === 'page0' || pageId === 'pageLogin' || pageId === 'pageAdminLogin') {
           document.body.style.backgroundColor = '#eef2f5'; 
       }
       
@@ -389,10 +468,118 @@
         document.getElementById('mainContainer').style.display = 'block';
       }
 
-      if(document.getElementById('message')) {
-        document.getElementById('message').textContent = ""; 
-        document.getElementById('message').style.backgroundColor = "transparent";
-      }
+      const msgs = ['message', 'loginMessage', 'adminAuthMessage', 'adminDashMessage'];
+      msgs.forEach(m => {
+          if(document.getElementById(m)) { document.getElementById(m).textContent = ""; document.getElementById(m).style.backgroundColor = "transparent"; }
+      });
+    }
+
+    // --- AUTHENTICATION LOGIC ---
+    function attemptLogin() {
+        const user = document.getElementById('teacherSelect').value;
+        const pin = document.getElementById('teacherPin').value.trim();
+        const msg = document.getElementById('loginMessage');
+        const btn = document.getElementById('loginBtn');
+        
+        if(!pin) { msg.style.color = "#ef4444"; msg.textContent = "Please enter your PIN."; return; }
+        
+        btn.textContent = "Verifying..."; btn.disabled = true;
+        
+        fetch(scriptURL, {
+            method: 'POST',
+            body: JSON.stringify({ action: "login", user: user, pin: pin })
+        })
+        .then(res => res.json())
+        .then(data => {
+            btn.textContent = "Login"; btn.disabled = false;
+            if (data.status === "success") {
+                loggedInUser = user;
+                appMode = "entry";
+                document.getElementById('logoutBtn').style.display = "block";
+                document.getElementById('teacherGreeting').textContent = "Welcome, " + user;
+                document.getElementById('teacherPin').value = ""; // clear pin
+                showPage('page0'); // Proceed to select exam
+            } else {
+                msg.style.color = "#ef4444"; msg.style.backgroundColor = "#fee2e2"; msg.textContent = data.message;
+            }
+        })
+        .catch(err => {
+            btn.textContent = "Login"; btn.disabled = false;
+            msg.style.color = "#ef4444"; msg.style.backgroundColor = "#fee2e2"; msg.textContent = "Network error connecting to server.";
+        });
+    }
+
+    function verifyAdmin() {
+        const pin = document.getElementById('adminPinInput').value.trim();
+        const msg = document.getElementById('adminAuthMessage');
+        const btn = document.getElementById('adminAuthBtn');
+        
+        if(!pin) { msg.style.color = "#ef4444"; msg.textContent = "Enter Admin PIN."; return; }
+        
+        btn.textContent = "Checking..."; btn.disabled = true;
+        
+        fetch(scriptURL, {
+            method: 'POST',
+            body: JSON.stringify({ action: "login", user: "Admin", pin: pin })
+        })
+        .then(res => res.json())
+        .then(data => {
+            btn.textContent = "Enter Console"; btn.disabled = false;
+            if (data.status === "success" && data.role === "admin") {
+                adminToken = pin; // Store temporarily to authorize setPin actions
+                document.getElementById('adminPinInput').value = "";
+                showPage('pageAdminDash');
+            } else {
+                msg.style.color = "#ef4444"; msg.style.backgroundColor = "#fee2e2"; msg.textContent = "Incorrect Admin PIN.";
+            }
+        })
+        .catch(err => {
+            btn.textContent = "Enter Console"; btn.disabled = false;
+            msg.style.color = "#ef4444"; msg.style.backgroundColor = "#fee2e2"; msg.textContent = "Network error.";
+        });
+    }
+
+    function setTeacherPin() {
+        const targetTeacher = document.getElementById('adminTeacherSelect').value;
+        const newPin = document.getElementById('newTeacherPin').value.trim();
+        const msg = document.getElementById('adminDashMessage');
+        const btn = document.getElementById('setPinBtn');
+        
+        if(!newPin || newPin.length < 4) { msg.style.color = "#ef4444"; msg.textContent = "PIN must be at least 4 digits."; return; }
+        
+        btn.textContent = "Saving..."; btn.disabled = true;
+        
+        fetch(scriptURL, {
+            method: 'POST',
+            body: JSON.stringify({ action: "setPin", adminPin: adminToken, teacher: targetTeacher, newPin: newPin })
+        })
+        .then(res => res.json())
+        .then(data => {
+            btn.textContent = "Save PIN"; btn.disabled = false;
+            if (data.status === "success") {
+                msg.style.color = "#10b981"; msg.style.backgroundColor = "#d1fae5"; msg.textContent = data.message;
+                document.getElementById('newTeacherPin').value = ""; // clear
+            } else {
+                msg.style.color = "#ef4444"; msg.style.backgroundColor = "#fee2e2"; msg.textContent = data.message;
+            }
+        }).catch(err => {
+            btn.textContent = "Save PIN"; btn.disabled = false;
+            msg.style.color = "#ef4444"; msg.style.backgroundColor = "#fee2e2"; msg.textContent = "Network error.";
+        });
+    }
+
+    function logout() {
+        loggedInUser = null;
+        appMode = "";
+        adminToken = "";
+        document.getElementById('logoutBtn').style.display = "none";
+        showPage('pageHome');
+    }
+
+    function startPublicReports() {
+        appMode = "report";
+        document.getElementById('logoutBtn').style.display = "block"; // Give a way to go back home easily
+        showPage('page0'); // Go to Exam selection
     }
 
     // --- LOGIC FOR EXAM & ENTRY FLOW ---
@@ -400,21 +587,63 @@
       currentExam = exam;
       document.querySelectorAll('.test-name').forEach(el => el.textContent = currentExam);
       
-      // Set distinct background colors
-      if (exam === 'First Term Exam') {
-          document.body.style.backgroundColor = '#e0f2fe'; 
-      } else if (exam === 'First Mid Term Exam') {
-          document.body.style.backgroundColor = '#fef3c7'; 
-      }
+      if (exam === 'First Term Exam') { document.body.style.backgroundColor = '#e0f2fe'; } 
+      else if (exam === 'First Mid Term Exam') { document.body.style.backgroundColor = '#fef3c7'; }
       
-      showPage('page1');
+      if (appMode === "report") {
+          // Skip division/subject lockouts, go straight to report type selection
+          showPage('page4'); 
+      } else {
+          // Mode is Entry: Filter and show Divisions
+          filterDivisionsForTeacher();
+          showPage('page1');
+      }
+    }
+
+    function filterDivisionsForTeacher() {
+        // Find which divisions this teacher teaches
+        let allowedDivs = [];
+        for (let sub in teacherMapping) {
+            for (let div in teacherMapping[sub]) {
+                if (teacherMapping[sub][div] === loggedInUser) {
+                    allowedDivs.push(div.replace('10', '')); // Push 'A', 'B', etc.
+                }
+            }
+        }
+        
+        ['A','B','C','D','E','F','G','H'].forEach(d => {
+            let btn = document.getElementById('btn-div-'+d);
+            if (allowedDivs.includes(d)) {
+                btn.classList.remove('disabled-btn'); btn.disabled = false;
+            } else {
+                btn.classList.add('disabled-btn'); btn.disabled = true;
+            }
+        });
     }
 
     function selectDivision(div) {
       currentDivision = div;
       const fullClassName = currentClass + currentDivision;
       document.getElementById('subjectTitleClass').textContent = "Class " + fullClassName;
+      
+      filterSubjectsForTeacher(fullClassName);
       showPage('page2');
+    }
+
+    function filterSubjectsForTeacher(className) {
+        subjectsList.forEach(sub => {
+            let btnId = 'btn-sub-' + sub.replace(/\s+/g, '');
+            let btn = document.getElementById(btnId);
+            
+            // Check if teacher is assigned to this specific subject AND division
+            let assignedTeacher = teacherMapping[sub] && teacherMapping[sub][className] ? teacherMapping[sub][className] : null;
+            
+            if (assignedTeacher === loggedInUser) {
+                btn.classList.remove('disabled-btn'); btn.disabled = false;
+            } else {
+                btn.classList.add('disabled-btn'); btn.disabled = true;
+            }
+        });
     }
 
     function selectSubject(sub) {
@@ -433,7 +662,6 @@
         document.getElementById('studentListContainer').style.display = "block";
         document.getElementById('saveBtn').style.display = "none";
         document.getElementById('editBtn').style.display = "none";
-        document.getElementById('message').textContent = "";
         return; 
       }
       
@@ -442,9 +670,7 @@
       document.getElementById('editBtn').style.display = "none";
       
       const msg = document.getElementById('message');
-      msg.style.color = "#3b82f6";
-      msg.style.backgroundColor = "transparent";
-      msg.textContent = "Loading, Please Wait........";
+      msg.style.color = "#3b82f6"; msg.textContent = "Loading, Please Wait........";
       
       fetch(scriptURL, {
         method: 'POST',
@@ -456,9 +682,8 @@
         if (data.status === "success") {
            let subjectMarks = {};
            data.data.forEach(row => {
-             // Default to Mid Term if the row doesn't have an exam specified yet
              let rowExam = row.exam || "First Mid Term Exam";
-             if (rowExam === "SSLC Mid Term Examination") rowExam = "First Mid Term Exam"; // Normalizer
+             if (rowExam === "SSLC Mid Term Examination") rowExam = "First Mid Term Exam"; 
              
              if (rowExam === currentExam && row.subject === currentSubject) {
                subjectMarks[row.student] = row.mark;
@@ -466,14 +691,12 @@
            });
            renderStudentListWithMarks(fullClassName, subjectMarks);
         } else {
-           msg.textContent = "Failed to load marks. Starting fresh.";
-           msg.style.color = "#b91c1c";
+           msg.textContent = "Failed to load marks. Starting fresh."; msg.style.color = "#b91c1c";
            renderStudentListWithMarks(fullClassName, {});
         }
       })
       .catch(error => {
-        msg.textContent = "Network error. Starting fresh.";
-        msg.style.color = "#b91c1c";
+        msg.textContent = "Network error. Starting fresh."; msg.style.color = "#b91c1c";
         renderStudentListWithMarks(fullClassName, {});
       });
     }
@@ -482,13 +705,11 @@
       const container = document.getElementById('studentListContainer');
       container.innerHTML = ""; 
       const students = studentsData[className];
-      
       let hasExistingMarks = Object.keys(existingMarks).length > 0;
 
       students.forEach((student, index) => {
         const row = document.createElement('div');
         row.className = 'student-row';
-        
         let markVal = existingMarks[student] !== undefined ? existingMarks[student] : "";
         let disabledAttr = hasExistingMarks ? "disabled" : "";
         
@@ -523,19 +744,14 @@
 
       for(let i=0; i<inputs.length; i++) {
         let input = inputs[i];
-        
-        // Reset styles first
-        input.style.borderColor = "#cbd5e1";
-        input.style.backgroundColor = "#f8fafc";
+        input.style.borderColor = "#cbd5e1"; input.style.backgroundColor = "#f8fafc";
         
         const markValue = input.value.trim();
         if (markValue !== "") {
           let numValue = parseFloat(markValue);
           if (numValue > maxMarkAllowed || numValue < 0) {
             validationError = `Entry rejected: Mark cannot exceed ${maxMarkAllowed} for ${currentSubject}.`;
-            input.style.borderColor = "#ef4444";
-            input.style.backgroundColor = "#fee2e2";
-            // We don't break immediately so we can highlight ALL invalid inputs
+            input.style.borderColor = "#ef4444"; input.style.backgroundColor = "#fee2e2";
           } else {
             marksToSave.push({ exam: currentExam, className: fullClassName, subject: currentSubject, student: input.dataset.studentName, mark: markValue });
           }
@@ -543,10 +759,8 @@
       }
 
       if (validationError !== "") {
-        msg.style.color = "#b91c1c"; 
-        msg.style.backgroundColor = "#fee2e2"; 
-        msg.textContent = validationError;
-        return; // Halt the saving process entirely
+        msg.style.color = "#b91c1c"; msg.style.backgroundColor = "#fee2e2"; msg.textContent = validationError;
+        return; 
       }
 
       if (marksToSave.length === 0) {
@@ -578,20 +792,11 @@
 
     function enableEditing() {
       const inputs = document.querySelectorAll('.mark-input');
-      inputs.forEach(input => {
-        input.disabled = false;
-        input.style.borderColor = "#cbd5e1";
-        input.style.backgroundColor = "#ffffff";
-      });
+      inputs.forEach(input => { input.disabled = false; input.style.borderColor = "#cbd5e1"; input.style.backgroundColor = "#ffffff"; });
       document.getElementById('editBtn').style.display = "none";
       const saveBtn = document.getElementById('saveBtn');
-      saveBtn.style.display = "block";
-      saveBtn.disabled = false;
-      saveBtn.textContent = "Save All Marks";
-      
-      const msg = document.getElementById('message');
-      msg.textContent = ""; 
-      msg.style.backgroundColor = "transparent";
+      saveBtn.style.display = "block"; saveBtn.disabled = false; saveBtn.textContent = "Save All Marks";
+      document.getElementById('message').textContent = ""; 
     }
 
     // --- GRADING AND MAX MARKS HELPERS ---
@@ -599,7 +804,7 @@
         if (exam === "First Term Exam") {
             if (subject === 'English' || subject === 'Social Science' || subject === 'Mathematics') return 80;
             return 40;
-        } else { // First Mid Term Exam
+        } else {
             if (subject === 'Social Science' || subject === 'Mathematics') return 40;
             if (subject === 'English') {
                 if (division === '10A' || division === '10F') return 40; 
@@ -626,20 +831,9 @@
     // --- LOGIC FOR VIEWING/PRINTING REPORTS ---
     function selectReportType(type) {
       currentReportType = type;
-      
-      if (type === 'top10') {
-        document.getElementById('reportDivisionTitle').textContent = "Top 10 - Select Division";
-      } else if (type === 'progress') {
-        document.getElementById('reportDivisionTitle').textContent = "Progress Report - Select Division";
-      } else {
-        document.getElementById('reportDivisionTitle').textContent = "Class Report - Select Division";
-      }
-      
-      const reportBtns = document.querySelectorAll('#page4a .report-class-btn');
-      reportBtns.forEach(btn => {
-        btn.className = 'nav-btn report-class-btn ' + (type === 'top10' ? 'top10-div' : (type === 'progress' ? 'progress-div' : 'full-div'));
-      });
-      
+      if (type === 'top10') { document.getElementById('reportDivisionTitle').textContent = "Top 10 - Select Division"; } 
+      else if (type === 'progress') { document.getElementById('reportDivisionTitle').textContent = "Progress Report - Select Division"; } 
+      else { document.getElementById('reportDivisionTitle').textContent = "Class Report - Select Division"; }
       showPage('page4a');
     }
 
@@ -664,169 +858,93 @@
       })
       .then(response => response.json())
       .then(data => {
-        if (data.status === "success") {
-          buildTable(className, data.data);
-        } else {
-          if (currentReportType === 'progress') {
-            document.getElementById('progressLoadingIndicator').textContent = "Error loading data.";
-          } else {
-            document.getElementById('loadingIndicator').textContent = "Error loading data.";
-          }
+        if (data.status === "success") { buildTable(className, data.data); } 
+        else {
+          if (currentReportType === 'progress') document.getElementById('progressLoadingIndicator').textContent = "Error loading data.";
+          else document.getElementById('loadingIndicator').textContent = "Error loading data.";
         }
       })
       .catch(error => {
-        if (currentReportType === 'progress') {
-            document.getElementById('progressLoadingIndicator').textContent = "Network error. Please try again.";
-        } else {
-            document.getElementById('loadingIndicator').textContent = "Network error. Please try again.";
-        }
+        if (currentReportType === 'progress') document.getElementById('progressLoadingIndicator').textContent = "Network error.";
+        else document.getElementById('loadingIndicator').textContent = "Network error.";
       });
     }
 
     function buildTable(className, fetchedData) {
       let students = studentsData[className];
-      
-      // Pivot data and calculate totals
       let pivot = {};
       students.forEach(s => { 
-        pivot[s] = { 
-            total: 0, // Total for the CURRENT selected exam only
-            marks: {
-                "First Term Exam": {},
-                "First Mid Term Exam": {}
-            }
-        }; 
+        pivot[s] = { total: 0, marks: { "First Term Exam": {}, "First Mid Term Exam": {} } }; 
       }); 
       
       fetchedData.forEach(row => {
         if(pivot[row.student]) {
-          let ex = row.exam || "First Mid Term Exam"; // Fallback
-          if (ex === "SSLC Mid Term Examination") ex = "First Mid Term Exam"; // Normalizer
+          let ex = row.exam || "First Mid Term Exam"; 
+          if (ex === "SSLC Mid Term Examination") ex = "First Mid Term Exam"; 
 
           let parsedMark = parseFloat(row.mark);
           let mark = isNaN(parsedMark) ? 0 : Math.round(parsedMark);
           
           if(pivot[row.student].marks[ex]) {
              pivot[row.student].marks[ex][row.subject] = mark;
-             // Only add to total if it's the currently selected exam
-             if (ex === currentExam) {
-                 pivot[row.student].total += mark;
-             }
+             if (ex === currentExam) pivot[row.student].total += mark;
           }
         }
       });
 
-      // Filter and Sort based on Report Type
       let displayStudents = [];
       if (currentReportType === 'top10') {
-        displayStudents = [...students]
-          .filter(a => {
+        displayStudents = [...students].filter(a => {
              if (pivot[a].total === 0) return false;
-             
-             // Check < 30% condition across all subjects for CURRENT EXAM
              for (let i = 0; i < subjectsList.length; i++) {
                  let sub = subjectsList[i];
                  let mark = pivot[a].marks[currentExam][sub] !== undefined ? pivot[a].marks[currentExam][sub] : 0;
                  let maxMark = getMaxMark(currentExam, sub, className);
-                 
-                 let percentage = Math.round((parseFloat(mark) / maxMark) * 100);
-                 if (percentage < 30) {
-                     return false; // Disqualified if ANY subject is below 30%
-                 }
+                 if (Math.round((parseFloat(mark) / maxMark) * 100) < 30) return false; 
              }
              return true;
-          })
-          .sort((a, b) => pivot[b].total - pivot[a].total)
-          .slice(0, 10);
+          }).sort((a, b) => pivot[b].total - pivot[a].total).slice(0, 10);
       } else {
         displayStudents = students;
       }
 
       let html = "";
-
       if (currentReportType === 'progress') {
-        // BUILD INDIVIDUAL PROGRESS REPORTS FOR DIRECT PRINTING
         html = `<div>`;
         displayStudents.forEach(student => {
           html += `
           <div class="report-card">
              <h3 style="text-align: center; color: #000000; margin: 0 0 10px 0; font-size: 28px;">SANSKRIT HS VATTOLI</h3>
              <div style="text-align: center; font-size: 24px; color: #000000; margin-bottom: 15px; text-transform: uppercase; letter-spacing: 1px;">
-               Academic Year 2026-27<br><br>
-               <span style="color: #000000; font-weight: bold; font-size: 26px;">Progress Report</span>
+               Academic Year 2026-27<br><br><span style="color: #000000; font-weight: bold; font-size: 26px;">Progress Report</span>
              </div>
              <div style="font-weight: bold; font-size: 22px; margin-bottom: 10px; color: #000000; border-bottom: 2px solid #000000; padding-bottom: 10px; display: flex; justify-content: space-between;">
-               <span>Name: <span style="color: #000000;">${student}</span></span>
-               <span>Class: <span style="color: #000000;">${className}</span></span>
+               <span>Name: <span style="color: #000000;">${student}</span></span><span>Class: <span style="color: #000000;">${className}</span></span>
              </div>
              <table class="progress-table">
-               <thead>
-                 <tr>
-                   <th rowspan="2" style="border-bottom: 2px solid #000000;">Subject</th>
-                   <th colspan="2" style="border-bottom: 1px solid #000000;">Mid Term</th>
-                   <th colspan="2" style="border-bottom: 1px solid #000000;">First Term</th>
-                 </tr>
-                 <tr>
-                   <th>Score</th>
-                   <th>Grade</th>
-                   <th>Score</th>
-                   <th>Grade</th>
-                 </tr>
-               </thead>
-               <tbody>
-          `;
+               <thead><tr><th rowspan="2" style="border-bottom: 2px solid #000000;">Subject</th><th colspan="2" style="border-bottom: 1px solid #000000;">Mid Term</th><th colspan="2" style="border-bottom: 1px solid #000000;">First Term</th></tr>
+               <tr><th>Score</th><th>Grade</th><th>Score</th><th>Grade</th></tr></thead><tbody>`;
           subjectsList.forEach(sub => {
-             let ftMarkVal = pivot[student].marks["First Term Exam"][sub];
-             let mtMarkVal = pivot[student].marks["First Mid Term Exam"][sub];
-             
-             let ftMark = ftMarkVal !== undefined ? ftMarkVal : '-';
-             let mtMark = mtMarkVal !== undefined ? mtMarkVal : '-';
-             
+             let ftMark = pivot[student].marks["First Term Exam"][sub] !== undefined ? pivot[student].marks["First Term Exam"][sub] : '-';
+             let mtMark = pivot[student].marks["First Mid Term Exam"][sub] !== undefined ? pivot[student].marks["First Mid Term Exam"][sub] : '-';
              let ftGrade = ftMark !== '-' ? getGrade(ftMark, getMaxMark("First Term Exam", sub, className)) : '-';
              let mtGrade = mtMark !== '-' ? getGrade(mtMark, getMaxMark("First Mid Term Exam", sub, className)) : '-';
-
-             html += `<tr>
-                        <td>${sub}</td>
-                        <td>${mtMark}</td>
-                        <td style="font-weight: bold;">${mtGrade}</td>
-                        <td>${ftMark}</td>
-                        <td style="font-weight: bold;">${ftGrade}</td>
-                      </tr>`;
+             html += `<tr><td>${sub}</td><td>${mtMark}</td><td style="font-weight: bold;">${mtGrade}</td><td>${ftMark}</td><td style="font-weight: bold;">${ftGrade}</td></tr>`;
           });
-          html += `
-               </tbody>
-             </table>
-             
-             <!-- Signature Block strictly pushed to the bottom of the content area -->
-             <div style="margin-top: auto; text-align: right; padding-right: 20px;">
-               <div style="display: inline-block; text-align: center;">
-                 <div style="border-bottom: 1px solid #000000; width: 280px; margin-bottom: 10px;"></div>
-                 <div style="font-size: 22px; font-weight: bold; color: #000000;">Signature of Class Teacher</div>
-               </div>
-             </div>
-             
-          </div>`;
+          html += `</tbody></table>
+             <div style="margin-top: auto; text-align: right; padding-right: 20px;"><div style="display: inline-block; text-align: center;">
+             <div style="border-bottom: 1px solid #000000; width: 280px; margin-bottom: 10px;"></div><div style="font-size: 22px; font-weight: bold; color: #000000;">Signature of Class Teacher</div></div></div></div>`;
         });
         html += `</div>`;
         
-        // Inject into hidden print area
         document.getElementById('printArea').innerHTML = html;
         document.getElementById('progressLoadingIndicator').style.display = 'none';
-        
-        // Directly open print dialogue for the generated PDF
         document.body.classList.add('print-progress');
-        setTimeout(() => {
-          window.print();
-          document.body.classList.remove('print-progress');
-        }, 200);
+        setTimeout(() => { window.print(); document.body.classList.remove('print-progress'); }, 200);
 
       } else {
-        // BUILD GRID TABLE (Class Report or Top 10) for normal viewing
         let titleSuffix = currentReportType === 'top10' ? " (Top 10 Students)" : "";
-        let rankHeader = currentReportType === 'top10' ? "Rank" : "No.";
-        
         html = '<div style="padding: 10px; background: white;"><h2 style="text-align: center; margin-bottom: 20px;">SANSKRIT HS VATTOLI - Class ' + className + titleSuffix + '</h2>';
-        
         html += '<table class="marks-table"><thead><tr><th>Student Name</th>';
         subjectsList.forEach(sub => html += `<th>${sub}</th>`);
         html += '<th style="background-color: #e2e8f0;">Total</th></tr></thead><tbody>';
@@ -856,19 +974,13 @@
       }
     }
 
-    // --- LOGIC FOR PDF GENERATION (TOP 10) ---
     function downloadPDF() {
       document.body.classList.add('print-top10');
-      setTimeout(() => {
-        window.print();
-        document.body.classList.remove('print-top10');
-      }, 100);
+      setTimeout(() => { window.print(); document.body.classList.remove('print-top10'); }, 100);
     }
 
-    // --- LOGIC FOR EXCEL GENERATION ---
     function downloadExcel() {
-      const table = document.querySelector('#tableWrapper table');
-      const workbook = XLSX.utils.table_to_book(table, {sheet: "Class Report"});
+      const workbook = XLSX.utils.table_to_book(document.querySelector('#tableWrapper table'), {sheet: "Class Report"});
       XLSX.writeFile(workbook, 'Class_' + currentReportClass + '_' + currentExam.replace(/ /g, '_') + '.xlsx');
     }
   </script>
