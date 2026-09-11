@@ -473,8 +473,12 @@
 
     // Initialize Dropdowns and Auto-Login
     window.addEventListener('load', function() {
-      // 1. Fetch live Master Switch statuses from the backend!
-      fetch(scriptURL, { method: 'POST', body: JSON.stringify({ action: "getExamStatus" }) })
+      // Fetch live Master Switch statuses from the backend!
+      fetch(scriptURL, { 
+          method: 'POST', 
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+          body: JSON.stringify({ action: "getExamStatus" }) 
+      })
       .then(res => res.json())
       .then(data => {
           if(data.status === "success") {
@@ -557,6 +561,7 @@
         
         fetch(scriptURL, {
             method: 'POST',
+            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
             body: JSON.stringify({ action: "login", user: user, pin: pin })
         })
         .then(res => res.json())
@@ -595,6 +600,7 @@
         
         fetch(scriptURL, {
             method: 'POST',
+            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
             body: JSON.stringify({ action: "changeMyPin", user: tempLoginUser, oldPin: tempLoginPin, newPin: newPin })
         })
         .then(res => res.json())
@@ -652,6 +658,7 @@
         
         fetch(scriptURL, {
             method: 'POST',
+            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
             body: JSON.stringify({ action: "login", user: "Admin", pin: pin })
         })
         .then(res => res.json())
@@ -695,6 +702,7 @@
 
         fetch(scriptURL, {
             method: 'POST',
+            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
             body: JSON.stringify({ action: "toggleExamStatus", adminPin: adminToken, examName: examName, newState: newStateStr })
         })
         .then(res => res.json())
@@ -720,6 +728,7 @@
         const targetTeacher = document.getElementById('adminTeacherSelect').value;
         const msg = document.getElementById('adminDashMessage');
         
+        // Block Admin from resetting their own PIN to the 1234 default
         if (targetTeacher === "Admin") {
             msg.style.color = "#ef4444"; 
             msg.style.backgroundColor = "#fee2e2"; 
@@ -743,6 +752,7 @@
         
         fetch(scriptURL, {
             method: 'POST',
+            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
             body: JSON.stringify({ action: "setPin", adminPin: adminToken, teacher: targetTeacher, newPin: newPin })
         })
         .then(res => res.json())
@@ -1031,10 +1041,6 @@
       else if (type === 'progress') { document.getElementById('reportDivisionTitle').textContent = "Progress Report - Select Division"; } 
       else { document.getElementById('reportDivisionTitle').textContent = "Class Report - Select Division"; }
       showPage('page4a');
-    }
-
-    function goBackFromReports() {
-        showPage('page1');
     }
 
     function fetchAndShowReport(className) {
