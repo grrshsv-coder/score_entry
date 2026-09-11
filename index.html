@@ -141,19 +141,6 @@
     
     #message, #loginMessage, #setupPinMessage, #adminAuthMessage, #adminDashMessage { text-align: center; font-weight: bold; margin-top: 20px; min-height: 24px; padding: 10px; border-radius: 6px; }
 
-    /* Admin Toggle Switch Boxes */
-    .admin-switch-box {
-        display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; 
-        background: #f8fafc; padding: 12px; border-radius: 8px; border: 1px solid #cbd5e1;
-    }
-    .admin-switch-box strong { color: #334155; font-size: 15px; }
-    .toggle-btn {
-        width: auto; padding: 8px 15px; font-size: 14px; color: white; border-radius: 6px; font-weight: bold; border: none; box-shadow: none; cursor: pointer; transition: opacity 0.2s;
-    }
-    .toggle-btn:hover { opacity: 0.8; transform: none; box-shadow: none; }
-    .toggle-btn.open { background: #10b981; }
-    .toggle-btn.closed { background: #ef4444; }
-
     /* Data Table Styles (Class, Top 10) */
     .table-responsive { width: 100%; overflow-x: auto; margin-top: 15px; border-radius: 8px; border: 1px solid #e2e8f0; }
     .marks-table { width: 100%; border-collapse: collapse; font-size: 13px; }
@@ -266,19 +253,9 @@
     <div id="pageAdminDash" class="page">
       <button class="back-btn" onclick="logoutAdmin()">← Exit Admin</button>
       <h1 class="school-name">Admin Console</h1>
-      
-      <h2 style="text-align: left; margin-top: 20px;">Exam Entry Switches</h2>
-      <div class="admin-switch-box">
-          <strong>First Term Exam</strong>
-          <button id="btnToggleFirstTerm" class="toggle-btn" onclick="toggleExam('First Term Exam')">...</button>
-      </div>
-      <div class="admin-switch-box">
-          <strong>First Mid Term Exam</strong>
-          <button id="btnToggleMidTerm" class="toggle-btn" onclick="toggleExam('First Mid Term Exam')">...</button>
-      </div>
-
+      <h2>Set Teacher PINs</h2>
       <hr class="divider">
-      <h2 style="text-align: left;">Manage Teacher PINs</h2>
+      
       <label style="font-weight:bold; color:#475569; display:block; margin-bottom:5px;">Select Teacher</label>
       <select id="adminTeacherSelect"></select>
       
@@ -428,12 +405,13 @@
   <div id="printArea"></div>
 
   <script>
-    // REPLACE THIS WITH YOUR APPS SCRIPT URL!
-    const scriptURL = 'YOUR_WEB_APP_URL_HERE';
+    // --- MANUAL ENTRY MASTER SWITCHES ---
+    // Change these to 'false' inside GitHub when you want to lock an exam.
+    const IS_FIRST_TERM_ENTRY_OPEN = true;
+    const IS_MID_TERM_ENTRY_OPEN = false; 
 
-    // --- DYNAMIC SWITCH VARIABLES ---
-    let IS_FIRST_TERM_ENTRY_OPEN = true;
-    let IS_MID_TERM_ENTRY_OPEN = false; 
+    // REPLACE THIS WITH YOUR APPS SCRIPT URL!
+    const scriptURL = 'https://script.google.com/macros/s/AKfycby05tkg3ElQdyLWsIwXICADRJgQYWkJQZkELLdvV-KArxfZNvWQXfgE9LRRrB3Bii-7lQ/exec';
 
     const studentsData = {
       "10A": ["ADHIDEV A S", "ADHISANKAR S R", "ALAN S N", "ALANKRISHNA V S", "ANUNANDA N P", "ANUNANDH P D", "ANVIK K C", "DEVANANDA K", "DEVARSH RAJEEV", "DHYANA SOJAV. V P", "FATHIMA RIZA MEHRIN", "FATHIMA ZAHRA K", "FILZA FATHIMA C H", "HANIYA FATHIMA N S", "HINA FARHEEN", "KARTHIK. B", "KOUSHIK PRAKASH", "LEZIN MUHAMMAD", "LIYA MEHAJABIN", "MADHUMATH SARANG", "MISBA MEHRIN", "MUHAMMED MUNEES P P", "MUHAMMED NASMIL V K", "MUHAMMED RIDAN.K.K", "MUHAMMED ZIDHAN T K", "NAADHIDEV S R", "NAVAMI A S", "NEERAJ R", "NIHA FATHIMA", "NIVEDITHA .D", "RAMONA ROSE", "RITHU S LAKSHMI", "SALMAN", "SARANNYA V K", "SHAJA FATHIMA K K", "SIVA PANCHAMI.M.K", "SIVAKESH", "SOORYAKIRAN V P", "SRAVAN KRISHNA", "SREEDARSH L L", "SREEHARSH L L", "SUHANA SAFREEN", "SURYADEV V BABU", "THANHARA C T", "VIVEK.R"],
@@ -473,21 +451,6 @@
 
     // Initialize Dropdowns and Auto-Login
     window.addEventListener('load', function() {
-      // Fetch live Master Switch statuses from the backend!
-      fetch(scriptURL, { 
-          method: 'POST', 
-          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-          body: JSON.stringify({ action: "getExamStatus" }) 
-      })
-      .then(res => res.json())
-      .then(data => {
-          if(data.status === "success") {
-              IS_FIRST_TERM_ENTRY_OPEN = (data.firstTerm === "open");
-              IS_MID_TERM_ENTRY_OPEN = (data.midTerm === "open");
-              updateAdminExamSwitches(); 
-          }
-      }).catch(e => console.log("Could not fetch exam statuses."));
-
       const teacherSet = new Set();
       for (let sub in teacherMapping) {
         for (let div in teacherMapping[sub]) {
@@ -646,7 +609,6 @@
         showPage('pageHome');
     }
 
-    // --- ADMIN LOGIC ---
     function verifyAdmin() {
         const pin = document.getElementById('adminPinInput').value.trim();
         const msg = document.getElementById('adminAuthMessage');
@@ -667,7 +629,6 @@
             if (data.status === "success" && data.role === "admin") {
                 adminToken = pin; 
                 document.getElementById('adminPinInput').value = "";
-                updateAdminExamSwitches(); // Update buttons when entering console
                 showPage('pageAdminDash');
             } else {
                 msg.style.color = "#ef4444"; msg.style.backgroundColor = "#fee2e2"; msg.textContent = "Incorrect Admin PIN.";
@@ -679,56 +640,10 @@
         });
     }
 
-    function updateAdminExamSwitches() {
-        let ftBtn = document.getElementById('btnToggleFirstTerm');
-        let mtBtn = document.getElementById('btnToggleMidTerm');
-
-        if(ftBtn && mtBtn) {
-            ftBtn.textContent = IS_FIRST_TERM_ENTRY_OPEN ? "OPEN (Click to Close)" : "CLOSED (Click to Open)";
-            ftBtn.className = IS_FIRST_TERM_ENTRY_OPEN ? "toggle-btn open" : "toggle-btn closed";
-
-            mtBtn.textContent = IS_MID_TERM_ENTRY_OPEN ? "OPEN (Click to Close)" : "CLOSED (Click to Open)";
-            mtBtn.className = IS_MID_TERM_ENTRY_OPEN ? "toggle-btn open" : "toggle-btn closed";
-        }
-    }
-
-    function toggleExam(examName) {
-        let currentState = (examName === "First Term Exam") ? IS_FIRST_TERM_ENTRY_OPEN : IS_MID_TERM_ENTRY_OPEN;
-        let newStateStr = currentState ? "closed" : "open";
-        let btn = (examName === "First Term Exam") ? document.getElementById('btnToggleFirstTerm') : document.getElementById('btnToggleMidTerm');
-
-        btn.textContent = "Updating...";
-        btn.disabled = true;
-
-        fetch(scriptURL, {
-            method: 'POST',
-            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-            body: JSON.stringify({ action: "toggleExamStatus", adminPin: adminToken, examName: examName, newState: newStateStr })
-        })
-        .then(res => res.json())
-        .then(data => {
-            btn.disabled = false;
-            if(data.status === "success") {
-                if(examName === "First Term Exam") IS_FIRST_TERM_ENTRY_OPEN = !currentState;
-                if(examName === "First Mid Term Exam") IS_MID_TERM_ENTRY_OPEN = !currentState;
-                updateAdminExamSwitches();
-            } else {
-                alert("Error: " + data.message);
-                updateAdminExamSwitches();
-            }
-        })
-        .catch(err => {
-            btn.disabled = false;
-            alert("Network error.");
-            updateAdminExamSwitches();
-        });
-    }
-
     function resetToDefaultPin() {
         const targetTeacher = document.getElementById('adminTeacherSelect').value;
         const msg = document.getElementById('adminDashMessage');
         
-        // Block Admin from resetting their own PIN to the 1234 default
         if (targetTeacher === "Admin") {
             msg.style.color = "#ef4444"; 
             msg.style.backgroundColor = "#fee2e2"; 
@@ -860,7 +775,7 @@
       
       showPage('page3');
 
-      // --- MASTER SWITCH LOGIC ---
+      // --- MANUAL MASTER SWITCH LOGIC ---
       let isEntryOpen = (currentExam === "First Term Exam") ? IS_FIRST_TERM_ENTRY_OPEN : IS_MID_TERM_ENTRY_OPEN;
       
       if (!isEntryOpen) {
