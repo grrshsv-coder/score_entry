@@ -103,7 +103,7 @@
     
     #message { text-align: center; font-weight: bold; margin-top: 20px; min-height: 24px; padding: 10px; border-radius: 6px; }
 
-    /* Data Table Styles (Full Class, Top 10) */
+    /* Data Table Styles (Class, Top 10) */
     .table-responsive { width: 100%; overflow-x: auto; margin-top: 15px; border-radius: 8px; border: 1px solid #e2e8f0; }
     .marks-table { width: 100%; border-collapse: collapse; font-size: 13px; }
     .marks-table th, .marks-table td { padding: 8px 4px; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; text-align: center; }
@@ -276,9 +276,9 @@
       
       <!-- Centered Report Type Buttons -->
       <div style="display: flex; flex-direction: column; align-items: center; gap: 20px; margin-top: 30px;">
-        <button class="nav-btn full-div" style="width: 85%; max-width: 300px; padding: 20px;" onclick="selectReportType('full')">📄 Full Class Report</button>
+        <button class="nav-btn full-div" style="width: 85%; max-width: 300px; padding: 20px;" onclick="selectReportType('full')">📄 Class Report</button>
         <button class="nav-btn top10-div" style="width: 85%; max-width: 300px; padding: 20px;" onclick="selectReportType('top10')">🏆 Top 10 Students</button>
-        <button class="nav-btn progress-div" style="width: 85%; max-width: 300px; padding: 20px;" onclick="selectReportType('progress')">📈 Combined Progress Report</button>
+        <button class="nav-btn progress-div" style="width: 85%; max-width: 300px; padding: 20px;" onclick="selectReportType('progress')">📈 Progress Report</button>
       </div>
       <div class="developer-credit">Designed & Developed by GRR</div>
     </div>
@@ -630,9 +630,9 @@
       if (type === 'top10') {
         document.getElementById('reportDivisionTitle').textContent = "Top 10 - Select Division";
       } else if (type === 'progress') {
-        document.getElementById('reportDivisionTitle').textContent = "Combined Progress Report";
+        document.getElementById('reportDivisionTitle').textContent = "Progress Report - Select Division";
       } else {
-        document.getElementById('reportDivisionTitle').textContent = "Full Report - Select Division";
+        document.getElementById('reportDivisionTitle').textContent = "Class Report - Select Division";
       }
       
       const reportBtns = document.querySelectorAll('#page4a .report-class-btn');
@@ -753,7 +753,7 @@
              <h3 style="text-align: center; color: #000000; margin: 0 0 10px 0; font-size: 28px;">SANSKRIT HS VATTOLI</h3>
              <div style="text-align: center; font-size: 24px; color: #000000; margin-bottom: 15px; text-transform: uppercase; letter-spacing: 1px;">
                Academic Year 2026-27<br><br>
-               <span style="color: #000000; font-weight: bold; font-size: 26px;">Combined Progress Report</span>
+               <span style="color: #000000; font-weight: bold; font-size: 26px;">Progress Report</span>
              </div>
              <div style="font-weight: bold; font-size: 22px; margin-bottom: 10px; color: #000000; border-bottom: 2px solid #000000; padding-bottom: 10px; display: flex; justify-content: space-between;">
                <span>Name: <span style="color: #000000;">${student}</span></span>
@@ -821,7 +821,7 @@
         }, 200);
 
       } else {
-        // BUILD GRID TABLE (Full Report or Top 10) for normal viewing
+        // BUILD GRID TABLE (Class Report or Top 10) for normal viewing
         let titleSuffix = currentReportType === 'top10' ? " (Top 10 Students)" : "";
         let rankHeader = currentReportType === 'top10' ? "Rank" : "No.";
         
