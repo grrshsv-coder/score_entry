@@ -114,17 +114,13 @@
     .back-btn:hover { color: #2563eb; transform: translateX(-3px) !important; box-shadow: none !important; }
     .back-btn:active { transform: translateX(0) !important; }
 
-    .logout-btn { float: right; color: #ef4444; font-size: 14px; font-weight: bold; background: none; border: none; box-shadow: none; padding:0;}
-    .logout-btn:hover { text-decoration: underline; color: #dc2626; transform: none; box-shadow:none;}
-
     /* ------------------------------------- */
-    /* Student List Form (UPDATED TEXT BOXES)*/
-    /* ------------------------------------- */
+    /* Student List Form */
     .student-row { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid #f1f5f9; }
     .student-name { font-size: 15px; font-weight: 500; color: #475569; flex-grow: 1; padding-right: 10px; line-height: 1.2; }
     .mark-input { 
-        width: 55px; /* Made smaller */
-        padding: 6px; /* Reduced padding */
+        width: 55px; 
+        padding: 6px; 
         font-size: 16px; 
         border: 1px solid #cbd5e1; border-radius: 6px; text-align: center; color: #1e293b; font-weight: bold; background-color: #f8fafc; transition: border-color 0.2s; 
     }
@@ -133,7 +129,7 @@
     
     #message, #loginMessage, #adminMessage { text-align: center; font-weight: bold; margin-top: 20px; min-height: 24px; padding: 10px; border-radius: 6px; }
 
-    /* Data Table Styles */
+    /* Data Table Styles (Class, Top 10) */
     .table-responsive { width: 100%; overflow-x: auto; margin-top: 15px; border-radius: 8px; border: 1px solid #e2e8f0; }
     .marks-table { width: 100%; border-collapse: collapse; font-size: 13px; }
     .marks-table th, .marks-table td { padding: 8px 4px; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; text-align: center; }
@@ -189,8 +185,7 @@
       
       <h2>Welcome</h2>
       <div class="list-grid" style="margin-top: 25px;">
-        <button class="nav-btn" style="border-color:#3b82f6; color:#3b82f6;" onclick="showPage('pageLogin')">👨‍🏫 Teacher Login (Enter Marks)</button>
-        <button class="nav-btn" style="border-color:#10b981; color:#10b981;" onclick="startPublicReports()">📊 View Public Reports</button>
+        <button class="nav-btn" style="border-color:#3b82f6; color:#3b82f6;" onclick="showPage('pageLogin')">👨‍🏫 Teacher Login</button>
         <button class="admin-btn" onclick="showPage('pageAdminLogin')">⚙️ Admin Console</button>
       </div>
 
@@ -209,7 +204,7 @@
       <label style="font-weight:bold; color:#475569; display:block; margin-bottom:5px;">Enter PIN</label>
       <input type="password" id="teacherPin" placeholder="4-digit PIN" pattern="[0-9]*" inputmode="numeric">
       
-      <button class="action-btn" id="loginBtn" onclick="attemptLogin()">Login</button>
+      <button class="action-btn" id="loginBtn" onclick="attemptLogin()">Save Device & Login</button>
       <div id="loginMessage"></div>
     </div>
 
@@ -228,7 +223,7 @@
 
     <!-- PAGE ADMIN DASHBOARD: Set/Reset PINs -->
     <div id="pageAdminDash" class="page">
-      <button class="back-btn" onclick="showPage('pageHome')">← Logout Admin</button>
+      <button class="back-btn" onclick="showPage('pageHome')">← Exit Admin</button>
       <h1 class="school-name">Admin Console</h1>
       <h2>Set Teacher PINs</h2>
       <hr class="divider">
@@ -248,7 +243,6 @@
 
     <!-- PAGE 0: Select Examination -->
     <div id="page0" class="page">
-      <button class="logout-btn" id="logoutBtn" onclick="logout()" style="display:none;">Logout</button>
       <h1 class="school-name">SANSKRIT HS VATTOLI</h1>
       <h2 class="event-name">Vijayotsavam 2026-27</h2>
       <hr class="divider">
@@ -422,7 +416,7 @@
     let currentReportClass = "";
     let adminToken = ""; 
 
-    // Initialize Dropdowns
+    // Initialize Dropdowns and Auto-Login
     window.addEventListener('load', function() {
       const teacherSet = new Set();
       for (let sub in teacherMapping) {
@@ -435,7 +429,6 @@
       const selectLogin = document.getElementById('teacherSelect');
       const selectAdmin = document.getElementById('adminTeacherSelect');
       
-      // Add Admin Option for PIN reset
       let adminOpt = document.createElement('option'); 
       adminOpt.value = "Admin"; 
       adminOpt.textContent = "Admin (Change my PIN)";
@@ -447,6 +440,15 @@
           selectLogin.appendChild(opt1);
           selectAdmin.appendChild(opt2);
       });
+
+      // AUTO-LOGIN LOGIC: Check if this device is assigned to a teacher
+      const savedTeacher = localStorage.getItem('loggedTeacher');
+      if (savedTeacher) {
+          loggedInUser = savedTeacher;
+          appMode = "entry";
+          document.getElementById('teacherGreeting').textContent = "Welcome, " + savedTeacher;
+          showPage('page0'); 
+      }
     });
 
     window.history.pushState(null, null, window.location.href);
@@ -493,11 +495,14 @@
         })
         .then(res => res.json())
         .then(data => {
-            btn.textContent = "Login"; btn.disabled = false;
+            btn.textContent = "Save Device & Login"; btn.disabled = false;
             if (data.status === "success") {
                 loggedInUser = user;
                 appMode = "entry";
-                document.getElementById('logoutBtn').style.display = "block";
+                
+                // SAVE DEVICE LOGIN PERMANENTLY
+                localStorage.setItem('loggedTeacher', user); 
+                
                 document.getElementById('teacherGreeting').textContent = "Welcome, " + user;
                 document.getElementById('teacherPin').value = ""; 
                 showPage('page0'); 
@@ -506,7 +511,7 @@
             }
         })
         .catch(err => {
-            btn.textContent = "Login"; btn.disabled = false;
+            btn.textContent = "Save Device & Login"; btn.disabled = false;
             msg.style.color = "#ef4444"; msg.style.backgroundColor = "#fee2e2"; msg.textContent = "Network error connecting to server.";
         });
     }
@@ -561,7 +566,6 @@
             if (data.status === "success") {
                 msg.style.color = "#10b981"; msg.style.backgroundColor = "#d1fae5"; msg.textContent = data.message;
                 document.getElementById('newTeacherPin').value = ""; 
-                // Auto-update token if admin resets their own PIN so they don't get locked out
                 if (targetTeacher === "Admin") { adminToken = newPin; }
             } else {
                 msg.style.color = "#ef4444"; msg.style.backgroundColor = "#fee2e2"; msg.textContent = data.message;
@@ -573,25 +577,10 @@
     }
 
     function goToAdminEntry() {
-        loggedInUser = "Admin"; // Grants global bypass
+        loggedInUser = "Admin"; 
         appMode = "entry";
-        document.getElementById('logoutBtn').style.display = "block";
         document.getElementById('teacherGreeting').textContent = "Welcome, Admin Mode";
         showPage('page0');
-    }
-
-    function logout() {
-        loggedInUser = null;
-        appMode = "";
-        adminToken = "";
-        document.getElementById('logoutBtn').style.display = "none";
-        showPage('pageHome');
-    }
-
-    function startPublicReports() {
-        appMode = "report";
-        document.getElementById('logoutBtn').style.display = "block"; 
-        showPage('page0'); 
     }
 
     // --- LOGIC FOR EXAM & ENTRY FLOW ---
@@ -602,16 +591,11 @@
       if (exam === 'First Term Exam') { document.body.style.backgroundColor = '#e0f2fe'; } 
       else if (exam === 'First Mid Term Exam') { document.body.style.backgroundColor = '#fef3c7'; }
       
-      if (appMode === "report") {
-          showPage('page4'); 
-      } else {
-          filterDivisionsForTeacher();
-          showPage('page1');
-      }
+      filterDivisionsForTeacher();
+      showPage('page1');
     }
 
     function filterDivisionsForTeacher() {
-        // Admin gets access to all divisions
         if (loggedInUser === "Admin") {
             ['A','B','C','D','E','F','G','H'].forEach(d => {
                 let btn = document.getElementById('btn-div-'+d);
@@ -653,7 +637,6 @@
             let btnId = 'btn-sub-' + sub.replace(/\s+/g, '');
             let btn = document.getElementById(btnId);
             
-            // Admin gets access to all subjects
             if (loggedInUser === "Admin") {
                 btn.classList.remove('disabled-btn'); btn.disabled = false;
                 return;
@@ -860,11 +843,7 @@
     }
 
     function goBackFromReports() {
-        if (appMode === "entry") {
-            showPage('page1');
-        } else {
-            showPage('page0');
-        }
+        showPage('page1');
     }
 
     function fetchAndShowReport(className) {
