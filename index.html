@@ -427,6 +427,9 @@
     const subjectsList = ['Language 1', 'Language 2', 'English', 'Hindi', 'Social Science', 'Physics', 'Chemistry', 'Biology', 'Mathematics'];
     const currentClass = "10"; 
     
+    // Language Teachers List (Access ALL divisions, but ONLY Language 1 & 2)
+    const languageTeachers = ["Aneesh A", "AP Najee Ahammed", "CK Leela", "KV Sheeba", "Shyna R", "Smitha KK", "T Sayad"];
+
     // Teacher Mapping
     const teacherMapping = {
       "Biology": { "10A": "ASHITHA S P", "10B": "K ROOSY CONTRACTOR", "10C": "KK RINCY", "10D": "ASHITHA S P", "10E": "KK RINCY", "10F": "K ROOSY CONTRACTOR", "10H": "K ROOSY CONTRACTOR" },
@@ -451,7 +454,7 @@
 
     // Initialize Dropdowns and Auto-Login
     window.addEventListener('load', function() {
-      const teacherSet = new Set();
+      const teacherSet = new Set(languageTeachers); // Include language teachers automatically
       for (let sub in teacherMapping) {
         for (let div in teacherMapping[sub]) {
           teacherSet.add(teacherMapping[sub][div]);
@@ -720,6 +723,14 @@
             return;
         }
 
+        if (languageTeachers.includes(loggedInUser)) {
+            ['A','B','C','D','E','F','G','H'].forEach(d => {
+                let btn = document.getElementById('btn-div-'+d);
+                btn.classList.remove('disabled-btn'); btn.disabled = false;
+            });
+            return;
+        }
+
         let allowedDivs = [];
         for (let sub in teacherMapping) {
             for (let div in teacherMapping[sub]) {
@@ -755,6 +766,15 @@
             
             if (loggedInUser === "Admin") {
                 btn.classList.remove('disabled-btn'); btn.disabled = false;
+                return;
+            }
+
+            if (languageTeachers.includes(loggedInUser)) {
+                if (sub === 'Language 1' || sub === 'Language 2') {
+                    btn.classList.remove('disabled-btn'); btn.disabled = false;
+                } else {
+                    btn.classList.add('disabled-btn'); btn.disabled = true;
+                }
                 return;
             }
             
