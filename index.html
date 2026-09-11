@@ -424,7 +424,7 @@
     const IS_MID_TERM_ENTRY_OPEN = false; 
 
     // REPLACE THIS WITH YOUR APPS SCRIPT URL!
-    const scriptURL = 'https://script.google.com/macros/s/AKfycby05tkg3ElQdyLWsIwXICADRJgQYWkJQZkELLdvV-KArxfZNvWQXfgE9LRRrB3Bii-7lQ/exec';
+    const scriptURL = 'YOUR_WEB_APP_URL_HERE';
 
     const studentsData = {
       // CLASS 10
@@ -768,15 +768,13 @@
     function selectStandard(std) {
         currentStandard = std;
         
-        // Update headers dynamic text
         document.getElementById('divisionTitle').textContent = "Select Class " + std + " Division";
         document.getElementById('reportDivisionTitle').textContent = "Select Class " + std + " Division";
         
         if (std === '10') {
             document.body.style.backgroundColor = '#eef2f5';
-            showPage('page0'); // Let them select First Term or Mid Term
+            showPage('page0'); 
         } else {
-            // Class 9 and 8 ONLY have First Term Exam. Auto-select and bypass Page0.
             currentExam = "First Term Exam";
             document.querySelectorAll('.test-name').forEach(el => el.textContent = currentExam);
             document.body.style.backgroundColor = '#e0f2fe';
@@ -814,7 +812,6 @@
             return;
         }
 
-        // Language teachers have access to all divisions across all classes
         if (languageTeachers.includes(loggedInUser)) {
             ['A','B','C','D','E','F','G','H'].forEach(d => {
                 let btn = document.getElementById('btn-div-'+d);
@@ -861,7 +858,6 @@
                 return;
             }
 
-            // Language teachers ONLY get access to Language 1 & 2
             if (languageTeachers.includes(loggedInUser)) {
                 if (sub === 'Language 1' || sub === 'Language 2') {
                     btn.classList.remove('disabled-btn'); btn.disabled = false;
@@ -888,7 +884,6 @@
       
       showPage('page3');
 
-      // --- MANUAL MASTER SWITCH LOGIC ---
       let isEntryOpen = (currentExam === "First Term Exam") ? IS_FIRST_TERM_ENTRY_OPEN : IS_MID_TERM_ENTRY_OPEN;
       
       if (!isEntryOpen) {
@@ -1034,32 +1029,50 @@
     }
 
     // --- GRADING AND MAX MARKS HELPERS ---
-    function getMaxMark(exam, subject, division) {
+    function getMaxMark(exam, subject, className) {
+        // Special logic for Class 8
+        if (className.startsWith('8')) {
+            if (subject === 'Physics' || subject === 'Chemistry' || subject === 'Biology') return 20;
+            return 40;
+        }
+
+        // Standard logic for 9 and 10
         if (exam === "First Term Exam") {
             if (subject === 'English' || subject === 'Social Science' || subject === 'Mathematics') return 80;
             return 40;
         } else {
             if (subject === 'Social Science' || subject === 'Mathematics') return 40;
             if (subject === 'English') {
-                if (division.includes('A') || division.includes('F')) return 40; 
-                if (division.includes('B') || division.includes('H')) return 31; 
+                if (className.includes('A') || className.includes('F')) return 40; 
+                if (className.includes('B') || className.includes('H')) return 31; 
                 return 40;
             }
             return 25;
         }
     }
 
-    function getGrade(mark, maxMark) {
+    function getGrade(mark, maxMark, className) {
         let percentage = Math.round((parseFloat(mark) / maxMark) * 100);
-        if (percentage >= 90) return 'A+';
-        if (percentage >= 80) return 'A';
-        if (percentage >= 70) return 'B+';
-        if (percentage >= 60) return 'B';
-        if (percentage >= 50) return 'C+';
-        if (percentage >= 40) return 'C';
-        if (percentage >= 30) return 'D+';
-        if (percentage >= 20) return 'D';
-        return 'E';
+        
+        // Special grading logic for Class 8
+        if (className && className.startsWith('8')) {
+            if (percentage >= 80) return 'A';
+            if (percentage >= 60) return 'B';
+            if (percentage >= 40) return 'C';
+            if (percentage >= 30) return 'D';
+            return 'E';
+        } else {
+            // Standard 9-point grading logic for Classes 9 and 10
+            if (percentage >= 90) return 'A+';
+            if (percentage >= 80) return 'A';
+            if (percentage >= 70) return 'B+';
+            if (percentage >= 60) return 'B';
+            if (percentage >= 50) return 'C+';
+            if (percentage >= 40) return 'C';
+            if (percentage >= 30) return 'D+';
+            if (percentage >= 20) return 'D';
+            return 'E';
+        }
     }
 
     // --- LOGIC FOR VIEWING/PRINTING REPORTS ---
@@ -1172,11 +1185,11 @@
 
           subjectsList.forEach(sub => {
              let ftMark = pivot[student].marks["First Term Exam"][sub] !== undefined ? pivot[student].marks["First Term Exam"][sub] : '-';
-             let ftGrade = ftMark !== '-' ? getGrade(ftMark, getMaxMark("First Term Exam", sub, className)) : '-';
+             let ftGrade = ftMark !== '-' ? getGrade(ftMark, getMaxMark("First Term Exam", sub, className), className) : '-';
              
              if (currentStandard === '10') {
                  let mtMark = pivot[student].marks["First Mid Term Exam"][sub] !== undefined ? pivot[student].marks["First Mid Term Exam"][sub] : '-';
-                 let mtGrade = mtMark !== '-' ? getGrade(mtMark, getMaxMark("First Mid Term Exam", sub, className)) : '-';
+                 let mtGrade = mtMark !== '-' ? getGrade(mtMark, getMaxMark("First Mid Term Exam", sub, className), className) : '-';
                  html += `<tr><td>${sub}</td><td>${mtMark}</td><td style="font-weight: bold;">${mtGrade}</td><td>${ftMark}</td><td style="font-weight: bold;">${ftGrade}</td></tr>`;
              } else {
                  html += `<tr><td>${sub}</td><td>${ftMark}</td><td style="font-weight: bold;">${ftGrade}</td></tr>`;
