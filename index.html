@@ -213,7 +213,9 @@
       <!-- Step 1: Initial Auth -->
       <div id="loginStep1">
         <label style="font-weight:bold; color:#475569; display:block; margin-bottom:5px;">Select Name</label>
-        <select id="teacherSelect"></select>
+        <select id="teacherSelect">
+            <option value="" disabled selected hidden>Select Your Name</option>
+        </select>
         
         <label style="font-weight:bold; color:#475569; display:block; margin-bottom:5px;">Enter PIN</label>
         <input type="password" id="teacherPin" placeholder="Enter PIN (Default: 1234)" pattern="[0-9]*" inputmode="numeric">
@@ -583,6 +585,7 @@
         const msg = document.getElementById('loginMessage');
         const btn = document.getElementById('loginBtn');
         
+        if(!user) { msg.style.color = "#ef4444"; msg.textContent = "Please select your name."; return; }
         if(!pin) { msg.style.color = "#ef4444"; msg.textContent = "Please enter your PIN. Default is 1234."; return; }
         
         btn.textContent = "Verifying..."; btn.disabled = true;
