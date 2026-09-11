@@ -64,7 +64,7 @@
       transform: translateY(4px); box-shadow: 0 0 0 transparent !important; 
     }
 
-    /* Disabled Button State for unassigned teachers */
+    /* Disabled Button State */
     .disabled-btn {
       background-color: #f1f5f9 !important;
       color: #94a3b8 !important;
@@ -114,6 +114,12 @@
     .back-btn:hover { color: #2563eb; transform: translateX(-3px) !important; box-shadow: none !important; }
     .back-btn:active { transform: translateX(0) !important; }
 
+    /* Logout Button Styling */
+    .logout-btn { 
+        position: absolute; top: 15px; right: 20px; color: #dc2626; font-size: 13px; font-weight: bold; background: #fee2e2; border: 1px solid #fca5a5; padding: 8px 12px; border-radius: 6px; box-shadow: none; z-index: 10;
+    }
+    .logout-btn:hover { background-color: #fecaca; transform: none; box-shadow:none; }
+
     /* ------------------------------------- */
     /* Student List Form */
     .student-row { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid #f1f5f9; }
@@ -127,7 +133,7 @@
     .mark-input:focus { outline: none; border-color: #3b82f6; background-color: #ffffff; }
     .mark-input:disabled { background-color: #e2e8f0; color: #64748b; border-color: #e2e8f0; cursor: not-allowed; }
     
-    #message, #loginMessage, #adminMessage { text-align: center; font-weight: bold; margin-top: 20px; min-height: 24px; padding: 10px; border-radius: 6px; }
+    #message, #loginMessage, #setupPinMessage, #adminAuthMessage, #adminDashMessage { text-align: center; font-weight: bold; margin-top: 20px; min-height: 24px; padding: 10px; border-radius: 6px; }
 
     /* Data Table Styles (Class, Top 10) */
     .table-responsive { width: 100%; overflow-x: auto; margin-top: 15px; border-radius: 8px; border: 1px solid #e2e8f0; }
@@ -198,14 +204,30 @@
       <h1 class="school-name">Teacher Login</h1>
       <hr class="divider">
       
-      <label style="font-weight:bold; color:#475569; display:block; margin-bottom:5px;">Select Name</label>
-      <select id="teacherSelect"></select>
+      <!-- Step 1: Initial Auth -->
+      <div id="loginStep1">
+        <label style="font-weight:bold; color:#475569; display:block; margin-bottom:5px;">Select Name</label>
+        <select id="teacherSelect"></select>
+        
+        <label style="font-weight:bold; color:#475569; display:block; margin-bottom:5px;">Enter PIN</label>
+        <input type="password" id="teacherPin" placeholder="Enter PIN (Default: 1234)" pattern="[0-9]*" inputmode="numeric">
+        
+        <button class="action-btn" id="loginBtn" onclick="attemptLogin()">Login</button>
+        <div id="loginMessage"></div>
+      </div>
       
-      <label style="font-weight:bold; color:#475569; display:block; margin-bottom:5px;">Enter PIN</label>
-      <input type="password" id="teacherPin" placeholder="4-digit PIN" pattern="[0-9]*" inputmode="numeric">
-      
-      <button class="action-btn" id="loginBtn" onclick="attemptLogin()">Save Device & Login</button>
-      <div id="loginMessage"></div>
+      <!-- Step 2: Force PIN Reset on First Login -->
+      <div id="loginStep2" style="display: none; text-align: center;">
+        <h3 style="color:#ef4444; margin-top: 10px;">Security Action Required</h3>
+        <p style="font-size: 14px; margin-bottom: 20px; color:#475569;">Because you are using the default PIN, you must create a new personal PIN to securely remember this device.</p>
+        
+        <label style="font-weight:bold; color:#475569; display:block; text-align:left; margin-bottom:5px;">Create New PIN</label>
+        <input type="password" id="newTeacherPinSetup" placeholder="Minimum 4 digits" pattern="[0-9]*" inputmode="numeric">
+        
+        <button class="action-btn" style="border-color:#10b981; color:#10b981;" id="saveNewPinBtn" onclick="submitNewPin()">Save New PIN & Login</button>
+        <button class="back-btn" style="margin-top:15px; width:100%; text-align:center;" onclick="cancelPinSetup()">Cancel</button>
+        <div id="setupPinMessage"></div>
+      </div>
     </div>
 
     <!-- PAGE ADMIN LOGIN: Admin Authentication -->
@@ -223,7 +245,7 @@
 
     <!-- PAGE ADMIN DASHBOARD: Set/Reset PINs -->
     <div id="pageAdminDash" class="page">
-      <button class="back-btn" onclick="showPage('pageHome')">← Exit Admin</button>
+      <button class="back-btn" onclick="logoutAdmin()">← Exit Admin</button>
       <h1 class="school-name">Admin Console</h1>
       <h2>Set Teacher PINs</h2>
       <hr class="divider">
@@ -234,18 +256,23 @@
       <label style="font-weight:bold; color:#475569; display:block; margin-bottom:5px;">Assign New PIN</label>
       <input type="password" id="newTeacherPin" placeholder="Enter new PIN (e.g. 1234)" pattern="[0-9]*" inputmode="numeric">
       
-      <button class="action-btn" id="setPinBtn" onclick="setTeacherPin()">Save PIN</button>
+      <button class="action-btn" id="setPinBtn" onclick="setTeacherPin()">Save Custom PIN</button>
+      <button class="nav-btn" style="width: 100%; border-color:#f59e0b; color:#d97706; margin-top:15px;" onclick="resetToDefaultPin()">Reset to Default (1234)</button>
+      
       <div id="adminDashMessage"></div>
 
       <hr class="divider">
-      <button class="action-btn" style="border-color:#10b981; color:#10b981; background: #ffffff;" onclick="goToAdminEntry()">➔ Access Full Data Entry</button>
+      <button class="action-btn" style="border-color:#10b981; color:#10b981; background: #ffffff;" onclick="goToAdminEntry()">➔ Access Data Entry & Reports</button>
     </div>
 
     <!-- PAGE 0: Select Examination -->
     <div id="page0" class="page">
+      <button class="logout-btn" id="logoutBtn" onclick="logoutDevice()" style="display:none;">Logout Device</button>
       <h1 class="school-name">SANSKRIT HS VATTOLI</h1>
       <h2 class="event-name">Vijayotsavam 2026-27</h2>
-      <hr class="divider">
+      <hr class="divider" style="margin-top: 40px;"> <!-- Push down to avoid logout button -->
+      
+      <h3 id="teacherGreeting" style="color:#3b82f6; font-weight:bold; margin-bottom:25px;"></h3>
       
       <h2>Select Examination</h2>
       <div class="list-grid" style="margin-top: 25px;">
@@ -264,7 +291,6 @@
       <hr class="divider">
       
       <h2>Enter Marks</h2>
-      <h3 id="teacherGreeting" style="color:#3b82f6; font-weight:bold;"></h3>
       <h3>Select Class 10 Division</h3>
       <div class="button-grid" id="divisionGrid">
         <button class="nav-btn page1-div" id="btn-div-A" onclick="selectDivision('A')">10 A</button>
@@ -278,7 +304,6 @@
       </div>
 
       <hr class="divider">
-      <!-- Report Button is prominent here -->
       <button class="report-btn" onclick="showPage('page4')">View Class Reports</button>
 
       <div class="developer-credit">Designed & Developed by GRR</div>
@@ -319,7 +344,7 @@
 
     <!-- PAGE 4: Select Report Type -->
     <div id="page4" class="page">
-      <button class="back-btn" onclick="goBackFromReports()">← Back</button>
+      <button class="back-btn" onclick="showPage('page1')">← Back to Division</button>
       <h2 class="test-name"></h2>
       <h3>Select report type</h3>
       
@@ -408,7 +433,8 @@
     
     // Auth & App State
     let loggedInUser = null; 
-    let appMode = ""; 
+    let tempLoginUser = "";
+    let tempLoginPin = "";
     let currentExam = "";
     let currentDivision = "";
     let currentSubject = "";
@@ -445,17 +471,10 @@
       const savedTeacher = localStorage.getItem('loggedTeacher');
       if (savedTeacher) {
           loggedInUser = savedTeacher;
-          appMode = "entry";
           document.getElementById('teacherGreeting').textContent = "Welcome, " + savedTeacher;
+          document.getElementById('logoutBtn').style.display = "block";
           showPage('page0'); 
       }
-    });
-
-    window.history.pushState(null, null, window.location.href);
-    window.addEventListener("popstate", function(event) {
-      window.close(); 
-      document.body.innerHTML = "<h2 style='text-align:center; margin-top:50px; color:#334155;'>App closed. You can exit this tab.</h2>";
-      setTimeout(function() { window.location.href = "about:blank"; }, 300);
     });
 
     function showPage(pageId) {
@@ -472,7 +491,7 @@
         document.getElementById('mainContainer').style.display = 'block';
       }
 
-      const msgs = ['message', 'loginMessage', 'adminAuthMessage', 'adminDashMessage'];
+      const msgs = ['message', 'loginMessage', 'setupPinMessage', 'adminAuthMessage', 'adminDashMessage'];
       msgs.forEach(m => {
           if(document.getElementById(m)) { document.getElementById(m).textContent = ""; document.getElementById(m).style.backgroundColor = "transparent"; }
       });
@@ -485,7 +504,7 @@
         const msg = document.getElementById('loginMessage');
         const btn = document.getElementById('loginBtn');
         
-        if(!pin) { msg.style.color = "#ef4444"; msg.textContent = "Please enter your PIN."; return; }
+        if(!pin) { msg.style.color = "#ef4444"; msg.textContent = "Please enter your PIN. Default is 1234."; return; }
         
         btn.textContent = "Verifying..."; btn.disabled = true;
         
@@ -497,15 +516,14 @@
         .then(data => {
             btn.textContent = "Save Device & Login"; btn.disabled = false;
             if (data.status === "success") {
-                loggedInUser = user;
-                appMode = "entry";
-                
-                // SAVE DEVICE LOGIN PERMANENTLY
-                localStorage.setItem('loggedTeacher', user); 
-                
-                document.getElementById('teacherGreeting').textContent = "Welcome, " + user;
-                document.getElementById('teacherPin').value = ""; 
-                showPage('page0'); 
+                if (data.requiresReset) {
+                    tempLoginUser = user;
+                    tempLoginPin = pin;
+                    document.getElementById('loginStep1').style.display = "none";
+                    document.getElementById('loginStep2').style.display = "block";
+                } else {
+                    completeLogin(user);
+                }
             } else {
                 msg.style.color = "#ef4444"; msg.style.backgroundColor = "#fee2e2"; msg.textContent = data.message;
             }
@@ -514,6 +532,65 @@
             btn.textContent = "Save Device & Login"; btn.disabled = false;
             msg.style.color = "#ef4444"; msg.style.backgroundColor = "#fee2e2"; msg.textContent = "Network error connecting to server.";
         });
+    }
+
+    function submitNewPin() {
+        const newPin = document.getElementById('newTeacherPinSetup').value.trim();
+        const msg = document.getElementById('setupPinMessage');
+        const btn = document.getElementById('saveNewPinBtn');
+        
+        if(!newPin || newPin.length < 4 || newPin === "1234") { 
+            msg.style.color = "#ef4444"; msg.textContent = "PIN must be at least 4 digits and cannot be 1234."; 
+            return; 
+        }
+        
+        btn.textContent = "Saving..."; btn.disabled = true;
+        
+        fetch(scriptURL, {
+            method: 'POST',
+            body: JSON.stringify({ action: "changeMyPin", user: tempLoginUser, oldPin: tempLoginPin, newPin: newPin })
+        })
+        .then(res => res.json())
+        .then(data => {
+            btn.textContent = "Save New PIN & Login"; btn.disabled = false;
+            if(data.status === "success") {
+                completeLogin(tempLoginUser);
+            } else {
+                msg.style.color = "#ef4444"; msg.textContent = data.message;
+            }
+        })
+        .catch(err => {
+            btn.textContent = "Save New PIN & Login"; btn.disabled = false;
+            msg.style.color = "#ef4444"; msg.textContent = "Network error.";
+        });
+    }
+
+    function cancelPinSetup() {
+        document.getElementById('loginStep1').style.display = "block";
+        document.getElementById('loginStep2').style.display = "none";
+        document.getElementById('teacherPin').value = "";
+    }
+
+    function completeLogin(user) {
+        loggedInUser = user;
+        localStorage.setItem('loggedTeacher', user); 
+        
+        document.getElementById('teacherGreeting').textContent = "Welcome, " + user;
+        document.getElementById('teacherPin').value = ""; 
+        document.getElementById('newTeacherPinSetup').value = ""; 
+        document.getElementById('loginStep1').style.display = "block";
+        document.getElementById('loginStep2').style.display = "none";
+        
+        document.getElementById('logoutBtn').style.display = "block";
+        showPage('page0'); 
+    }
+
+    function logoutDevice() {
+        loggedInUser = null;
+        adminToken = "";
+        localStorage.removeItem('loggedTeacher'); 
+        document.getElementById('logoutBtn').style.display = "none";
+        showPage('pageHome');
     }
 
     function verifyAdmin() {
@@ -546,6 +623,11 @@
         });
     }
 
+    function resetToDefaultPin() {
+        document.getElementById('newTeacherPin').value = "1234";
+        setTeacherPin();
+    }
+
     function setTeacherPin() {
         const targetTeacher = document.getElementById('adminTeacherSelect').value;
         const newPin = document.getElementById('newTeacherPin').value.trim();
@@ -562,7 +644,7 @@
         })
         .then(res => res.json())
         .then(data => {
-            btn.textContent = "Save PIN"; btn.disabled = false;
+            btn.textContent = "Save Custom PIN"; btn.disabled = false;
             if (data.status === "success") {
                 msg.style.color = "#10b981"; msg.style.backgroundColor = "#d1fae5"; msg.textContent = data.message;
                 document.getElementById('newTeacherPin').value = ""; 
@@ -571,15 +653,21 @@
                 msg.style.color = "#ef4444"; msg.style.backgroundColor = "#fee2e2"; msg.textContent = data.message;
             }
         }).catch(err => {
-            btn.textContent = "Save PIN"; btn.disabled = false;
+            btn.textContent = "Save Custom PIN"; btn.disabled = false;
             msg.style.color = "#ef4444"; msg.style.backgroundColor = "#fee2e2"; msg.textContent = "Network error.";
         });
     }
 
+    function logoutAdmin() {
+        adminToken = "";
+        loggedInUser = null;
+        showPage('pageHome');
+    }
+
     function goToAdminEntry() {
         loggedInUser = "Admin"; 
-        appMode = "entry";
         document.getElementById('teacherGreeting').textContent = "Welcome, Admin Mode";
+        document.getElementById('logoutBtn').style.display = "block";
         showPage('page0');
     }
 
@@ -840,10 +928,6 @@
       else if (type === 'progress') { document.getElementById('reportDivisionTitle').textContent = "Progress Report - Select Division"; } 
       else { document.getElementById('reportDivisionTitle').textContent = "Class Report - Select Division"; }
       showPage('page4a');
-    }
-
-    function goBackFromReports() {
-        showPage('page1');
     }
 
     function fetchAndShowReport(className) {
