@@ -271,8 +271,8 @@
       <button class="action-btn" style="border-color:#10b981; color:#10b981; background: #ffffff;" onclick="goToAdminEntry()">➔ Access Data Entry & Reports</button>
     </div>
 
-    <!-- PAGE 0: Select Examination -->
-    <div id="page0" class="page">
+    <!-- PAGE CLASS SELECT: Select standard (10, 9, 8) -->
+    <div id="pageClassSelect" class="page">
       <button class="logout-text-btn" id="logoutBtn" onclick="logoutDevice()" style="display:none;">Logout Device</button>
       <h1 class="school-name" style="margin-top: 0;">SANSKRIT HS VATTOLI</h1>
       <h2 class="event-name">Vijayotsavam 2026-27</h2>
@@ -280,38 +280,52 @@
       
       <h3 id="teacherGreeting" style="color:#3b82f6; font-weight:bold; margin-bottom:25px;"></h3>
       
+      <h2>Select Class</h2>
+      <div class="list-grid" style="margin-top: 25px;">
+        <button class="nav-btn sub-4" onclick="selectStandard('10')" style="padding: 20px; font-size: 18px;">📘 Class 10</button>
+        <button class="nav-btn sub-5" onclick="selectStandard('9')" style="padding: 20px; font-size: 18px;">📗 Class 9</button>
+        <button class="nav-btn sub-6" onclick="selectStandard('8')" style="padding: 20px; font-size: 18px;">📙 Class 8</button>
+      </div>
+
+      <div class="developer-credit">Designed & Developed by GRR</div>
+    </div>
+
+    <!-- PAGE 0: Select Examination (Only for Class 10) -->
+    <div id="page0" class="page">
+      <button class="back-btn" onclick="showPage('pageClassSelect')">← Back to Classes</button>
+      <h1 class="school-name">Class 10</h1>
+      <hr class="divider">
+      
       <h2>Select Examination</h2>
       <div class="list-grid" style="margin-top: 25px;">
         <button class="nav-btn sub-6" onclick="selectExam('First Term Exam')" style="padding: 20px; font-size: 18px;">📄 First Term Exam</button>
         <button class="nav-btn sub-3" onclick="selectExam('First Mid Term Exam')" style="padding: 20px; font-size: 18px;">📄 First Mid Term Exam</button>
       </div>
-
       <div class="developer-credit">Designed & Developed by GRR</div>
     </div>
     
     <!-- PAGE 1: Select Division -->
     <div id="page1" class="page">
-      <button class="back-btn" onclick="showPage('page0')">← Back to Exams</button>
+      <button class="back-btn" onclick="goBackFromDivisions()">← Back</button>
       <h1 class="school-name">SANSKRIT HS VATTOLI</h1>
       <h3 class="test-name"></h3>
       <hr class="divider">
       
       <h2>Enter Marks</h2>
-      <h3>Select Class 10 Division</h3>
+      <h3 id="divisionTitle">Select Class Division</h3>
       <div class="button-grid" id="divisionGrid">
-        <button class="nav-btn page1-div" id="btn-div-A" onclick="selectDivision('A')">10 A</button>
-        <button class="nav-btn page1-div" id="btn-div-B" onclick="selectDivision('B')">10 B</button>
-        <button class="nav-btn page1-div" id="btn-div-C" onclick="selectDivision('C')">10 C</button>
-        <button class="nav-btn page1-div" id="btn-div-D" onclick="selectDivision('D')">10 D</button>
-        <button class="nav-btn page1-div" id="btn-div-E" onclick="selectDivision('E')">10 E</button>
-        <button class="nav-btn page1-div" id="btn-div-F" onclick="selectDivision('F')">10 F</button>
-        <button class="nav-btn page1-div" id="btn-div-G" onclick="selectDivision('G')">10 G</button>
-        <button class="nav-btn page1-div" id="btn-div-H" onclick="selectDivision('H')">10 H</button>
+        <button class="nav-btn page1-div" id="btn-div-A" onclick="selectDivision('A')">A</button>
+        <button class="nav-btn page1-div" id="btn-div-B" onclick="selectDivision('B')">B</button>
+        <button class="nav-btn page1-div" id="btn-div-C" onclick="selectDivision('C')">C</button>
+        <button class="nav-btn page1-div" id="btn-div-D" onclick="selectDivision('D')">D</button>
+        <button class="nav-btn page1-div" id="btn-div-E" onclick="selectDivision('E')">E</button>
+        <button class="nav-btn page1-div" id="btn-div-F" onclick="selectDivision('F')">F</button>
+        <button class="nav-btn page1-div" id="btn-div-G" onclick="selectDivision('G')">G</button>
+        <button class="nav-btn page1-div" id="btn-div-H" onclick="selectDivision('H')">H</button>
       </div>
 
       <hr class="divider">
       <button class="report-btn" onclick="showPage('page4')">View Class Reports</button>
-
       <div class="developer-credit">Designed & Developed by GRR</div>
     </div>
 
@@ -350,7 +364,7 @@
 
     <!-- PAGE 4: Select Report Type -->
     <div id="page4" class="page">
-      <button class="back-btn" onclick="showPage('page1')">← Back to Division</button>
+      <button class="back-btn" onclick="goBackFromReports()">← Back</button>
       <h2 class="test-name"></h2>
       <h3>Select report type</h3>
       
@@ -366,16 +380,15 @@
     <div id="page4a" class="page">
       <button class="back-btn" onclick="showPage('page4')">← Back to Reports</button>
       <h2 id="reportDivisionTitle">Select Division</h2>
-      <h3>Choose a class to view</h3>
       <div class="button-grid">
-        <button class="nav-btn report-class-btn" onclick="fetchAndShowReport('10A')">10 A</button>
-        <button class="nav-btn report-class-btn" onclick="fetchAndShowReport('10B')">10 B</button>
-        <button class="nav-btn report-class-btn" onclick="fetchAndShowReport('10C')">10 C</button>
-        <button class="nav-btn report-class-btn" onclick="fetchAndShowReport('10D')">10 D</button>
-        <button class="nav-btn report-class-btn" onclick="fetchAndShowReport('10E')">10 E</button>
-        <button class="nav-btn report-class-btn" onclick="fetchAndShowReport('10F')">10 F</button>
-        <button class="nav-btn report-class-btn" onclick="fetchAndShowReport('10G')">10 G</button>
-        <button class="nav-btn report-class-btn" onclick="fetchAndShowReport('10H')">10 H</button>
+        <button class="nav-btn report-class-btn" onclick="fetchAndShowReport('A')">A</button>
+        <button class="nav-btn report-class-btn" onclick="fetchAndShowReport('B')">B</button>
+        <button class="nav-btn report-class-btn" onclick="fetchAndShowReport('C')">C</button>
+        <button class="nav-btn report-class-btn" onclick="fetchAndShowReport('D')">D</button>
+        <button class="nav-btn report-class-btn" onclick="fetchAndShowReport('E')">E</button>
+        <button class="nav-btn report-class-btn" onclick="fetchAndShowReport('F')">F</button>
+        <button class="nav-btn report-class-btn" onclick="fetchAndShowReport('G')">G</button>
+        <button class="nav-btn report-class-btn" onclick="fetchAndShowReport('H')">H</button>
       </div>
       
       <div id="progressLoadingIndicator" style="display: none; text-align: center; color: #3b82f6; font-weight: bold; margin-top: 25px;">
@@ -410,10 +423,11 @@
     const IS_FIRST_TERM_ENTRY_OPEN = true;
     const IS_MID_TERM_ENTRY_OPEN = false; 
 
-    // THE CORRECT APPS SCRIPT URL HAS BEEN RESTORED HERE!
+    // REPLACE THIS WITH YOUR APPS SCRIPT URL!
     const scriptURL = 'https://script.google.com/macros/s/AKfycby05tkg3ElQdyLWsIwXICADRJgQYWkJQZkELLdvV-KArxfZNvWQXfgE9LRRrB3Bii-7lQ/exec';
 
     const studentsData = {
+      // CLASS 10
       "10A": ["ADHIDEV A S", "ADHISANKAR S R", "ALAN S N", "ALANKRISHNA V S", "ANUNANDA N P", "ANUNANDH P D", "ANVIK K C", "DEVANANDA K", "DEVARSH RAJEEV", "DHYANA SOJAV. V P", "FATHIMA RIZA MEHRIN", "FATHIMA ZAHRA K", "FILZA FATHIMA C H", "HANIYA FATHIMA N S", "HINA FARHEEN", "KARTHIK. B", "KOUSHIK PRAKASH", "LEZIN MUHAMMAD", "LIYA MEHAJABIN", "MADHUMATH SARANG", "MISBA MEHRIN", "MUHAMMED MUNEES P P", "MUHAMMED NASMIL V K", "MUHAMMED RIDAN.K.K", "MUHAMMED ZIDHAN T K", "NAADHIDEV S R", "NAVAMI A S", "NEERAJ R", "NIHA FATHIMA", "NIVEDITHA .D", "RAMONA ROSE", "RITHU S LAKSHMI", "SALMAN", "SARANNYA V K", "SHAJA FATHIMA K K", "SIVA PANCHAMI.M.K", "SIVAKESH", "SOORYAKIRAN V P", "SRAVAN KRISHNA", "SREEDARSH L L", "SREEHARSH L L", "SUHANA SAFREEN", "SURYADEV V BABU", "THANHARA C T", "VIVEK.R"],
       "10B": ["AGNEY S KUMAR", "AMAN MUHAMMAD P", "AMEN RIZA", "ANAGASREE.P.M", "ANHA ASLAM", "ANMIYA ROSE . J.R", "ARSHAWIN S AJITH", "B . HARY NIGAM", "BHAVIYUKTHA SURESH P S", "BHUVAN GOPAL J P", "DEVA NANDHA P", "DEVAMITHRA S", "DHYAN KRISHNA", "DILSHAN", "DIYA MEHRIN", "EHNA S DOYAL", "FATHIMA HAYA PARVEEN N K", "FIDA RATHNA C P", "FIDIN MINSHAD", "HADIYA NOURIN P P", "HANFA MEHFIN", "LEYA LINEESH", "MINHA FATHIMA G P", "MOHAMMED SHEES O", "MUHAMMAD IHSAN", "MUHAMMAD MIRSAH", "MUHAMMAD RASAL N", "MUHAMMAD RAZIN", "MUHAMMED RAJUL SHAN C K", "MUHAMMED SHABIN P P", "NAINA ZIYA", "NIYALAKSHMI M", "NUBHA FATHIMA K M", "PRANAV DEV", "RAIDA MEHEBIN", "SOUVIK MAJUMDER", "THARAK N", "THEERTHA R", "YASHIKA SINGH M", "ZAYBA DAANIYA JAMSHID"],
       "10C": ["AADIL S M", "AASHMI RATNESH", "ABAYKRISHNA S R", "ADHEENA BABU", "AGNEY R AJAY", "AHAL THEJ A R", "AMANYA A V", "ANUSHKA V V", "ARCHIT RAJESH", "DAIWIK G KRISHNA", "DENUK N SASI", "DEVAPRIYA L G", "DHYAN DEV K", "DHYANA LAKSHMI D S", "FADIN FAROOK", "FATHIMA", "FATHIMA SAFVANA O", "KRISHNAPRIYA S S", "LAMIA ZAHRIN P P", "LOONA KHADEEJA", "MINHA ZAYAN J P", "MITHVA M", "MUHAMMAD FAZ P", "MUHAMMAD NACEEB", "MUHAMMAD RAFIN SHAN", "MUHAMMAD YASEEN.V.K", "NAKHIYA NAJA", "NEERAJ KRISHNA", "NEERAV A P", "NEVIN VAIBHAV", "NIVEDA R J", "PRITHWINJITH V", "RAFIN SHAN N P", "RAFNA FATHIMA K K", "SANVI KRISHNA", "SHAIHA FATHIMA", "SHANWIN KRISHNA", "SHENZA MEHBIN P P", "SIDHARTH PURUSHOTHAMAN", "SIYANA FATHIMA", "SREEHARI . S", "SREEHARI RAJAN", "SREELAKSHMI S N", "THAHLIYA FATHIMA", "THANHA FATHIMA", "THEJA S R", "VEDHA S.R"],
@@ -421,30 +435,78 @@
       "10E": ["AADHIDEV C K", "ADHISH S BABU", "ADHITYAN P P", "ALJIN ANIL", "ANANYASREE", "ANHITHA S ASHOK", "ANMIYA C M", "ANURAJ", "ASHNA MOL S S", "AYSHA NAIFA", "DEVATHEERTH S B", "DHYAN KRISHNA RAJESH", "DHYANDEV M K", "FATHIMA", "HABEEB AHAMMED KEERAM POYIL", "HADHI HANNAN", "HANNA FATHIMA", "HANNA SHADHIYA", "HISHAM", "JISHNU R P", "KASHINADH P S", "KRISHNA VENI S N", "MISBA MEHARIN", "MUHAMMAD AFLAH", "MUHAMMAD RISHAD", "MUHAMMED NIHAL N", "MUHAMMED SAFVAN", "MUHAMMED SHUHAIM", "MUHAMMED SINAN", "NAITHIKA G S", "NEJA C S", "NIVEDH KRISHNA", "RAFNAJ M", "REVATHI RINITH", "SAYOOJ V P", "SIVA MITHRA", "SREEDEV .M.V", "THANVI E K", "VEDAKEERTHI R", "VEDHA L J", "YADHU KRISHNA K C P", "ZAEEM ABDULLA"],
       "10F": ["AANLIYA N S", "ABDULNAFIH", "ALWIN AJITH", "AMEEN ABDULLA", "ANASWAR P", "DANISH T", "DEVAJ K K", "DHYANDEV V P", "DIYA DEVA D S", "DYUTHIKALAKSHMI B S", "HADI MUHAMMAD K K", "ISHAN S LINT", "JHANVI R AJI", "MITHRA V RAJ", "MUHAMMAD RINAN O.P", "MUHAMMED AJIFAN P P", "MUHAMMED MISUAB", "MUHAMMED RAIHAN", "MUHAMMED SHIBIL SHAM P.P.", "NAISHAN A NEERAJ", "NERVIN N ASHOK", "NIDA FATHIMA", "NIVED R M", "NIVEDH PAVITHRAN", "R N SURYADEV", "SAIKRISHNA K P", "SHIKHA RANJITH K.K.", "SHIVADEV KRISHNA B", "SHIVAMITHRA SHAJI K", "SHIYONA VINOD P K", "SREEDEV S S", "SURYADEV .S.N", "VARUNJITH K R", "VEDHA LAKSHMI", "VEDHIKA A S", "VIDU SMERA . K", "VYGA P P"],
       "10G": ["AADIDEV S R", "ABHIN KRISHNA K", "ABINANDHA A", "ABINEET S R", "ADWIN RAJ", "AGNEY S SUJITH", "AHALYA K K", "AKSHITH K K", "ALAN KRISHNA E M", "ALEKH S SUJITH", "ANAMIKA P M", "ANLIYA S S", "ANSIYA", "ARUSH DEV K K", "ASHMI .K", "ATHIL C S", "AYANDEV .V", "DEVANGANA . M.S", "DIYAN DEV", "GARHITHA", "GAYANA RAJEEV K P", "GOUTHAM KRISHNA G S", "ISHAN SURESH", "JINU DEV V V", "NAITHIKA.K.P", "NEEL KAUTHIK.S", "RIVETH KRISHNA V P", "SANJOG V", "SAYOOJ B BABURAJAN", "SHIVANANDA M.T.P", "SHIVANI V P", "SINOBIYA RINEESH", "SIVAKEERTH D N", "SREEDEV K", "SRIRAM T", "THEJUL DEV", "VEDHASREE"],
-      "10H": ["AASHLINRAJ", "ABHIMANYU R MANOJ", "ABHINAV C K", "ADHISH RAJESH", "ADIDEV A B", "ADISH J S", "ADISH KRISHNA D S", "ADWAYA E K", "ALANDEV N K", "ALANDEV P P", "ALBIN KRISHNA", "ALVIN C P", "AMAN JYOTH P S", "AMEGH NATH R B", "ANANTHU P K", "ANGITHKRISHNA", "ARADHYA A S", "ASHIN C K", "ATMAJ ALAN.N S", "DEVASURYA P P", "DHYAN KRISHNA C K", "KARTHIK", "NAINIKA. K M", "NIHARA P C", "PARVANA K K", "RHETHUNAND V P", "RONA P P", "SANMAYA N K", "SAYOOJ V S", "SHARON FIDHAL A S", "SHEHAN SHAJU", "SHIYONA ROSE S R", "SIVANANDHA S R", "SIYA .V S", "SREEDEV .B", "THANMAYA .A"]
+      "10H": ["AASHLINRAJ", "ABHIMANYU R MANOJ", "ABHINAV C K", "ADHISH RAJESH", "ADIDEV A B", "ADISH J S", "ADISH KRISHNA D S", "ADWAYA E K", "ALANDEV N K", "ALANDEV P P", "ALBIN KRISHNA", "ALVIN C P", "AMAN JYOTH P S", "AMEGH NATH R B", "ANANTHU P K", "ANGITHKRISHNA", "ARADHYA A S", "ASHIN C K", "ATMAJ ALAN.N S", "DEVASURYA P P", "DHYAN KRISHNA C K", "KARTHIK", "NAINIKA. K M", "NIHARA P C", "PARVANA K K", "RHETHUNAND V P", "RONA P P", "SANMAYA N K", "SAYOOJ V S", "SHARON FIDHAL A S", "SHEHAN SHAJU", "SHIYONA ROSE S R", "SIVANANDHA S R", "SIYA .V S", "SREEDEV .B", "THANMAYA .A"],
+      
+      // CLASS 9
+      "9A": ["AATHMAJ AMAN", "AAYUSH V", "ANAI DHAKSH V S", "ANAY KARTHIK", "ANAY N KARTHIK", "ANAYKRISHNA", "ANUNANDA P S", "AROMAL PRAGHEESH", "ATHMAJ S RAMESH", "AYSHA LUB LUBHA N F", "GOWRINANDA.P.P", "HASEEN MUHAMMAD", "HEVENA S BIJU", "JAHRA JABIN", "KRISHNAPRIYA MANOJ", "LAMHA FATHIMA K M", "MUHAMMAD MINHAJ.E.K", "MUHAMMAD SUHAIL M P", "MUHAMMED AFIN.K.V", "MUHAMMED HISHAN", "MUHAMMED ZIDAN", "NEDHIKA LAKSHMI", "NETHRA S RAJEESH", "NIVEDH NIKHIL", "PRANAV P P", "PRANAV.K.K", "SAI KRISHNA K", "SANIN ABDULLA", "SANVI ROSE", "SHALMIN L S", "SHANMIYA G MOHANAN", "SHANVIN V C", "SHEZA MARIYAM", "SIYANA", "SRAVAN SANGEETH", "SREE PARVANA E M", "SRIYA MOL", "SURYA NANDA", "THANMAYA U L"],
+      "9B": ["AGRAJ R P", "ALAMKRITHA", "ALANDEV T K", "ALONA P", "ANANTHJITH S", "ANNLIZ KRISHNA", "ANUDEV K P", "ARCHITH KRISHNA", "ARMIN ZAHRA .C.K", "ARYAN R", "ASHWIN P", "AYSHA SHEZA", "DHAKSHA RAJEEV V K", "DHARMIK PRAKASH R", "DHWANI RAG P K", "DHYAN DAS", "DIYA FATHIMA C P", "DYUTHITH DEV M P", "GAUTHAMI S", "GILAN SHAHU V.S", "ISHAN SURYA S S", "JAZA MEHAJUBA", "JEWEL ROSE", "NJANTHEJ RANA", "RETHIKA K P", "RINZA FATHIMA", "ROHITH RAJ", "ROONA SHEHAN", "SAYAN SURYA K P", "SHREEDHAR M", "SIDHARTH T S", "SIVANAND K M", "SREEDEV.M.P", "SREELAKSHMI K P", "SREEPARVATHI S", "THRISHAL KRISHNA"],
+      "9C": ["ABDULLA RASLAN C", "ADHILAKSHMI.S.R", "AHAL JYOTH M", "ALAN KARTHIK K C", "ALVIYA", "ANNUAY C", "ARAV SANKAR N P", "ARON DEV", "AYISHA P M", "CYBELA P P", "DEVAPRAYAG", "DIYAN MUHAMMED HASHIM", "GAYA PARVATHI", "GOURI S NIJESH", "HARIDEV T P", "HARINANDANA E", "HARINANDH T P", "KASHINATH K P", "KASINADH K C", "KRISHNAVENI K M", "MINHA FATHIMA P", "MINZA FATHIMA K P", "MUAHAMMAD SHIBILI N M", "MUHAMMAD INSAF", "MUHAMMAD NASHVAN", "MUHAMMED AMAN", "MUHAMMED FARHAN K M", "MUHAMMED MIDLAJ", "MUHAMMED SHANU FARSHAN", "MUHAMMED YASEEN C", "NADHUN VIJAY", "NAIJA FATHIMA", "NAKSHATHRA BABU R", "ROHIN VARISH S", "SHANRIYA A R", "SOORYATHEJ P M", "SWALIH ABDULLAH M P", "VEDHALAKSHMI P P", "VEDHIKA.S.SAJITH"],
+      "9D": ["AADHIL RAMESH K", "AATHMIK RAJ P R", "ADEEP DEEPAK", "ADHIDEV S R", "ADVIK R VIKAS", "ALDIYA T", "ALIDA V SUNEESH", "ANANTHU KRISHNA", "ANIKASREE B", "ASIM ISMAIL. K.K", "AVANIYA . C", "AYANA V P", "DEVA NIDA", "DEVANGANA G S", "DEVASREESH S S", "DEVNA P", "DHYAN SANKAR", "FATHIMA", "FATHIMA ROUFA", "HANNA FATHIMA V V", "HUSNA NAJIYA K C", "KISHAN DEV S ANEESH", "MEHARA C", "MUHAMMAD", "MUHAMMED AFNAN P C", "MUHAMMED BIN ASHRAF", "MUHAMMED HATHIM V", "MUHAMMED RAFNAS . V K", "MUHAMMED SHAMIL.T", "NAINIKA B SAJEEV", "NANDA GOPAL", "NASIH S R", "NELGHA S RINEESH", "RIFA FATHIMA", "SAJON KUMAR P K", "SANA FATHIMA K K", "SANVIN KRISHNA M K", "SHANIF AHAMMED", "SHANZA FATHIMA", "SIYA RAJU", "SIYON A K", "SURYA DEV T K", "THEJUAL R", "VEDHA T K", "VIDHU RAG"],
+      "9E": ["ADHI DEV", "ALAN DEV", "ALANDEV", "ANMIYA DINESH I P", "ANSHIGA S SHYJU", "ANVIN S B", "ARJUN", "ARNAV A R", "ASHIN C H", "ASHIN T T", "ASWIN SANTHOSH", "ATHIKA B S", "AYISHA FAIHA P", "DEVATHEERTH. A", "DEVIKHA LALU", "DHANANJAY S MANOJ", "DHYAN DEV V S", "DIYA LAKSHMI N K", "FATHIMA K", "FATHIMA P P", "GHAZAL V", "GOURI A S", "HAFIZA FARHANA", "IZZAHALAL", "MINHA FATHIMA U K", "MISNA FATHIMA", "MUHAMMAD AFNAN", "MUHAMMED", "MUHAMMED A P", "MUHAMMED SAFVAN", "MUHAMMED THWAHA", "PARTHIV", "RANA FATHIMA M V", "SALVIN DEV M T P", "SALVIN SUNIL", "SAYOOJ A SAJEESH", "SHALVIN S R", "SHIYON V SATHYAN", "VAMDEV V S"],
+      "9F": ["AARADHYA SREEJESH", "ADIKRISHNA M M", "ADISH . R K", "AMNA SHERIN", "ANU SHARVAN M K", "ANUPRIYA P", "ARADHYA A K", "ARCHITH V K", "ASHIKA", "ASHWIN C N", "AVANTHIKA MOL", "AYISHA NASHWA", "DEVA SOORYA S", "DEVANANDA", "FATHIMA", "FATHIMA K P", "FATHIMA ZAHRA .K.K", "GOPIKA.T.K", "HAIFA A P", "MINHA FATHIMA", "MUHAMMAD HAMDAN", "MUHAMMAD RABIN SHAS", "MUHAMMAD RAZIN", "MUHAMMAD RISHAN", "MUHAMMED HASHIR", "MUHAMMED SADIM V K", "NAITHIK P N", "NANDITH KRISHNA K P", "NAWRAH SHERIN.K", "NAZAL FANAN", "NIBIN BABU.P", "NIVEDYA N R", "RIDHA SHERIN.T", "RIDVA FATHIMA", "RIYA FATHIMA T", "SHYAN KRISHNA", "SIYA MEHABIN", "SRAVAN S", "SURYA THEJ S R", "THEERTHA", "UJWAL T K", "VYGALAKSHMI V", "VYSHNAV P P", "YAMIKA P P"],
+      "9G": ["A S SHARON DEV", "AALVIN DEV", "ADHIL KRISHNA K", "ADHIYA T", "ALANDEV", "ALFIYA B S", "ALMIYA", "ALNITH KUMAR T", "ALVIN KRISHNA N P", "AMANDEV P S", "ANANTHALAKSHMI A R", "ANAYA N P", "ANWIN M P", "DEERAJ K M", "DEVANANDH", "DEVATHEERTHA K K", "DHARMIK PRASANTH", "ELVIN M A", "HANSIKA V RAJI", "HARDEV S", "HEMIN S R", "JENA", "KARTHIK RAJ", "NANDANA L R", "NAYAN THEJ V P", "NIYALAKSHMI V P", "RITHIKDEV A", "SANJAY P M", "SANVIYA S R", "SHALVIN", "SHANAYSHEEJI S", "SHANVEDH", "SHINTON", "SHIYONA C", "SIVATHEERTHA RAJ A", "SIYONA SREEJITH", "SOORYAMOL P M", "SREENATH P K", "THANEESI BALA", "UTHRA UDHAYAN", "VAMIKA S VIJEESH", "YOUVIK RANJITH T P"],
+      "9H": ["ADHIDEV A R", "ALAN DEV", "ALAN S B", "ALNA C", "ALNA RAJEEV", "ALOSHIYA RATHEESH", "AMRUTHA GIREESH", "ANAY", "ANMIYA V T", "ANSAF A T", "ANSHIKA SURESH V P", "ANUMITHRA K C", "ARADHYA R S", "ARSHIN SUMESH", "ATHULDEV", "CHAITHRASREE S R", "DEVAJ SAYI", "DHARMIK KRISHNA", "DIYALAKSHMI A R", "GOKULKRISHNA N S", "ISHAAN L", "JULIOUS MIDHLEJ N S", "KASHMEERA RATHEESH G K", "MEGHASANA P P", "MUHAMMED HAMDAN", "NYNIKA SUMESH", "RIDHUN DEV M T", "RIYA BIJU K", "SAI KRISHNA", "SANJAY KRISHNA.U", "SANJAY RAM", "SANVIYA P S", "SHALIN KRISHNA C P", "SHANMIK SREE", "SIDAN S", "SREEDEV S", "SREENANDA E K", "SREENANDA T", "SREEPATH C P", "SREEYUKTHA D K", "THANHIYA S S", "VYGALAKSHMI K"],
+      
+      // CLASS 8
+      "8A": ["AARADHYA A S", "AARADHYA SANTHOSH", "ANAUSHKA MANOJ K V", "ANLIYA SHYJITH", "ANSHIK R N", "ANVED KRISHNA S A", "ARADYA P M", "ARSHIA.S. RAJESH", "ATHIF BIN ASHRAF", "AYISHA K", "AYURDA B R", "DEVADETH L", "DEVASIGHA.S R", "EVA PRAJEED", "FATHIMA LIZA ASHRAF", "GOURI KRISHNA P K", "HAMNA FATHIMA", "JONITA L MANOJ", "MUHAMMED K V", "NASHFA MEHRIN A K", "PARVATHI T", "POPPY D S", "RINSHA FATHIMA", "RISHON RAJ", "RISVIN SHYJU", "RITHWIK RAJINESH", "SATHVIKA SUJESH", "SHELZA NAZVIN", "SHIZAN MUHAMMADALI", "SREEDIL DEV T", "THANHA MARIYAM A P", "UTHARA S J", "VEDA LAKSHMI M", "YADHAV V V"],
+      "8B": ["ADAM KAUSHIK C S", "ANMIYA.K.C", "BHAGAT NIJEESH", "DAKSHALAKSHMI.A L", "DEVADARSH J P", "DEVADARSH M", "DEVIKA V", "FIZA FAZIL", "HADI MOHAMMED", "HIZA NEZMIN", "ISHAAN K", "ISHITA MANJITH", "MEDHALEKSHMI.P.P", "MUHAMMAD NASEEH T M", "MUHAMMED HADHI.A.K", "MUHAMMED JASIL", "MUHAMMED SINAN", "NASHVA", "NAVALKRISHNA.M", "RIDA THANZA N P", "RISVIN DEV", "RITHIKA.S", "RIYON K", "SAI LAKSHMI P N", "SATHWIK GOUTHAM", "SETHU RAM P C", "SNIGDHA PRAJEESH", "SURYA DEV P", "SWATHIKA C", "VEDHIK PRAVEESH", "YEMIN HAMISH", "ZEBA SAHARISH"],
+      "8C": ["AASIF ASSAINAR", "ADHIDEV S", "ADITHYAN V P", "AGNAI KRISHNA", "ANSHIKA A S", "ANSHIYA M SHAJI", "ARCHITHA R VINOD", "ARUSH.M.K", "AVANTHIKA K K", "BIDHAN TUDU", "DAYA LAKSHMI K P", "DEEPTHIR.S.PRADEEP", "DIYA FATHIMA", "LAKSHYA RATHEESH", "LIVOY.D", "MINHA KHADEEJA", "MUHAMMAD RAZIN", "NAFIA AYSHA K", "NIKKATH SAFRIN", "RITHU VARNA T P", "RITHUDEV A", "RIZA MEHARIN", "SANMAYA U K", "SHALVIN S KRISHNA", "SIVADHYAN . V S", "THEHAL M P", "VEDA BHARATH", "VYGHA A S"],
+      "8D": ["ADHI LAKSHMI S L", "AKSHAD DEV M K", "ALAN DEV", "ALVIN THEJ K", "AMNAKRISHNA S.R", "ANSHIN SUDHEESH", "ARADHYA .M.K", "ARADHYA C P", "ARADHYA.S S", "ARADHYASAIREVATHI", "AYISHA NAHIDA K", "AYISHA RUMANA", "DHAKSH DHARMIK K", "DHARMIK ANEESH", "DHARMIK R", "FATHIMA REEM", "LAIBA FATHIMA M K", "MINHA MEHARIN", "MUHAMMAD THWAYYIB . V K", "MUHAMMED ADHIL V P", "MUHAMMED YASEEN", "NAINIKA SATHYAN", "NEERAJ KRISHNA", "NIPIN KRISHNA", "NIYA SUNIL U K", "NYDHIK P K", "SHALVIN T P", "SHAMMAS AMEEN", "SREEBHADRA P P", "SREEDEV KRISHNA R P", "SREEHARI M", "SRIYA SREEJITH", "THAMANNA. N .K"],
+      "8E": ["ADAL ZAYAN", "AKSHARA S R", "ALVIN KRISHNA P", "ARADHYA GANESH", "ASHLIN AJITH", "DHYAN S", "FATHIMATHUL MINHA SHERIN", "HADI HAFSA R", "HEMIN A N", "MOHAMMAD SHAFNAS.N.K", "MOHAMMED THAHA", "MUHAMMAD HADI HAMDAN", "MUHAMMAD RADHIN", "MUHAMMED MIDLAJ", "MUHAMMED MISHAL", "MUHAMMED RAHAN", "MUHAMMED SINAN C T K", "NAFA SIDRA", "NIHA KRISHNA N V", "POOJA V V", "PRAJJUN S PRADEEPAN", "SALVIN P.P", "SANGEETH V H", "SHIVADHA L", "SHIVANI L", "SIDRATHUL MUNTHAHA P P", "SIVANI K K", "SIYA LAKSHMI", "SRAYALAKSHMI K K", "SURYADEV T", "THANISHKH K", "THANMAYA NAKULESH", "ZAMIN MUHAMMED V A P"],
+      "8F": ["ADARV SUBHASH", "ADHIDEV N R", "ADHIDEV P R", "ANANTHU K", "ANMIYA BIJU", "ANUDEV", "AYAN ASHIK K P", "AYAN THEJ", "BHAGATH K B", "DHRUVIN .S H", "DHYAN VINOD", "EBINVINU V B", "FAHABHA MEHABIN", "HAMNA FATHIMA", "HANNA FATHIMA", "HRIDHIKA N", "ISARA ROSE", "JUWAIRIYA", "KARTHIKEYAN", "MEHANA FATHIMA N K", "MILAN DEV", "MUHAMMAD N K", "MUHAMMED DILSHAN", "MUHAMMED RAZIN M P", "NAJWA FATHIMA", "RISHWAL DEV A S", "RITHIK BALA", "SAYANORA ANEESH", "SEJAL PRADEESH", "SHARVIN R LIJEESH", "SIVA NANDH A S", "SREEHARI R NIJEESH", "VAGDA LAKSHMI"],
+      "8G": ["ADHI DEV C P", "ADITHYA N P", "ADWAITH V C", "ALAN SURYA", "ALANKRISHNA", "ANAINA.A.B", "ASHIKH DEV", "ASHIN DEV O P", "ASHMIKA.N.K", "DEVA AMRUDANANDA P M", "DEVADHARSH A B", "DIYA LAKSHMI C P", "GHANASHYAM C S", "JUNA LINEESH.C.K", "KARTHIK SANEESH", "KARTHIKA", "NIYA SHAJI", "RISHAL K M", "SANVIYA SURESH", "SHARON V M", "SHIVADHA LAKSHMI", "SHRAVAN J P", "SNEHID DEVAS", "SREE SHARON", "SRENIKA K", "THAMANNA DIBESH", "VAIGALAKSHMI A", "VEDHA PRIYA T P", "VINAY SANKAR V K"],
+      "8H": ["AADIDEV P P", "AKSHIKA M", "ANMIYA", "ARSHIK DEV P", "ARUNDHATHI K", "ASWIN DEV K K", "AVANI VIJEESH", "DARSITH V R", "DEVALAKSHMI.V.C", "DEVAMGANA P B", "GOUTHAM KRISHNA A", "ISHIKA A", "KEDARNADH B.S", "NAINIKA C P", "NAYAN THEJ K C", "NIHAL S", "NIVEDYA ANIL KUMAR", "RITHUKRISHNA C P", "SAMARTH S CHANDRAN", "SARON A K", "SHANVIN PRAJITH C P", "SHIVA LAKSHMI SANAL", "SHYAMDEV S NATH", "SIVADA P M", "SIVADA SASI", "SURYA DEV V.K", "THEJA KALLYANI", "THRINAD SHAH", "VEDAJ", "VISHWADHAR P P"]
     };
     
     const subjectsList = ['Language 1', 'Language 2', 'English', 'Hindi', 'Social Science', 'Physics', 'Chemistry', 'Biology', 'Mathematics'];
-    const currentClass = "10"; 
     
-    // Language Teachers List (Access ALL divisions, but ONLY Language 1 & 2)
+    // Language Teachers List (Access ALL divisions across 10, 9, 8, but ONLY Language 1 & 2)
     const languageTeachers = ["Aneesh A", "AP Najee Ahammed", "CK Leela", "KV Sheeba", "Shyna R", "Smitha KK", "T Sayad"];
 
-    // Teacher Mapping
+    // Updated Teacher Mapping across 10, 9, 8
     const teacherMapping = {
-      "Biology": { "10A": "ASHITHA S P", "10B": "K ROOSY CONTRACTOR", "10C": "KK RINCY", "10D": "ASHITHA S P", "10E": "KK RINCY", "10F": "K ROOSY CONTRACTOR", "10H": "K ROOSY CONTRACTOR" },
-      "Chemistry": { "10A": "SREERAG GR", "10B": "SREERAG GR", "10C": "AMRUTHA R", "10D": "AMRUTHA R", "10E": "AMRUTHA R", "10F": "AMRUTHA R", "10G": "SREERAG GR", "10H": "SREERAG GR" },
-      "English": { "10A": "V BRIJISHA", "10B": "AP MUNEER", "10C": "KK SREENA", "10D": "P MIDHUN", "10E": "SANATH SN", "10F": "V BRIJISHA", "10G": "KK SREENA", "10H": "AP MUNEER" },
-      "Hindi": { "10A": "VK REEJA", "10B": "P DEEPIKA", "10C": "P K GOPIKA", "10D": "P K GOPIKA", "10E": "P DEEPIKA", "10F": "VK REEJA", "10G": "P DEEPIKA", "10H": "VK REEJA" },
-      "Mathematics": { "10A": "TP THULASIDAS", "10B": "VK FAHEEMA", "10C": "TP THULASIDAS", "10D": "VP RAGILA", "10E": "NK ABHINA", "10F": "NK ABHINA", "10G": "TP DIJA", "10H": "CB ABHILASH" },
-      "Physics": { "10A": "CP LIJO", "10B": "UR THRISALA", "10C": "INDULEKHA NR", "10D": "UR THRISALA", "10E": "CP LIJO", "10F": "CP LIJO", "10G": "INDULEKHA NR", "10H": "INDULEKHA NR" },
-      "Social Science": { "10A": "AP RAJEEVAN", "10B": "MP SREEKANTH", "10C": "AP RAJEEVAN", "10D": "NISAR EDATHIL", "10E": "NISAR EDATHIL", "10F": "MK BINDU", "10G": "MK BINDU", "10H": "NK NIJISHA" }
+      "Biology": { 
+          "10A": "ASHITHA S P", "10B": "K ROOSY CONTRACTOR", "10C": "KK RINCY", "10D": "ASHITHA S P", "10E": "KK RINCY", "10F": "K ROOSY CONTRACTOR", "10G": "K ROOSY CONTRACTOR", "10H": "ASHITHA S P", 
+          "9A": "K ROOSY CONTRACTOR", "9B": "ASHITHA S P", "9C": "KK RINCY", "9D": "KK RINCY", "9E": "K ROOSY CONTRACTOR", "9F": "ASHITHA S P", "9G": "ASHITHA S P", "9H": "KK RINCY", 
+          "8A": "ASHITHA S P", "8B": "KK RINCY", "8C": "K ROOSY CONTRACTOR", "8D": "ASHITHA S P", "8E": "K ROOSY CONTRACTOR", "8F": "KK RINCY", "8G": "K ROOSY CONTRACTOR", "8H": "K ROOSY CONTRACTOR" 
+      },
+      "Chemistry": { 
+          "10A": "SREERAG GR", "10B": "SREERAG GR", "10C": "AMRUTHA R", "10D": "AMRUTHA R", "10E": "AMRUTHA R", "10F": "AMRUTHA R", "10G": "SREERAG GR", "10H": "SREERAG GR",
+          "9A": "AMRUTHA R", "9B": "SREERAG GR", "9C": "AMRUTHA R", "9D": "SREERAG GR", "9E": "SREERAG GR", "9F": "SREERAG GR", "9G": "AMRUTHA R", "9H": "AMRUTHA R",
+          "8A": "AMRUTHA R", "8B": "UR THRISALA", "8C": "SREERAG GR", "8D": "AMRUTHA R", "8E": "UR THRISALA", "8F": "UR THRISALA", "8G": "UR THRISALA", "8H": "UR THRISALA" 
+      },
+      "English": { 
+          "10A": "V BRIJISHA", "10B": "AP MUNEER", "10C": "KK SREENA", "10D": "P MIDHUN", "10E": "SANATH SN", "10F": "V BRIJISHA", "10G": "KK SREENA", "10H": "AP MUNEER",
+          "9A": "AP MUNEER", "9B": "V BRIJISHA", "9C": "P MIDHUN", "9D": "P MIDHUN", "9E": "KK SREENA", "9F": "SANATH SN", "9G": "AP MUNEER", "9H": "SANATH SN",
+          "8A": "KK SREENA", "8B": "V BRIJISHA", "8C": "SANATH SN", "8D": "P MIDHUN", "8E": "P MIDHUN", "8F": "SANATH SN", "8G": "V BRIJISHA", "8H": "AP MUNEER" 
+      },
+      "Hindi": { 
+          "10A": "VK REEJA", "10B": "P DEEPIKA", "10C": "P K GOPIKA", "10D": "P K GOPIKA", "10E": "P DEEPIKA", "10F": "VK REEJA", "10G": "P DEEPIKA", "10H": "VK REEJA",
+          "9A": "P K GOPIKA", "9B": "VK REEJA", "9C": "P DEEPIKA", "9D": "P K GOPIKA", "9E": "VK REEJA", "9F": "P DEEPIKA", "9G": "P K GOPIKA", "9H": "VK REEJA",
+          "8A": "P DEEPIKA", "8B": "P K GOPIKA", "8C": "VK REEJA", "8D": "P DEEPIKA", "8E": "P DEEPIKA", "8F": "VK REEJA", "8G": "P K GOPIKA", "8H": "P K GOPIKA" 
+      },
+      "Mathematics": { 
+          "10A": "TP THULASIDAS", "10B": "VK FAHEEMA", "10C": "TP THULASIDAS", "10D": "VP RAGILA", "10E": "NK ABHINA", "10F": "NK ABHINA", "10G": "TP DIJA", "10H": "CB ABHILASH",
+          "9A": "VP RAGILA", "9B": "TP THULASIDAS", "9C": "TP DIJA", "9D": "NK ABHINA", "9E": "CB ABHILASH", "9F": "VK FAHEEMA", "9G": "CB ABHILASH", "9H": "VP RAGILA",
+          "8A": "VK FAHEEMA", "8B": "NK ABHINA", "8C": "VP RAGILA", "8D": "VK FAHEEMA", "8E": "TP DIJA", "8F": "CB ABHILASH", "8G": "TP DIJA", "8H": "TP THULASIDAS" 
+      },
+      "Physics": { 
+          "10A": "CP LIJO", "10B": "UR THRISALA", "10C": "INDULEKHA NR", "10D": "UR THRISALA", "10E": "CP LIJO", "10F": "CP LIJO", "10G": "INDULEKHA NR", "10H": "INDULEKHA NR",
+          "9A": "CP LIJO", "9B": "CP LIJO", "9C": "UR THRISALA", "9D": "INDULEKHA NR", "9E": "UR THRISALA", "9F": "INDULEKHA NR", "9G": "INDULEKHA NR", "9H": "UR THRISALA",
+          "8A": "CP LIJO", "8B": "INDULEKHA NR", "8C": "CP LIJO", "8D": "CP LIJO", "8E": "INDULEKHA NR", "8F": "CP LIJO", "8G": "INDULEKHA NR", "8H": "CP LIJO" 
+      },
+      "Social Science": { 
+          "10A": "AP RAJEEVAN", "10B": "MP SREEKANTH", "10C": "AP RAJEEVAN", "10D": "NISAR EDATHIL", "10E": "NISAR EDATHIL", "10F": "MK BINDU", "10G": "MK BINDU", "10H": "NK NIJISHA",
+          "9A": "MP SREEKANTH", "9B": "NK NIJISHA", "9C": "MP SREEKANTH", "9D": "NK NIJISHA", "9E": "NISAR EDATHIL", "9F": "MK BINDU", "9G": "NISAR EDATHIL", "9H": "MK BINDU",
+          "8A": "AP RAJEEVAN", "8B": "MP SREEKANTH", "8C": "AP RAJEEVAN", "8D": "NK NIJISHA", "8E": "AP RAJEEVAN", "8F": "NISAR EDATHIL", "8G": "MP SREEKANTH", "8H": "MK BINDU" 
+      }
     };
     
     // Auth & App State
     let loggedInUser = null; 
     let tempLoginUser = "";
     let tempLoginPin = "";
+    let currentStandard = "";
     let currentExam = "";
     let currentDivision = "";
     let currentSubject = "";
@@ -456,8 +518,8 @@
     window.addEventListener('load', function() {
       const teacherSet = new Set(languageTeachers); 
       for (let sub in teacherMapping) {
-        for (let div in teacherMapping[sub]) {
-          teacherSet.add(teacherMapping[sub][div]);
+        for (let cls in teacherMapping[sub]) {
+          teacherSet.add(teacherMapping[sub][cls]);
         }
       }
       const sortedTeachers = Array.from(teacherSet).sort();
@@ -483,7 +545,7 @@
           loggedInUser = savedTeacher;
           document.getElementById('teacherGreeting').textContent = "Welcome, " + savedTeacher;
           document.getElementById('logoutBtn').style.display = "block";
-          showPage('page0'); 
+          showPage('pageClassSelect'); 
       }
     });
 
@@ -498,7 +560,7 @@
       document.querySelectorAll('.page').forEach(page => page.classList.remove('active'));
       document.getElementById(pageId).classList.add('active');
       
-      if (pageId === 'pageHome' || pageId === 'page0' || pageId === 'pageLogin' || pageId === 'pageAdminLogin') {
+      if (pageId === 'pageHome' || pageId === 'pageClassSelect' || pageId === 'page0' || pageId === 'pageLogin' || pageId === 'pageAdminLogin') {
           document.body.style.backgroundColor = '#eef2f5'; 
       }
       
@@ -601,7 +663,7 @@
         document.getElementById('loginStep2').style.display = "none";
         
         document.getElementById('logoutBtn').style.display = "block";
-        showPage('page0'); 
+        showPage('pageClassSelect'); 
     }
 
     function logoutDevice() {
@@ -699,10 +761,31 @@
         loggedInUser = "Admin"; 
         document.getElementById('teacherGreeting').textContent = "Welcome, Admin Mode";
         document.getElementById('logoutBtn').style.display = "block";
-        showPage('page0');
+        showPage('pageClassSelect');
     }
 
     // --- LOGIC FOR EXAM & ENTRY FLOW ---
+    function selectStandard(std) {
+        currentStandard = std;
+        
+        // Update headers dynamic text
+        document.getElementById('divisionTitle').textContent = "Select Class " + std + " Division";
+        document.getElementById('reportDivisionTitle').textContent = "Select Class " + std + " Division";
+        
+        if (std === '10') {
+            document.body.style.backgroundColor = '#eef2f5';
+            showPage('page0'); // Let them select First Term or Mid Term
+        } else {
+            // Class 9 and 8 ONLY have First Term Exam. Auto-select and bypass Page0.
+            currentExam = "First Term Exam";
+            document.querySelectorAll('.test-name').forEach(el => el.textContent = currentExam);
+            document.body.style.backgroundColor = '#e0f2fe';
+            
+            filterDivisionsForTeacher();
+            showPage('page1');
+        }
+    }
+
     function selectExam(exam) {
       currentExam = exam;
       document.querySelectorAll('.test-name').forEach(el => el.textContent = currentExam);
@@ -714,6 +797,14 @@
       showPage('page1');
     }
 
+    function goBackFromDivisions() {
+        if (currentStandard === '10') {
+            showPage('page0');
+        } else {
+            showPage('pageClassSelect');
+        }
+    }
+
     function filterDivisionsForTeacher() {
         if (loggedInUser === "Admin") {
             ['A','B','C','D','E','F','G','H'].forEach(d => {
@@ -723,6 +814,7 @@
             return;
         }
 
+        // Language teachers have access to all divisions across all classes
         if (languageTeachers.includes(loggedInUser)) {
             ['A','B','C','D','E','F','G','H'].forEach(d => {
                 let btn = document.getElementById('btn-div-'+d);
@@ -733,9 +825,9 @@
 
         let allowedDivs = [];
         for (let sub in teacherMapping) {
-            for (let div in teacherMapping[sub]) {
-                if (teacherMapping[sub][div] === loggedInUser) {
-                    allowedDivs.push(div.replace('10', '')); 
+            for (let cls in teacherMapping[sub]) {
+                if (teacherMapping[sub][cls] === loggedInUser && cls.startsWith(currentStandard)) {
+                    allowedDivs.push(cls.replace(currentStandard, '')); 
                 }
             }
         }
@@ -752,7 +844,7 @@
 
     function selectDivision(div) {
       currentDivision = div;
-      const fullClassName = currentClass + currentDivision;
+      const fullClassName = currentStandard + currentDivision;
       document.getElementById('subjectTitleClass').textContent = "Class " + fullClassName;
       
       filterSubjectsForTeacher(fullClassName);
@@ -769,6 +861,7 @@
                 return;
             }
 
+            // Language teachers ONLY get access to Language 1 & 2
             if (languageTeachers.includes(loggedInUser)) {
                 if (sub === 'Language 1' || sub === 'Language 2') {
                     btn.classList.remove('disabled-btn'); btn.disabled = false;
@@ -789,7 +882,7 @@
 
     function selectSubject(sub) {
       currentSubject = sub;
-      const fullClassName = currentClass + currentDivision;
+      const fullClassName = currentStandard + currentDivision;
       document.getElementById('marksTitle').textContent = "Class " + fullClassName;
       document.getElementById('marksSubtitle').textContent = sub;
       
@@ -876,7 +969,7 @@
     function saveMarks() {
       const msg = document.getElementById('message');
       const btn = document.getElementById('saveBtn');
-      const fullClassName = currentClass + currentDivision;
+      const fullClassName = currentStandard + currentDivision;
       const inputs = document.querySelectorAll('.mark-input');
       const marksToSave = [];
       
@@ -948,8 +1041,8 @@
         } else {
             if (subject === 'Social Science' || subject === 'Mathematics') return 40;
             if (subject === 'English') {
-                if (division === '10A' || division === '10F') return 40; 
-                if (division === '10B' || division === '10H') return 31; 
+                if (division.includes('A') || division.includes('F')) return 40; 
+                if (division.includes('B') || division.includes('H')) return 31; 
                 return 40;
             }
             return 25;
@@ -972,9 +1065,6 @@
     // --- LOGIC FOR VIEWING/PRINTING REPORTS ---
     function selectReportType(type) {
       currentReportType = type;
-      if (type === 'top10') { document.getElementById('reportDivisionTitle').textContent = "Top 10 - Select Division"; } 
-      else if (type === 'progress') { document.getElementById('reportDivisionTitle').textContent = "Progress Report - Select Division"; } 
-      else { document.getElementById('reportDivisionTitle').textContent = "Class Report - Select Division"; }
       showPage('page4a');
     }
 
@@ -982,13 +1072,15 @@
         showPage('page1');
     }
 
-    function fetchAndShowReport(className) {
+    function fetchAndShowReport(divLetter) {
+      let className = currentStandard + divLetter;
       currentReportClass = className;
       
       if (currentReportType === 'progress') {
         document.getElementById('progressLoadingIndicator').style.display = 'block';
       } else {
-        document.getElementById('reportTitle').textContent = "Class " + className + " Report";
+        let titleSuffix = currentReportType === 'top10' ? " (Top 10 Students)" : "";
+        document.getElementById('reportTitle').textContent = "Class " + className + " Report" + titleSuffix;
         showPage('page5');
         document.getElementById('loadingIndicator').style.display = 'block';
         document.getElementById('tableWrapper').style.display = 'none';
@@ -1067,14 +1159,28 @@
                <span>Name: <span style="color: #000000;">${student}</span></span><span>Class: <span style="color: #000000;">${className}</span></span>
              </div>
              <table class="progress-table">
-               <thead><tr><th rowspan="2" style="border-bottom: 2px solid #000000;">Subject</th><th colspan="2" style="border-bottom: 1px solid #000000;">Mid Term</th><th colspan="2" style="border-bottom: 1px solid #000000;">First Term</th></tr>
+               <thead>`;
+               
+          if (currentStandard === '10') {
+              html += `<tr><th rowspan="2" style="border-bottom: 2px solid #000000;">Subject</th><th colspan="2" style="border-bottom: 1px solid #000000;">Mid Term</th><th colspan="2" style="border-bottom: 1px solid #000000;">First Term</th></tr>
                <tr><th>Score</th><th>Grade</th><th>Score</th><th>Grade</th></tr></thead><tbody>`;
+          } else {
+              // Simpler table for 9th and 8th
+              html += `<tr><th rowspan="2" style="border-bottom: 2px solid #000000;">Subject</th><th colspan="2" style="border-bottom: 1px solid #000000;">First Term</th></tr>
+               <tr><th>Score</th><th>Grade</th></tr></thead><tbody>`;
+          }
+
           subjectsList.forEach(sub => {
              let ftMark = pivot[student].marks["First Term Exam"][sub] !== undefined ? pivot[student].marks["First Term Exam"][sub] : '-';
-             let mtMark = pivot[student].marks["First Mid Term Exam"][sub] !== undefined ? pivot[student].marks["First Mid Term Exam"][sub] : '-';
              let ftGrade = ftMark !== '-' ? getGrade(ftMark, getMaxMark("First Term Exam", sub, className)) : '-';
-             let mtGrade = mtMark !== '-' ? getGrade(mtMark, getMaxMark("First Mid Term Exam", sub, className)) : '-';
-             html += `<tr><td>${sub}</td><td>${mtMark}</td><td style="font-weight: bold;">${mtGrade}</td><td>${ftMark}</td><td style="font-weight: bold;">${ftGrade}</td></tr>`;
+             
+             if (currentStandard === '10') {
+                 let mtMark = pivot[student].marks["First Mid Term Exam"][sub] !== undefined ? pivot[student].marks["First Mid Term Exam"][sub] : '-';
+                 let mtGrade = mtMark !== '-' ? getGrade(mtMark, getMaxMark("First Mid Term Exam", sub, className)) : '-';
+                 html += `<tr><td>${sub}</td><td>${mtMark}</td><td style="font-weight: bold;">${mtGrade}</td><td>${ftMark}</td><td style="font-weight: bold;">${ftGrade}</td></tr>`;
+             } else {
+                 html += `<tr><td>${sub}</td><td>${ftMark}</td><td style="font-weight: bold;">${ftGrade}</td></tr>`;
+             }
           });
           html += `</tbody></table>
              <div style="margin-top: auto; text-align: right; padding-right: 20px;"><div style="display: inline-block; text-align: center;">
@@ -1088,8 +1194,7 @@
         setTimeout(() => { window.print(); document.body.classList.remove('print-progress'); }, 200);
 
       } else {
-        let titleSuffix = currentReportType === 'top10' ? " (Top 10 Students)" : "";
-        html = '<div style="padding: 10px; background: white;"><h2 style="text-align: center; margin-bottom: 20px;">SANSKRIT HS VATTOLI - Class ' + className + titleSuffix + '</h2>';
+        html = '<div style="padding: 10px; background: white;"><h2 style="text-align: center; margin-bottom: 20px;">SANSKRIT HS VATTOLI - Class ' + className + '</h2>';
         html += '<table class="marks-table"><thead><tr><th>Student Name</th>';
         subjectsList.forEach(sub => html += `<th>${sub}</th>`);
         html += '<th style="background-color: #e2e8f0;">Total</th></tr></thead><tbody>';
