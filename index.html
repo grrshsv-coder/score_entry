@@ -411,7 +411,7 @@
     const IS_MID_TERM_ENTRY_OPEN = false; 
 
     // REPLACE THIS WITH YOUR APPS SCRIPT URL!
-    const scriptURL = 'https://script.google.com/macros/s/AKfycby05tkg3ElQdyLWsIwXICADRJgQYWkJQZkELLdvV-KArxfZNvWQXfgE9LRRrB3Bii-7lQ/exec';
+    const scriptURL = 'YOUR_WEB_APP_URL_HERE';
 
     const studentsData = {
       "10A": ["ADHIDEV A S", "ADHISANKAR S R", "ALAN S N", "ALANKRISHNA V S", "ANUNANDA N P", "ANUNANDH P D", "ANVIK K C", "DEVANANDA K", "DEVARSH RAJEEV", "DHYANA SOJAV. V P", "FATHIMA RIZA MEHRIN", "FATHIMA ZAHRA K", "FILZA FATHIMA C H", "HANIYA FATHIMA N S", "HINA FARHEEN", "KARTHIK. B", "KOUSHIK PRAKASH", "LEZIN MUHAMMAD", "LIYA MEHAJABIN", "MADHUMATH SARANG", "MISBA MEHRIN", "MUHAMMED MUNEES P P", "MUHAMMED NASMIL V K", "MUHAMMED RIDAN.K.K", "MUHAMMED ZIDHAN T K", "NAADHIDEV S R", "NAVAMI A S", "NEERAJ R", "NIHA FATHIMA", "NIVEDITHA .D", "RAMONA ROSE", "RITHU S LAKSHMI", "SALMAN", "SARANNYA V K", "SHAJA FATHIMA K K", "SIVA PANCHAMI.M.K", "SIVAKESH", "SOORYAKIRAN V P", "SRAVAN KRISHNA", "SREEDARSH L L", "SREEHARSH L L", "SUHANA SAFREEN", "SURYADEV V BABU", "THANHARA C T", "VIVEK.R"],
@@ -435,7 +435,7 @@
       "Biology": { "10A": "ASHITHA S P", "10B": "K ROOSY CONTRACTOR", "10C": "KK RINCY", "10D": "ASHITHA S P", "10E": "KK RINCY", "10F": "K ROOSY CONTRACTOR", "10H": "K ROOSY CONTRACTOR" },
       "Chemistry": { "10A": "SREERAG GR", "10B": "SREERAG GR", "10C": "AMRUTHA R", "10D": "AMRUTHA R", "10E": "AMRUTHA R", "10F": "AMRUTHA R", "10G": "SREERAG GR", "10H": "SREERAG GR" },
       "English": { "10A": "V BRIJISHA", "10B": "AP MUNEER", "10C": "KK SREENA", "10D": "P MIDHUN", "10E": "SANATH SN", "10F": "V BRIJISHA", "10G": "KK SREENA", "10H": "AP MUNEER" },
-      "Hindi": { "10A": "VK REEJA", "10B": "AMRUTHA S", "10C": "P K GOPIKA", "10D": "P K GOPIKA", "10E": "AMRUTHA S", "10F": "VK REEJA", "10G": "AMRUTHA S", "10H": "VK REEJA" },
+      "Hindi": { "10A": "VK REEJA", "10B": "P DEEPIKA", "10C": "P K GOPIKA", "10D": "P K GOPIKA", "10E": "P DEEPIKA", "10F": "VK REEJA", "10G": "P DEEPIKA", "10H": "VK REEJA" },
       "Mathematics": { "10A": "TP THULASIDAS", "10B": "VK FAHEEMA", "10C": "TP THULASIDAS", "10D": "VP RAGILA", "10E": "NK ABHINA", "10F": "NK ABHINA", "10G": "TP DIJA", "10H": "CB ABHILASH" },
       "Physics": { "10A": "CP LIJO", "10B": "UR THRISALA", "10C": "INDULEKHA NR", "10D": "UR THRISALA", "10E": "CP LIJO", "10F": "CP LIJO", "10G": "INDULEKHA NR", "10H": "INDULEKHA NR" },
       "Social Science": { "10A": "AP RAJEEVAN", "10B": "MP SREEKANTH", "10C": "AP RAJEEVAN", "10D": "NISAR EDATHIL", "10E": "NISAR EDATHIL", "10F": "MK BINDU", "10G": "MK BINDU", "10H": "NK NIJISHA" }
@@ -976,6 +976,10 @@
       else if (type === 'progress') { document.getElementById('reportDivisionTitle').textContent = "Progress Report - Select Division"; } 
       else { document.getElementById('reportDivisionTitle').textContent = "Class Report - Select Division"; }
       showPage('page4a');
+    }
+
+    function goBackFromReports() {
+        showPage('page1');
     }
 
     function fetchAndShowReport(className) {
