@@ -645,7 +645,7 @@
             document.getElementById('loadingIndicator').textContent = "Error loading data.";
           }
         }
-      }
+      })
       .catch(error => {
         if (currentReportType === 'progress') {
             document.getElementById('progressLoadingIndicator').textContent = "Network error. Please try again.";
