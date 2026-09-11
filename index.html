@@ -213,9 +213,7 @@
       <!-- Step 1: Initial Auth -->
       <div id="loginStep1">
         <label style="font-weight:bold; color:#475569; display:block; margin-bottom:5px;">Select Name</label>
-        <select id="teacherSelect">
-            <option value="" disabled selected hidden>Select Your Name</option>
-        </select>
+        <select id="teacherSelect"></select>
         
         <label style="font-weight:bold; color:#475569; display:block; margin-bottom:5px;">Enter PIN</label>
         <input type="password" id="teacherPin" placeholder="Enter PIN (Default: 1234)" pattern="[0-9]*" inputmode="numeric">
@@ -528,6 +526,8 @@
       
       const selectLogin = document.getElementById('teacherSelect');
       const selectAdmin = document.getElementById('adminTeacherSelect');
+      
+      selectLogin.innerHTML = '<option value="" disabled selected hidden>Select Your Name</option>';
       
       let adminOpt = document.createElement('option'); 
       adminOpt.value = "Admin"; 
@@ -1033,13 +1033,11 @@
 
     // --- GRADING AND MAX MARKS HELPERS ---
     function getMaxMark(exam, subject, className) {
-        // Special logic for Class 8
         if (className.startsWith('8')) {
             if (subject === 'Physics' || subject === 'Chemistry' || subject === 'Biology') return 20;
             return 40;
         }
 
-        // Standard logic for 9 and 10
         if (exam === "First Term Exam") {
             if (subject === 'English' || subject === 'Social Science' || subject === 'Mathematics') return 80;
             return 40;
@@ -1057,7 +1055,6 @@
     function getGrade(mark, maxMark, className) {
         let percentage = Math.round((parseFloat(mark) / maxMark) * 100);
         
-        // Special grading logic for Class 8
         if (className && className.startsWith('8')) {
             if (percentage >= 80) return 'A';
             if (percentage >= 60) return 'B';
@@ -1065,7 +1062,6 @@
             if (percentage >= 30) return 'D';
             return 'E';
         } else {
-            // Standard 9-point grading logic for Classes 9 and 10
             if (percentage >= 90) return 'A+';
             if (percentage >= 80) return 'A';
             if (percentage >= 70) return 'B+';
@@ -1181,7 +1177,6 @@
               html += `<tr><th rowspan="2" style="border-bottom: 2px solid #000000;">Subject</th><th colspan="2" style="border-bottom: 1px solid #000000;">Mid Term</th><th colspan="2" style="border-bottom: 1px solid #000000;">First Term</th></tr>
                <tr><th>Score</th><th>Grade</th><th>Score</th><th>Grade</th></tr></thead><tbody>`;
           } else {
-              // Simpler table for 9th and 8th
               html += `<tr><th rowspan="2" style="border-bottom: 2px solid #000000;">Subject</th><th colspan="2" style="border-bottom: 1px solid #000000;">First Term</th></tr>
                <tr><th>Score</th><th>Grade</th></tr></thead><tbody>`;
           }
@@ -1210,7 +1205,8 @@
         setTimeout(() => { window.print(); document.body.classList.remove('print-progress'); }, 200);
 
       } else {
-        html = '<div style="padding: 10px; background: white;"><h2 style="text-align: center; margin-bottom: 20px;">SANSKRIT HS VATTOLI - Class ' + className + '</h2>';
+        let titleSuffix = currentReportType === 'top10' ? " (Top 10 Students)" : "";
+        html = '<div style="padding: 10px; background: white;"><h2 style="text-align: center; margin-bottom: 20px;">SANSKRIT HS VATTOLI - Class ' + className + titleSuffix + '</h2>';
         html += '<table class="marks-table"><thead><tr><th>Student Name</th>';
         subjectsList.forEach(sub => html += `<th>${sub}</th>`);
         html += '<th style="background-color: #e2e8f0;">Total</th></tr></thead><tbody>';
