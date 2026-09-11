@@ -517,13 +517,37 @@
       const fullClassName = currentClass + currentDivision;
       const inputs = document.querySelectorAll('.mark-input');
       const marksToSave = [];
+      
+      const maxMarkAllowed = getMaxMark(currentExam, currentSubject, fullClassName);
+      let validationError = "";
 
-      inputs.forEach(input => {
+      for(let i=0; i<inputs.length; i++) {
+        let input = inputs[i];
+        
+        // Reset styles first
+        input.style.borderColor = "#cbd5e1";
+        input.style.backgroundColor = "#f8fafc";
+        
         const markValue = input.value.trim();
         if (markValue !== "") {
-          marksToSave.push({ exam: currentExam, className: fullClassName, subject: currentSubject, student: input.dataset.studentName, mark: markValue });
+          let numValue = parseFloat(markValue);
+          if (numValue > maxMarkAllowed || numValue < 0) {
+            validationError = `Entry rejected: Mark cannot exceed ${maxMarkAllowed} for ${currentSubject}.`;
+            input.style.borderColor = "#ef4444";
+            input.style.backgroundColor = "#fee2e2";
+            // We don't break immediately so we can highlight ALL invalid inputs
+          } else {
+            marksToSave.push({ exam: currentExam, className: fullClassName, subject: currentSubject, student: input.dataset.studentName, mark: markValue });
+          }
         }
-      });
+      }
+
+      if (validationError !== "") {
+        msg.style.color = "#b91c1c"; 
+        msg.style.backgroundColor = "#fee2e2"; 
+        msg.textContent = validationError;
+        return; // Halt the saving process entirely
+      }
 
       if (marksToSave.length === 0) {
         msg.style.color = "#b91c1c"; msg.style.backgroundColor = "#fee2e2"; msg.textContent = "No marks entered. Nothing to save.";
@@ -554,7 +578,11 @@
 
     function enableEditing() {
       const inputs = document.querySelectorAll('.mark-input');
-      inputs.forEach(input => input.disabled = false);
+      inputs.forEach(input => {
+        input.disabled = false;
+        input.style.borderColor = "#cbd5e1";
+        input.style.backgroundColor = "#ffffff";
+      });
       document.getElementById('editBtn').style.display = "none";
       const saveBtn = document.getElementById('saveBtn');
       saveBtn.style.display = "block";
