@@ -334,9 +334,10 @@
   <div id="printArea"></div>
 
   <script>
-    // --- MASTER SWITCH FOR CLOSING DATA ENTRY ---
-    // Change this to true to allow saving/editing again.
-    const IS_DATA_ENTRY_OPEN = true;
+    // --- MASTER SWITCHES FOR CLOSING DATA ENTRY ---
+    // Change to 'false' to close data entry for that specific exam.
+    const IS_FIRST_TERM_ENTRY_OPEN = true;
+    const IS_MID_TERM_ENTRY_OPEN = false; 
 
     const studentsData = {
       "10A": ["ADHIDEV A S", "ADHISANKAR S R", "ALAN S N", "ALANKRISHNA V S", "ANUNANDA N P", "ANUNANDH P D", "ANVIK K C", "DEVANANDA K", "DEVARSH RAJEEV", "DHYANA SOJAV. V P", "FATHIMA RIZA MEHRIN", "FATHIMA ZAHRA K", "FILZA FATHIMA C H", "HANIYA FATHIMA N S", "HINA FARHEEN", "KARTHIK. B", "KOUSHIK PRAKASH", "LEZIN MUHAMMAD", "LIYA MEHAJABIN", "MADHUMATH SARANG", "MISBA MEHRIN", "MUHAMMED MUNEES P P", "MUHAMMED NASMIL V K", "MUHAMMED RIDAN.K.K", "MUHAMMED ZIDHAN T K", "NAADHIDEV S R", "NAVAMI A S", "NEERAJ R", "NIHA FATHIMA", "NIVEDITHA .D", "RAMONA ROSE", "RITHU S LAKSHMI", "SALMAN", "SARANNYA V K", "SHAJA FATHIMA K K", "SIVA PANCHAMI.M.K", "SIVAKESH", "SOORYAKIRAN V P", "SRAVAN KRISHNA", "SREEDARSH L L", "SREEHARSH L L", "SUHANA SAFREEN", "SURYADEV V BABU", "THANHARA C T", "VIVEK.R"],
@@ -425,8 +426,10 @@
       showPage('page3');
 
       // --- MASTER SWITCH LOGIC ---
-      if (!IS_DATA_ENTRY_OPEN) {
-        document.getElementById('studentListContainer').innerHTML = "<div style='text-align:center; padding:40px 20px; font-size:22px; color:#ef4444; font-weight:bold; background:#fee2e2; border-radius:8px; margin-top:20px;'>Data entry is over.</div>";
+      let isEntryOpen = (currentExam === "First Term Exam") ? IS_FIRST_TERM_ENTRY_OPEN : IS_MID_TERM_ENTRY_OPEN;
+      
+      if (!isEntryOpen) {
+        document.getElementById('studentListContainer').innerHTML = "<div style='text-align:center; padding:40px 20px; font-size:22px; color:#ef4444; font-weight:bold; background:#fee2e2; border-radius:8px; margin-top:20px;'>Data entry is over for this exam.</div>";
         document.getElementById('studentListContainer').style.display = "block";
         document.getElementById('saveBtn').style.display = "none";
         document.getElementById('editBtn').style.display = "none";
@@ -642,7 +645,7 @@
             document.getElementById('loadingIndicator').textContent = "Error loading data.";
           }
         }
-      })
+      }
       .catch(error => {
         if (currentReportType === 'progress') {
             document.getElementById('progressLoadingIndicator').textContent = "Network error. Please try again.";
