@@ -301,7 +301,7 @@
     <div id="pageStatus" class="page">
       <button class="back-btn" onclick="goBackFromStatus()">← Back</button>
       <h1 class="school-name">Entry Status</h1>
-      <h3 style="color:#ef4444; margin-top: -5px; margin-bottom: 20px;">Pending Marks (< 60%)</h3>
+      <h3 style="color:#ef4444; margin-top: -5px; margin-bottom: 20px;">Pending Marks</h3>
       
       <label style="font-weight:bold; color:#475569; display:block; margin-bottom:5px;">Select Exam</label>
       <select id="statusExamSelect" onchange="fetchStatus()">
@@ -822,7 +822,7 @@
             if (data.status === "success") {
                 renderStatus(data.data, examName);
             } else {
-                document.getElementById('statusListContainer').innerHTML = "<div style='color:red;'>Error fetching data. (Did you update Code.gs?)</div>";
+                document.getElementById('statusListContainer').innerHTML = "<div style='color:red;'>Error fetching data.</div>";
             }
         })
         .catch(e => {
@@ -832,7 +832,6 @@
     }
 
     function renderStatus(marksData, examName) {
-        let pending = [];
         let counts = {};
         
         marksData.forEach(row => {
@@ -845,9 +844,10 @@
             counts[row.className][row.subject]++;
         });
         
+        let teacherPending = {};
+        
         for (let subject in teacherMapping) {
             for (let cls in teacherMapping[subject]) {
-                // If checking Mid Term, only Class 10 is relevant.
                 if (examName === "First Mid Term Exam" && !cls.startsWith("10")) continue;
 
                 let teacher = teacherMapping[subject][cls];
@@ -857,19 +857,26 @@
                 let percent = totalStudents > 0 ? (entered / totalStudents) * 100 : 100;
                 
                 if (percent < 60) {
-                    pending.push({ teacher: teacher, subject: subject, cls: cls, percent: Math.round(percent) });
+                    if (!teacherPending[teacher]) teacherPending[teacher] = {};
+                    if (!teacherPending[teacher][subject]) teacherPending[teacher][subject] = [];
+                    teacherPending[teacher][subject].push(cls);
                 }
             }
         }
         
-        pending.sort((a,b) => a.teacher.localeCompare(b.teacher));
+        let sortedTeachers = Object.keys(teacherPending).sort((a, b) => a.localeCompare(b));
         
         let html = "<ul style='text-align:left; line-height:1.6; padding-left: 20px; color:#334155; margin:0;'>";
-        if(pending.length === 0) {
-            html = "<p style='color:#10b981; font-weight:bold; text-align:center;'>All assigned teachers have completed >60%!</p>";
+        if(sortedTeachers.length === 0) {
+            html = "<p style='color:#10b981; font-weight:bold; text-align:center;'>All assigned teachers have completed their entries!</p>";
         } else {
-            pending.forEach(p => {
-                html += `<li><strong>${p.teacher}</strong> - ${p.subject} - Class ${p.cls} <span style="color:#ef4444; font-size:13px; font-weight:bold;">(${p.percent}%)</span></li>`;
+            sortedTeachers.forEach(teacher => {
+                let subjectArr = [];
+                for (let subj in teacherPending[teacher]) {
+                    let sortedClasses = teacherPending[teacher][subj].sort();
+                    subjectArr.push(`${subj} (${sortedClasses.join(", ")})`);
+                }
+                html += `<li style='margin-bottom: 8px;'><strong>${teacher}</strong>: ${subjectArr.join(" | ")}</li>`;
             });
         }
         html += "</ul>";
