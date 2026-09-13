@@ -199,6 +199,7 @@
       <div class="list-grid" style="margin-top: 25px;">
         <button class="nav-btn" style="border-color:#3b82f6; color:#3b82f6;" onclick="showPage('pageLogin')">👨‍🏫 Teacher Login</button>
         <button class="admin-btn" onclick="showPage('pageAdminLogin')">⚙️ Admin Console</button>
+        <button class="nav-btn" style="border-color:#f59e0b; color:#d97706; margin-top:10px;" onclick="showStatusPage('pageHome')">📋 Entry Status</button>
       </div>
 
       <div class="developer-credit">Designed & Developed by GRR</div>
@@ -213,7 +214,9 @@
       <!-- Step 1: Initial Auth -->
       <div id="loginStep1">
         <label style="font-weight:bold; color:#475569; display:block; margin-bottom:5px;">Select Name</label>
-        <select id="teacherSelect"></select>
+        <select id="teacherSelect">
+            <option value="" disabled selected hidden>Select Your Name</option>
+        </select>
         
         <label style="font-weight:bold; color:#475569; display:block; margin-bottom:5px;">Enter PIN</label>
         <input type="password" id="teacherPin" placeholder="Enter PIN (Default: 1234)" pattern="[0-9]*" inputmode="numeric">
@@ -269,6 +272,7 @@
 
       <hr class="divider">
       <button class="action-btn" style="border-color:#10b981; color:#10b981; background: #ffffff;" onclick="goToAdminEntry()">➔ Access Data Entry & Reports</button>
+      <button class="nav-btn" style="border-color:#f59e0b; color:#d97706; margin-top:15px; width:100%;" onclick="showStatusPage('pageAdminDash')">📋 View Entry Status</button>
     </div>
 
     <!-- PAGE CLASS SELECT: Select standard (10, 9, 8) -->
@@ -287,6 +291,30 @@
         <button class="nav-btn sub-6" onclick="selectStandard('8')" style="padding: 20px; font-size: 18px;">📙 Class 8</button>
       </div>
 
+      <hr class="divider">
+      <button class="nav-btn" style="border-color:#f59e0b; color:#d97706; width:100%;" onclick="showStatusPage('pageClassSelect')">📋 Check Entry Status</button>
+
+      <div class="developer-credit">Designed & Developed by GRR</div>
+    </div>
+
+    <!-- PAGE STATUS: Shows incomplete mark entry -->
+    <div id="pageStatus" class="page">
+      <button class="back-btn" onclick="goBackFromStatus()">← Back</button>
+      <h1 class="school-name">Entry Status</h1>
+      <h3 style="color:#ef4444; margin-top: -5px; margin-bottom: 20px;">Pending Marks (< 60%)</h3>
+      
+      <label style="font-weight:bold; color:#475569; display:block; margin-bottom:5px;">Select Exam</label>
+      <select id="statusExamSelect" onchange="fetchStatus()">
+          <option value="First Term Exam" selected>First Term Exam</option>
+          <option value="First Mid Term Exam">First Mid Term Exam (Class 10)</option>
+      </select>
+      
+      <div id="statusLoading" style="display:none; text-align:center; color:#3b82f6; font-weight:bold; margin: 20px 0;">Scanning all classes... ⏳</div>
+      
+      <div id="statusListContainer" style="background:#fff; border:1px solid #cbd5e1; border-radius:8px; padding:15px; max-height:400px; overflow-y:auto; margin-bottom: 20px;">
+          <!-- List injected here -->
+      </div>
+      
       <div class="developer-credit">Designed & Developed by GRR</div>
     </div>
 
@@ -419,7 +447,6 @@
 
   <script>
     // --- MANUAL ENTRY MASTER SWITCHES ---
-    // Change these to 'false' inside GitHub when you want to lock an exam.
     const IS_FIRST_TERM_ENTRY_OPEN = true;
     const IS_MID_TERM_ENTRY_OPEN = false; 
 
@@ -513,6 +540,7 @@
     let currentReportType = "full"; 
     let currentReportClass = "";
     let adminToken = ""; 
+    let statusReturnPage = 'pageHome';
 
     // Initialize Dropdowns and Auto-Login
     window.addEventListener('load', function() {
@@ -765,6 +793,87 @@
         document.getElementById('teacherGreeting').textContent = "Welcome, Admin Mode";
         document.getElementById('logoutBtn').style.display = "block";
         showPage('pageClassSelect');
+    }
+
+    // --- STATUS PAGE LOGIC ---
+    function showStatusPage(fromPage) {
+        statusReturnPage = fromPage;
+        showPage('pageStatus');
+        fetchStatus();
+    }
+    
+    function goBackFromStatus() {
+        showPage(statusReturnPage);
+    }
+    
+    function fetchStatus() {
+        let examName = document.getElementById('statusExamSelect').value;
+        document.getElementById('statusLoading').style.display = "block";
+        document.getElementById('statusListContainer').innerHTML = "";
+        
+        fetch(scriptURL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+            body: JSON.stringify({ action: "getAllMarks" })
+        })
+        .then(res => res.json())
+        .then(data => {
+            document.getElementById('statusLoading').style.display = "none";
+            if (data.status === "success") {
+                renderStatus(data.data, examName);
+            } else {
+                document.getElementById('statusListContainer').innerHTML = "<div style='color:red;'>Error fetching data. (Did you update Code.gs?)</div>";
+            }
+        })
+        .catch(e => {
+            document.getElementById('statusLoading').style.display = "none";
+            document.getElementById('statusListContainer').innerHTML = "<div style='color:red;'>Network error fetching status.</div>";
+        });
+    }
+
+    function renderStatus(marksData, examName) {
+        let pending = [];
+        let counts = {};
+        
+        marksData.forEach(row => {
+            let ex = row.exam || "First Mid Term Exam";
+            if (ex === "SSLC Mid Term Examination") ex = "First Mid Term Exam";
+            if (ex !== examName) return;
+            
+            if (!counts[row.className]) counts[row.className] = {};
+            if (!counts[row.className][row.subject]) counts[row.className][row.subject] = 0;
+            counts[row.className][row.subject]++;
+        });
+        
+        for (let subject in teacherMapping) {
+            for (let cls in teacherMapping[subject]) {
+                // If checking Mid Term, only Class 10 is relevant.
+                if (examName === "First Mid Term Exam" && !cls.startsWith("10")) continue;
+
+                let teacher = teacherMapping[subject][cls];
+                let totalStudents = studentsData[cls] ? studentsData[cls].length : 0;
+                let entered = (counts[cls] && counts[cls][subject]) ? counts[cls][subject] : 0;
+                
+                let percent = totalStudents > 0 ? (entered / totalStudents) * 100 : 100;
+                
+                if (percent < 60) {
+                    pending.push({ teacher: teacher, subject: subject, cls: cls, percent: Math.round(percent) });
+                }
+            }
+        }
+        
+        pending.sort((a,b) => a.teacher.localeCompare(b.teacher));
+        
+        let html = "<ul style='text-align:left; line-height:1.6; padding-left: 20px; color:#334155; margin:0;'>";
+        if(pending.length === 0) {
+            html = "<p style='color:#10b981; font-weight:bold; text-align:center;'>All assigned teachers have completed >60%!</p>";
+        } else {
+            pending.forEach(p => {
+                html += `<li><strong>${p.teacher}</strong> - ${p.subject} - Class ${p.cls} <span style="color:#ef4444; font-size:13px; font-weight:bold;">(${p.percent}%)</span></li>`;
+            });
+        }
+        html += "</ul>";
+        document.getElementById('statusListContainer').innerHTML = html;
     }
 
     // --- LOGIC FOR EXAM & ENTRY FLOW ---
@@ -1205,8 +1314,7 @@
         setTimeout(() => { window.print(); document.body.classList.remove('print-progress'); }, 200);
 
       } else {
-        let titleSuffix = currentReportType === 'top10' ? " (Top 10 Students)" : "";
-        html = '<div style="padding: 10px; background: white;"><h2 style="text-align: center; margin-bottom: 20px;">SANSKRIT HS VATTOLI - Class ' + className + titleSuffix + '</h2>';
+        html = '<div style="padding: 10px; background: white;"><h2 style="text-align: center; margin-bottom: 20px;">SANSKRIT HS VATTOLI - Class ' + className + '</h2>';
         html += '<table class="marks-table"><thead><tr><th>Student Name</th>';
         subjectsList.forEach(sub => html += `<th>${sub}</th>`);
         html += '<th style="background-color: #e2e8f0;">Total</th></tr></thead><tbody>';
