@@ -844,9 +844,12 @@
             counts[row.className][row.subject]++;
         });
         
-        let teacherPending = {};
+        let pendingGroups = {};
         
         for (let subject in teacherMapping) {
+            // Explicitly avoid Language checks
+            if (subject === 'Language 1' || subject === 'Language 2') continue;
+            
             for (let cls in teacherMapping[subject]) {
                 if (examName === "First Mid Term Exam" && !cls.startsWith("10")) continue;
 
@@ -857,26 +860,25 @@
                 let percent = totalStudents > 0 ? (entered / totalStudents) * 100 : 100;
                 
                 if (percent < 60) {
-                    if (!teacherPending[teacher]) teacherPending[teacher] = {};
-                    if (!teacherPending[teacher][subject]) teacherPending[teacher][subject] = [];
-                    teacherPending[teacher][subject].push(cls);
+                    if (!pendingGroups[teacher]) pendingGroups[teacher] = {};
+                    if (!pendingGroups[teacher][subject]) pendingGroups[teacher][subject] = [];
+                    pendingGroups[teacher][subject].push(cls);
                 }
             }
         }
         
-        let sortedTeachers = Object.keys(teacherPending).sort((a, b) => a.localeCompare(b));
-        
         let html = "<ul style='text-align:left; line-height:1.6; padding-left: 20px; color:#334155; margin:0;'>";
+        let sortedTeachers = Object.keys(pendingGroups).sort();
+        
         if(sortedTeachers.length === 0) {
-            html = "<p style='color:#10b981; font-weight:bold; text-align:center;'>All assigned teachers have completed their entries!</p>";
+            html = "<p style='color:#10b981; font-weight:bold; text-align:center;'>All assigned teachers have completed entry!</p>";
         } else {
             sortedTeachers.forEach(teacher => {
-                let subjectArr = [];
-                for (let subj in teacherPending[teacher]) {
-                    let sortedClasses = teacherPending[teacher][subj].sort();
-                    subjectArr.push(`${subj} (${sortedClasses.join(", ")})`);
+                let subjects = pendingGroups[teacher];
+                for (let subj in subjects) {
+                    let divs = subjects[subj].join(", ");
+                    html += `<li style="margin-bottom: 8px;">${teacher}, ${subj} (<span style="color:#ef4444;">${divs}</span>) <strong style="color:#ef4444;">Pending</strong></li>`;
                 }
-                html += `<li style='margin-bottom: 8px;'><strong>${teacher}</strong>: ${subjectArr.join(" | ")}</li>`;
             });
         }
         html += "</ul>";
