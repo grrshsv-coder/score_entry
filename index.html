@@ -150,57 +150,81 @@
     
     .marks-table tbody tr:nth-child(odd) { background-color: #ffffff; }
     .marks-table tbody tr:nth-child(even) { background-color: #f1f5f9; }
-    
-    /* Dedicated Progress Report Table Style (Scaled down for A5 landscape half) */
-    .progress-table { width: 100%; border-collapse: collapse; border: 2px solid #000000; margin-bottom: 10px; }
-    .progress-table th, .progress-table td { padding: 6px; font-size: 13px; border: 1px solid #000000; text-align: center; color: #000000; }
-    .progress-table th { background-color: #ffffff; font-weight: bold; border-bottom: 2px solid #000000; color: #000000; }
-    .progress-table td:first-child, .progress-table th:first-child { text-align: left; padding-left: 8px; }
-    .progress-table tbody tr { background-color: #ffffff !important; } 
 
     #loadingIndicator { text-align: center; color: #3b82f6; font-weight: bold; margin: 30px 0; font-size: 18px; }
     .developer-credit { text-align: center; margin-top: 20px; font-size: 13px; color: #94a3b8; font-weight: 500; letter-spacing: 0.3px; }
 
-    /* Print Styles  */
+    /* ------------------------------------- */
+    /* STRICT PRINT STYLES FOR PERFECT SPLIT */
+    /* ------------------------------------- */
     @media screen { #printArea { display: none !important; } }
     @media print {
-      /* Force Landscape and remove default margins */
-      @page { margin: 0; size: A4 landscape; }
-      body, html { background-color: #ffffff !important; margin: 0 !important; padding: 0 !important; height: auto; width: 100%; }
-      #mainContainer { display: none !important; }
-      .back-btn, #downloadPdfBtn, #downloadExcelBtn, .developer-credit { display: none !important; }
-      body.print-progress #page5 { display: none !important; }
-      body.print-progress #printArea { display: block !important; width: 100%; }
+      /* Force browser to Landscape mode */
+      @page { size: landscape; margin: 0; }
       
-      /* Wrapper to hold exactly TWO reports side by side on one A4 Landscape page */
-      .print-page-wrapper {
-        display: flex !important;
-        flex-direction: row !important;
-        width: 297mm !important;
-        height: 210mm !important;
-        page-break-after: always !important;
-        break-after: page !important;
-        margin: 0 !important;
-        padding: 0 !important;
-        box-sizing: border-box !important;
-        overflow: hidden !important;
+      body, html { 
+        background-color: #ffffff !important; 
+        margin: 0 !important; 
+        padding: 0 !important; 
+        width: 297mm !important; /* Exact A4 Landscape Width */
       }
       
-      /* Each report card is now basically A5 size (half of A4 Landscape) */
-      .report-card { 
-        height: 210mm !important; 
-        width: 148.5mm !important; 
-        box-sizing: border-box !important;
-        padding: 15mm 15mm 15mm 15mm !important; 
-        margin: 0 !important; 
-        display: flex !important; 
-        flex-direction: column !important;
+      #mainContainer { display: none !important; }
+      .back-btn, #downloadPdfBtn, #downloadExcelBtn, .developer-credit { display: none !important; }
+      
+      body.print-progress #page5 { display: none !important; }
+      body.print-progress #printArea { display: block !important; width: 100%; }
+
+      /* The Wrapper strictly holds TWO 148.5mm cards */
+      .print-page-wrapper {
+        width: 297mm !important;
+        height: 209mm !important;
+        display: flex !important;
+        flex-direction: row !important;
+        page-break-after: always !important;
+        break-after: page !important;
+        overflow: hidden !important;
         background: white !important;
       }
       
-      /* Faint dashed line down the middle of the page to guide cutting */
+      /* Each student's report is exactly half the page (A5) */
+      .report-card { 
+        width: 148.5mm !important; 
+        height: 209mm !important;
+        box-sizing: border-box !important;
+        /* Padding adjusted: 5mm bottom pushes signature all the way down */
+        padding: 10mm 15mm 5mm 15mm !important; 
+        display: flex !important; 
+        flex-direction: column !important;
+      }
+      
+      /* Center dash line to cut */
       .print-page-wrapper .report-card:first-child {
         border-right: 1px dashed #ccc !important;
+      }
+
+      /* Fix the table width so it NEVER stretches and breaks the layout */
+      .progress-table { 
+        width: 100% !important; 
+        border-collapse: collapse !important; 
+        border: 2px solid #000000 !important; 
+        table-layout: fixed !important; 
+      }
+      .progress-table th, .progress-table td { 
+        padding: 4px !important; 
+        font-size: 11px !important; 
+        border: 1px solid #000000 !important; 
+        text-align: center !important; 
+        color: #000000 !important; 
+        word-wrap: break-word !important; 
+      }
+      .progress-table th { background-color: #ffffff !important; font-weight: bold !important; border-bottom: 2px solid #000000 !important; }
+      
+      /* Strict column widths */
+      .progress-table th:first-child, .progress-table td:first-child { 
+        text-align: left !important; 
+        padding-left: 6px !important; 
+        width: 38% !important; /* Forces Subject column to fit */
       }
       
       body.print-top10 #page5 { display: block !important; }
@@ -514,10 +538,10 @@
     
     const subjectsList = ['Language 1', 'Language 2', 'English', 'Hindi', 'Social Science', 'Physics', 'Chemistry', 'Biology', 'Mathematics'];
     
-    // Language Teachers List (Access ALL divisions across 10, 9, 8, but ONLY Language 1 & 2)
+    // Language Teachers List
     const languageTeachers = ["Aneesh A", "AP Najee Ahammed", "CK Leela", "KV Sheeba", "Shyna R", "Smitha KK", "T Sayad"];
 
-    // Updated Teacher Mapping across 10, 9, 8
+    // Teacher Mapping
     const teacherMapping = {
       "Biology": { 
           "10A": "ASHITHA S P", "10B": "K ROOSY CONTRACTOR", "10C": "KK RINCY", "10D": "ASHITHA S P", "10E": "KK RINCY", "10F": "K ROOSY CONTRACTOR", "10G": "K ROOSY CONTRACTOR", "10H": "ASHITHA S P", 
@@ -556,7 +580,6 @@
       }
     };
     
-    // Auth & App State
     let loggedInUser = null; 
     let tempLoginUser = "";
     let tempLoginPin = "";
@@ -569,7 +592,6 @@
     let adminToken = ""; 
     let statusReturnPage = 'pageHome';
 
-    // Initialize Dropdowns and Auto-Login
     window.addEventListener('load', function() {
       const teacherSet = new Set(languageTeachers); 
       for (let sub in teacherMapping) {
@@ -596,7 +618,6 @@
           selectAdmin.appendChild(opt2);
       });
 
-      // AUTO-LOGIN LOGIC
       const savedTeacher = localStorage.getItem('loggedTeacher');
       if (savedTeacher) {
           loggedInUser = savedTeacher;
@@ -633,7 +654,6 @@
       });
     }
 
-    // --- AUTHENTICATION LOGIC ---
     function attemptLogin() {
         const user = document.getElementById('teacherSelect').value;
         const pin = document.getElementById('teacherPin').value.trim();
@@ -822,7 +842,6 @@
         showPage('pageClassSelect');
     }
 
-    // --- STATUS PAGE LOGIC ---
     function showStatusPage(fromPage) {
         statusReturnPage = fromPage;
         showPage('pageStatus');
@@ -874,7 +893,6 @@
         let pendingGroups = {};
         
         for (let subject in teacherMapping) {
-            // Explicitly avoid Language checks
             if (subject === 'Language 1' || subject === 'Language 2') continue;
             
             for (let cls in teacherMapping[subject]) {
@@ -912,7 +930,6 @@
         document.getElementById('statusListContainer').innerHTML = html;
     }
 
-    // --- LOGIC FOR EXAM & ENTRY FLOW ---
     function selectStandard(std) {
         currentStandard = std;
         
@@ -1304,23 +1321,25 @@
 
       let html = "";
       if (currentReportType === 'progress') {
-        html = `<div style="background: white;">`;
+        html = `<div style="background: white; width: 100%;">`;
         for (let i = 0; i < displayStudents.length; i += 2) {
           html += `<div class="print-page-wrapper">`;
           
           for (let j = 0; j < 2; j++) {
              if (i + j < displayStudents.length) {
                 let student = displayStudents[i + j];
-                html += `<div class="report-card">
-                   <h3 style="text-align: center; color: #000000; margin: 0 0 10px 0; font-size: 20px;">SANSKRIT HS VATTOLI</h3>
-                   <div style="text-align: center; font-size: 15px; color: #000000; margin-bottom: 12px; text-transform: uppercase; letter-spacing: 0.5px;">
-                     Academic Year 2026-27<br><br><span style="color: #000000; font-weight: bold; font-size: 18px;">Progress Report</span>
+                html += `
+                <div class="report-card">
+                   <h3 style="text-align: center; color: #000000; margin: 0 0 5px 0; font-size: 18px;">SANSKRIT HS VATTOLI</h3>
+                   <div style="text-align: center; font-size: 13px; color: #000000; margin-bottom: 10px; text-transform: uppercase;">
+                     Academic Year 2026-27<br><br><span style="color: #000000; font-weight: bold; font-size: 16px;">Progress Report</span>
                    </div>
-                   <div style="font-weight: bold; font-size: 14px; margin-bottom: 8px; color: #000000; border-bottom: 2px solid #000000; padding-bottom: 8px; display: flex; justify-content: space-between;">
-                     <span>Name: <span style="color: #000000;">${student}</span></span><span>Class: <span style="color: #000000;">${className}</span></span>
-                     </div>
-                     <table class="progress-table">
-                       <thead>`;
+                   <div style="font-weight: bold; font-size: 13px; margin-bottom: 10px; color: #000000; border-bottom: 2px solid #000000; padding-bottom: 5px; display: flex; justify-content: space-between;">
+                     <span style="flex:1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Name: <span style="color: #000000;">${student}</span></span>
+                     <span style="white-space: nowrap; margin-left: 10px;">Class: <span style="color: #000000;">${className}</span></span>
+                   </div>
+                   <table class="progress-table">
+                     <thead>`;
                        
                   if (currentStandard === '10') {
                       html += `<tr><th rowspan="2" style="border-bottom: 2px solid #000000;">Subject</th><th colspan="2" style="border-bottom: 1px solid #000000;">Mid Term</th><th colspan="2" style="border-bottom: 1px solid #000000;">First Term</th></tr>
@@ -1343,10 +1362,15 @@
                      }
                   });
                   html += `</tbody></table>
-                     <div style="margin-top: auto; text-align: right; padding-right: 10px; padding-bottom: 10px;"><div style="display: inline-block; text-align: center;">
-                     <div style="border-bottom: 1px solid #000000; width: 150px; margin-bottom: 6px;"></div><div style="font-size: 14px; font-weight: bold; color: #000000;">Signature of Class Teacher</div></div></div></div>`;
+                     <div style="margin-top: auto; text-align: right;">
+                       <div style="display: inline-block; text-align: center;">
+                         <div style="border-bottom: 1px solid #000000; width: 140px; margin-bottom: 6px;"></div>
+                         <div style="font-size: 12px; font-weight: bold; color: #000000;">Signature of Class Teacher</div>
+                       </div>
+                     </div>
+                </div>`;
              } else {
-                html += `<div class="report-card" style="visibility: hidden;"></div>`;
+                html += `<div class="report-card" style="border:none !important; visibility: hidden;"></div>`;
              }
           }
           html += `</div>`;
