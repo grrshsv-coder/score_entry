@@ -1169,51 +1169,55 @@
         }
     }
 
+    // --- HTML GENERATOR FOR SINGLE STUDENT REPORT ---
     function getStudentReportHtml(student, className, pivot) {
         let html = `
-           <h3 style="text-align: center; color: #000000; margin: 0 0 5px 0; font-size: 18px;">SANSKRIT HS VATTOLI</h3>
-           <div style="text-align: center; font-size: 13px; color: #000000; margin-bottom: 10px; text-transform: uppercase;">
-             Academic Year 2026-27<br><br><span style="color: #000000; font-weight: bold; font-size: 16px;">Progress Report</span>
+           <div style="font-weight: normal; text-align: center; color: #000000; margin: 0 0 5px 0; font-size: 18px;">SANSKRIT HS VATTOLI</div>
+           <div style="text-align: center; font-size: 14px; color: #000000; margin-bottom: 10px; text-transform: uppercase;">
+             Academic Year 2026-27<br><br><span style="font-weight: normal; font-size: 16px;">Progress Report</span>
            </div>
-           <div style="font-weight: bold; font-size: 13px; margin-bottom: 10px; color: #000000; border-bottom: 2px solid #000000; padding-bottom: 5px; display: flex; justify-content: space-between;">
+           <div style="font-weight: normal; font-size: 14px; margin-bottom: 10px; color: #000000; padding-bottom: 5px; display: flex; justify-content: space-between;">
              <span style="flex:1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Name: <span style="color: #000000;">${student}</span></span>
-             <span style="white-space: nowrap; margin-left: 10px;">Class: <span style="color: #ef4444;">${className}</span></span>
+             <span style="white-space: nowrap; margin-left: 10px;">Class: <span style="color: #000000;">${className}</span></span>
            </div>
-           <table style="width: 100%; border-collapse: collapse; border: 2px solid #000000; margin-bottom: 10px;">
-             <thead>`;
-             
-        if (currentStandard === '10') {
-            html += `<tr><th rowspan="2" style="border-bottom: 2px solid #000000; padding: 4px; font-size: 11px; border: 1px solid #000000; text-align: left; padding-left: 6px; width: 38%;">Subject</th><th colspan="2" style="border-bottom: 1px solid #000000; padding: 4px; font-size: 11px; border: 1px solid #000000;">Mid Term</th><th colspan="2" style="border-bottom: 1px solid #000000; padding: 4px; font-size: 11px; border: 1px solid #000000;">First Term</th></tr>
-             <tr><th style="padding: 4px; font-size: 11px; border: 1px solid #000000; border-bottom: 2px solid #000000;">Score</th><th style="padding: 4px; font-size: 11px; border: 1px solid #000000; border-bottom: 2px solid #000000;">Grade</th><th style="padding: 4px; font-size: 11px; border: 1px solid #000000; border-bottom: 2px solid #000000;">Score</th><th style="padding: 4px; font-size: 11px; border: 1px solid #000000; border-bottom: 2px solid #000000;">Grade</th></tr></thead><tbody>`;
-        } else {
-            html += `<tr><th rowspan="2" style="border-bottom: 2px solid #000000; padding: 4px; font-size: 11px; border: 1px solid #000000; text-align: left; padding-left: 6px; width: 38%;">Subject</th><th colspan="2" style="border-bottom: 1px solid #000000; padding: 4px; font-size: 11px; border: 1px solid #000000;">First Term</th></tr>
-             <tr><th style="padding: 4px; font-size: 11px; border: 1px solid #000000; border-bottom: 2px solid #000000;">Score</th><th style="padding: 4px; font-size: 11px; border: 1px solid #000000; border-bottom: 2px solid #000000;">Grade</th></tr></thead><tbody>`;
-        }
-
-        subjectsList.forEach(sub => {
-           let ftMark = pivot[student].marks["First Term Exam"][sub] !== undefined ? pivot[student].marks["First Term Exam"][sub] : '-';
-           let ftGrade = ftMark !== '-' ? getGrade(ftMark, getMaxMark("First Term Exam", sub, className), className) : '-';
            
-           if (currentStandard === '10') {
-               let mtMark = pivot[student].marks["First Mid Term Exam"][sub] !== undefined ? pivot[student].marks["First Mid Term Exam"][sub] : '-';
-               let mtGrade = mtMark !== '-' ? getGrade(mtMark, getMaxMark("First Mid Term Exam", sub, className), className) : '-';
-               html += `<tr><td style="padding: 4px; font-size: 11px; border: 1px solid #000000; text-align:left; padding-left:6px;">${sub}</td><td style="padding: 4px; font-size: 11px; border: 1px solid #000000; text-align: center;">${mtMark}</td><td style="padding: 4px; font-size: 11px; border: 1px solid #000000; font-weight: bold; text-align: center;">${mtGrade}</td><td style="padding: 4px; font-size: 11px; border: 1px solid #000000; text-align: center;">${ftMark}</td><td style="padding: 4px; font-size: 11px; border: 1px solid #000000; font-weight: bold; text-align: center;">${ftGrade}</td></tr>`;
-           } else {
-               html += `<tr><td style="padding: 4px; font-size: 11px; border: 1px solid #000000; text-align:left; padding-left:6px;">${sub}</td><td style="padding: 4px; font-size: 11px; border: 1px solid #000000; text-align: center;">${ftMark}</td><td style="padding: 4px; font-size: 11px; border: 1px solid #000000; font-weight: bold; text-align: center;">${ftGrade}</td></tr>`;
-           }
-        });
-        
-        html += `</tbody></table>
-           <div style="margin-top: auto; text-align: right;">
+           <div style="flex-grow: 1; display: flex; flex-direction: column;">
+             <table style="width: 100%; height: 100%; border-collapse: collapse; border: 2px solid #000000; margin-bottom: 10px;">
+               <thead>`;
+               
+          if (currentStandard === '10') {
+              html += `<tr><th rowspan="2" style="border-bottom: 2px solid #000000; padding: 6px; font-size: 13px; border: 1px solid #000000; text-align: left; padding-left: 8px; width: 38%; font-weight: normal; color:#000000;">Subject</th><th colspan="2" style="border-bottom: 1px solid #000000; padding: 6px; font-size: 13px; border: 1px solid #000000; font-weight: normal; color:#000000;">Mid Term</th><th colspan="2" style="border-bottom: 1px solid #000000; padding: 6px; font-size: 13px; border: 1px solid #000000; font-weight: normal; color:#000000;">First Term</th></tr>
+               <tr><th style="padding: 6px; font-size: 13px; border: 1px solid #000000; border-bottom: 2px solid #000000; font-weight: normal; color:#000000;">Score</th><th style="padding: 6px; font-size: 13px; border: 1px solid #000000; border-bottom: 2px solid #000000; font-weight: normal; color:#000000;">Grade</th><th style="padding: 6px; font-size: 13px; border: 1px solid #000000; border-bottom: 2px solid #000000; font-weight: normal; color:#000000;">Score</th><th style="padding: 6px; font-size: 13px; border: 1px solid #000000; border-bottom: 2px solid #000000; font-weight: normal; color:#000000;">Grade</th></tr></thead><tbody>`;
+          } else {
+              html += `<tr><th rowspan="2" style="border-bottom: 2px solid #000000; padding: 6px; font-size: 13px; border: 1px solid #000000; text-align: left; padding-left: 8px; width: 38%; font-weight: normal; color:#000000;">Subject</th><th colspan="2" style="border-bottom: 1px solid #000000; padding: 6px; font-size: 13px; border: 1px solid #000000; font-weight: normal; color:#000000;">First Term</th></tr>
+               <tr><th style="padding: 6px; font-size: 13px; border: 1px solid #000000; border-bottom: 2px solid #000000; font-weight: normal; color:#000000;">Score</th><th style="padding: 6px; font-size: 13px; border: 1px solid #000000; border-bottom: 2px solid #000000; font-weight: normal; color:#000000;">Grade</th></tr></thead><tbody>`;
+          }
+
+          subjectsList.forEach(sub => {
+             let ftMark = pivot[student].marks["First Term Exam"][sub] !== undefined ? pivot[student].marks["First Term Exam"][sub] : '-';
+             let ftGrade = ftMark !== '-' ? getGrade(ftMark, getMaxMark("First Term Exam", sub, className), className) : '-';
+             
+             if (currentStandard === '10') {
+                 let mtMark = pivot[student].marks["First Mid Term Exam"][sub] !== undefined ? pivot[student].marks["First Mid Term Exam"][sub] : '-';
+                 let mtGrade = mtMark !== '-' ? getGrade(mtMark, getMaxMark("First Mid Term Exam", sub, className), className) : '-';
+                 html += `<tr><td style="padding: 6px; font-size: 14px; border: 1px solid #000000; text-align:left; padding-left:8px; font-weight: normal; color:#000000;">${sub}</td><td style="padding: 6px; font-size: 14px; border: 1px solid #000000; text-align: center; font-weight: normal; color:#000000;">${mtMark}</td><td style="padding: 6px; font-size: 14px; border: 1px solid #000000; font-weight: normal; text-align: center; color:#000000;">${mtGrade}</td><td style="padding: 6px; font-size: 14px; border: 1px solid #000000; text-align: center; font-weight: normal; color:#000000;">${ftMark}</td><td style="padding: 6px; font-size: 14px; border: 1px solid #000000; font-weight: normal; text-align: center; color:#000000;">${ftGrade}</td></tr>`;
+             } else {
+                 html += `<tr><td style="padding: 6px; font-size: 14px; border: 1px solid #000000; text-align:left; padding-left:8px; font-weight: normal; color:#000000;">${sub}</td><td style="padding: 6px; font-size: 14px; border: 1px solid #000000; text-align: center; font-weight: normal; color:#000000;">${ftMark}</td><td style="padding: 6px; font-size: 14px; border: 1px solid #000000; font-weight: normal; text-align: center; color:#000000;">${ftGrade}</td></tr>`;
+             }
+          });
+          
+          html += `</tbody></table>
+           </div>
+           <div style="margin-top: auto; text-align: right; margin-bottom: 5px;">
              <div style="display: inline-block; text-align: center;">
-               <div style="border-bottom: 1px solid #000000; width: 140px; margin-bottom: 6px;"></div>
-               <div style="font-size: 12px; font-weight: bold; color: #000000;">Signature of Class Teacher</div>
+               <div style="font-size: 14px; font-weight: normal; color: #000000; margin-top: 15px;">Signature of Class Teacher</div>
              </div>
            </div>`;
-           
-        return html;
+             
+          return html;
     }
 
+    // --- LOGIC FOR VIEWING/PRINTING REPORTS ---
     function selectReportType(type) {
       currentReportType = type;
       showPage('page4a');
@@ -1293,10 +1297,10 @@
         let previewHtml = `<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; padding: 10px;">`;
         
         // Build Strict Off-screen layout for JS-based PDF Download
-        let pdfHtml = ``;
+        let pdfHtml = `<div style="width: 297mm; background: white; color: black; font-family: sans-serif;">`;
         
         for (let i = 0; i < displayStudents.length; i += 2) {
-          pdfHtml += `<div class="print-page-wrapper" style="display: flex; width: 297mm; height: 210mm; box-sizing: border-box; background: white;">`;
+          pdfHtml += `<div style="display: flex; width: 297mm; height: 210mm; page-break-after: always; box-sizing: border-box;">`;
           
           for (let j = 0; j < 2; j++) {
              if (i + j < displayStudents.length) {
@@ -1317,7 +1321,9 @@
           }
           pdfHtml += `</div>`;
         }
+        
         previewHtml += `</div>`;
+        pdfHtml += `</div>`;
         
         document.getElementById('tableWrapper').innerHTML = previewHtml;
         document.getElementById('pdfDownloadArea').innerHTML = pdfHtml;
@@ -1368,18 +1374,18 @@
           let doc;
 
           if (currentReportType === 'progress') {
-              doc = new jsPDF('l', 'mm', 'a4'); // Landscape
+              doc = new jsPDF('l', 'mm', 'a4'); 
               
               let downloadArea = document.getElementById('pdfDownloadArea');
-              downloadArea.style.left = '0'; // Bring into view briefly for rendering
+              downloadArea.style.left = '0'; 
               
-              let pages = document.querySelectorAll('#pdfDownloadArea .print-page-wrapper');
+              let pages = document.querySelectorAll('#pdfDownloadArea > div > div');
               
               for (let i = 0; i < pages.length; i++) {
                   btn.textContent = `Generating PDF (Page ${i+1} of ${pages.length})... ⏳`;
                   
                   let canvas = await html2canvas(pages[i], { 
-                      scale: 1.5, // Perfect balance of speed and clarity
+                      scale: 1.5, 
                       useCORS: true,
                       logging: false
                   });
@@ -1389,26 +1395,25 @@
                   doc.addImage(imgData, 'JPEG', 0, 0, 297, 210);
               }
 
-              downloadArea.style.left = '-9999px'; // Hide again
+              downloadArea.style.left = '-9999px'; 
               doc.save('Progress_Report_Class_' + currentReportClass + '.pdf');
 
           } else {
               btn.textContent = "Generating PDF... ⏳";
-              doc = new jsPDF('p', 'mm', 'a4'); // Portrait
+              doc = new jsPDF('p', 'mm', 'a4'); 
               
               let element = document.getElementById('tableWrapper');
               let oldBg = element.style.background;
-              element.style.background = '#ffffff'; // Force white bg
+              element.style.background = '#ffffff'; 
               
               let canvas = await html2canvas(element, { scale: 1.5, useCORS: true, logging: false });
               let imgData = canvas.toDataURL('image/jpeg', 0.95);
               
-              let imgWidth = 190; // A4 width minus 10mm margins
+              let imgWidth = 190; 
               let imgHeight = canvas.height * imgWidth / canvas.width;
               
               element.style.background = oldBg;
               
-              // Add title manually
               doc.setFontSize(16);
               doc.text("SANSKRIT HS VATTOLI - Class " + currentReportClass, 105, 15, null, null, "center");
               doc.addImage(imgData, 'JPEG', 10, 25, imgWidth, imgHeight);
