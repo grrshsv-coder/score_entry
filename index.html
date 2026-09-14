@@ -161,21 +161,52 @@
     #loadingIndicator { text-align: center; color: #3b82f6; font-weight: bold; margin: 30px 0; font-size: 18px; }
     .developer-credit { text-align: center; margin-top: 20px; font-size: 13px; color: #94a3b8; font-weight: 500; letter-spacing: 0.3px; }
 
-    /* Print Styles  */
+    /* ------------------------------------- */
+    /* NEW: LANDSCAPE SPLIT PRINT STYLES     */
+    /* ------------------------------------- */
     @media screen { #printArea { display: none !important; } }
     @media print {
-      @page { margin: 0; size: A4 portrait; }
+      @page { margin: 10mm; size: A4 landscape; }
       body, html { background-color: #ffffff !important; margin: 0 !important; padding: 0 !important; height: auto; }
       #mainContainer { display: none !important; }
       .back-btn, #downloadPdfBtn, #downloadExcelBtn, .developer-credit { display: none !important; }
       body.print-progress #page5 { display: none !important; }
       body.print-progress #printArea { display: block !important; }
-      .report-card { 
-        height: 296mm !important; width: 100% !important; box-sizing: border-box !important;
-        padding: 40mm 20mm 40mm 20mm !important; page-break-after: always !important; break-after: page !important; 
-        margin: 0 !important; border: none !important; display: flex !important; flex-direction: column !important;
+      
+      /* Make container flex to sit two reports side by side */
+      body.print-progress #printArea > div {
+        display: flex !important;
+        flex-wrap: wrap !important;
+        justify-content: space-between !important;
       }
-      .report-card:last-child { page-break-after: auto !important; break-after: auto !important; }
+      
+      .report-card { 
+        height: 185mm !important; 
+        width: 48% !important; 
+        box-sizing: border-box !important;
+        padding: 10mm 15mm !important; 
+        page-break-inside: avoid !important; break-inside: avoid !important;
+        page-break-after: auto !important; break-after: auto !important;
+        margin: 0 0 10mm 0 !important; 
+        border: 2px solid #000 !important; 
+        display: flex !important; flex-direction: column !important;
+      }
+      
+      /* Force a page break after every two reports */
+      .report-card:nth-child(even) {
+        page-break-after: always !important; break-after: page !important;
+      }
+      
+      /* Downscale fonts dynamically so they fit perfectly in half-A4 */
+      .report-card h3 { font-size: 20px !important; margin-bottom: 5px !important; }
+      .report-card > div { font-size: 14px !important; margin-bottom: 10px !important; }
+      .report-card span { font-size: 14px !important; }
+      .progress-table th, .progress-table td { padding: 6px !important; font-size: 13px !important; }
+      .report-card > div:last-child div { font-size: 14px !important; }
+      .report-card > div:last-child > div > div:first-child { width: 180px !important; }
+
+      /* Top 10 styling remains standard portrait */
+      body.print-top10 { @page { size: A4 portrait; margin: 0; } }
       body.print-top10 #page5 { display: block !important; }
       body.print-top10 #printArea { display: none !important; }
       body.print-top10 #reportTitle { display: none !important; } 
