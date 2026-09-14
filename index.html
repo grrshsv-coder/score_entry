@@ -9,9 +9,12 @@
   
   <title>Class Marks Entry System</title>
 
-  <!-- Excel & PDF Generation Libraries -->
+  <!-- Excel Generation Library -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+  
+  <!-- Direct PDF Generation Libraries (Replaces html2pdf for memory efficiency) -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
   <style>
     /* Aesthetic Color Palette & Typography */
@@ -142,17 +145,28 @@
     
     #message, #loginMessage, #setupPinMessage, #adminAuthMessage, #adminDashMessage { text-align: center; font-weight: bold; margin-top: 20px; min-height: 24px; padding: 10px; border-radius: 6px; }
 
-    /* Data Table Styles */
+    /* Data Table Styles (Class, Top 10) */
     .table-responsive { width: 100%; overflow-x: auto; margin-top: 15px; border-radius: 8px; border: 1px solid #e2e8f0; }
     .marks-table { width: 100%; border-collapse: collapse; font-size: 13px; }
     .marks-table th, .marks-table td { padding: 8px 4px; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; text-align: center; }
     .marks-table th { background-color: #f8fafc; color: #334155; font-weight: 700; white-space: normal; line-height: 1.2; font-size: 12px; }
     .marks-table td:first-child, .marks-table th:first-child { text-align: left; white-space: nowrap; padding-left: 8px; }
+    
     .marks-table tbody tr:nth-child(odd) { background-color: #ffffff; }
     .marks-table tbody tr:nth-child(even) { background-color: #f1f5f9; }
 
     #loadingIndicator { text-align: center; color: #3b82f6; font-weight: bold; margin: 30px 0; font-size: 18px; }
     .developer-credit { text-align: center; margin-top: 20px; font-size: 13px; color: #94a3b8; font-weight: 500; letter-spacing: 0.3px; }
+
+    /* Container for Offscreen PDF generation (Prevents rendering glitches) */
+    #pdfDownloadArea {
+        position: absolute;
+        top: -9999px;
+        left: -9999px;
+        width: 297mm; /* Force exact A4 landscape width for canvas rendering */
+        background: #ffffff;
+        z-index: -1;
+    }
   </style>
 </head>
 <body>
@@ -389,7 +403,7 @@
       </div>
       
       <div id="progressLoadingIndicator" style="display: none; text-align: center; color: #3b82f6; font-weight: bold; margin-top: 25px;">
-        Generating Reports... Please wait ⏳
+        Fetching Data... Please wait ⏳
       </div>
       <div class="developer-credit">Designed & Developed by GRR</div>
     </div>
@@ -398,24 +412,23 @@
   <!-- VIEW REPORT CONTAINER (Page 5) -->
   <div class="table-container-wrapper page" id="page5">
     <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px;">
-      <button class="back-btn" onclick="showPage('page4a')" style="margin-bottom: 0;">← Back to Divisions</button>
+      <button class="back-btn" onclick="showPage('page4a')" style="margin-bottom: 0;">← Back</button>
       <div style="text-align: right;">
         <button id="downloadPdfBtn" class="nav-btn" style="display: none; border-color: #3b82f6; color: #3b82f6; padding: 10px 15px; font-size: 14px; margin-bottom: 10px;" onclick="downloadPDF()">📥 Download as PDF</button>
         <button id="downloadExcelBtn" class="nav-btn" style="display: none; border-color: #10b981; color: #10b981; padding: 10px 15px; font-size: 14px; margin-bottom: 10px;" onclick="downloadExcel()">📊 Download as Excel</button>
       </div>
     </div>
     <h2 id="reportTitle" style="margin-top: -10px;">Class Report</h2>
-    <h3 class="test-name" style="margin-top: 0;"></h3>
     <div id="loadingIndicator" style="display: none;">Generating... ⏳</div>
     
     <!-- Area for UI Preview -->
-    <div class="table-responsive" id="tableWrapper" style="display: none;"></div>
+    <div class="table-responsive" id="tableWrapper" style="display: none; background: #eef2f5;"></div>
     
     <div class="developer-credit">Designed & Developed by GRR</div>
   </div>
 
   <!-- HIDDEN CONTAINER FOR PERFECT PDF GENERATION -->
-  <div id="pdfDownloadArea" style="display: none;"></div>
+  <div id="pdfDownloadArea"></div>
 
   <script>
     // --- MANUAL ENTRY MASTER SWITCHES ---
@@ -1156,7 +1169,6 @@
         }
     }
 
-    // --- HTML GENERATOR FOR SINGLE STUDENT REPORT ---
     function getStudentReportHtml(student, className, pivot) {
         let html = `
            <h3 style="text-align: center; color: #000000; margin: 0 0 5px 0; font-size: 18px;">SANSKRIT HS VATTOLI</h3>
@@ -1202,7 +1214,6 @@
         return html;
     }
 
-    // --- LOGIC FOR VIEWING/PRINTING REPORTS ---
     function selectReportType(type) {
       currentReportType = type;
       showPage('page4a');
@@ -1278,14 +1289,14 @@
       }
 
       if (currentReportType === 'progress') {
-        // 1. Build the Preview grid for the UI
+        // Build Preview for UI
         let previewHtml = `<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; padding: 10px;">`;
         
-        // 2. Build the strict PDF format in the hidden container
-        let pdfHtml = `<div style="width: 297mm; background: white; color: black; font-family: sans-serif;">`;
+        // Build Strict Off-screen layout for JS-based PDF Download
+        let pdfHtml = ``;
         
         for (let i = 0; i < displayStudents.length; i += 2) {
-          pdfHtml += `<div style="display: flex; width: 297mm; height: 210mm; page-break-after: always; box-sizing: border-box;">`;
+          pdfHtml += `<div class="print-page-wrapper" style="display: flex; width: 297mm; height: 210mm; box-sizing: border-box; background: white;">`;
           
           for (let j = 0; j < 2; j++) {
              if (i + j < displayStudents.length) {
@@ -1306,9 +1317,7 @@
           }
           pdfHtml += `</div>`;
         }
-        
         previewHtml += `</div>`;
-        pdfHtml += `</div>`;
         
         document.getElementById('tableWrapper').innerHTML = previewHtml;
         document.getElementById('pdfDownloadArea').innerHTML = pdfHtml;
@@ -1319,9 +1328,7 @@
         document.getElementById('downloadExcelBtn').style.display = 'none';
 
       } else {
-        // Standard Class / Top 10 Table
-        let html = '<div style="padding: 10px; background: white;"><h2 style="text-align: center; margin-bottom: 20px;">SANSKRIT HS VATTOLI - Class ' + className + '</h2>';
-        html += '<table class="marks-table"><thead><tr><th>Student Name</th>';
+        let html = '<div style="padding: 10px; background: white;"><table class="marks-table"><thead><tr><th>Student Name</th>';
         subjectsList.forEach(sub => html += `<th>${sub}</th>`);
         html += '<th style="background-color: #e2e8f0;">Total</th></tr></thead><tbody>';
 
@@ -1350,42 +1357,70 @@
       }
     }
 
-    // --- DIRECT PDF DOWNLOAD USING HTML2PDF ---
-    function downloadPDF() {
+    // --- DIRECT PDF DOWNLOAD ENGINE ---
+    async function downloadPDF() {
       let btn = document.getElementById('downloadPdfBtn');
       let originalText = btn.textContent;
-      btn.textContent = "Generating PDF... ⏳";
       btn.disabled = true;
 
-      if (currentReportType === 'progress') {
-          let element = document.getElementById('pdfDownloadArea');
-          element.style.display = 'block'; 
-          
-          html2pdf().set({
-              margin: 0,
-              filename: 'Progress_Report_' + currentReportClass + '.pdf',
-              image: { type: 'jpeg', quality: 0.98 },
-              html2canvas: { scale: 2, useCORS: true },
-              jsPDF: { unit: 'mm', format: 'a4', orientation: 'landscape' }
-          }).from(element).save().then(() => {
-              element.style.display = 'none';
-              btn.textContent = originalText;
-              btn.disabled = false;
-          });
-      } else {
-          // Download Top 10 List as PDF
-          let element = document.getElementById('tableWrapper');
-          html2pdf().set({
-              margin: 10,
-              filename: 'Top10_' + currentReportClass + '.pdf',
-              image: { type: 'jpeg', quality: 0.98 },
-              html2canvas: { scale: 2, useCORS: true },
-              jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
-          }).from(element).save().then(() => {
-              btn.textContent = originalText;
-              btn.disabled = false;
-          });
+      try {
+          const { jsPDF } = window.jspdf;
+          let doc;
+
+          if (currentReportType === 'progress') {
+              doc = new jsPDF('l', 'mm', 'a4'); // Landscape
+              
+              let downloadArea = document.getElementById('pdfDownloadArea');
+              downloadArea.style.left = '0'; // Bring into view briefly for rendering
+              
+              let pages = document.querySelectorAll('#pdfDownloadArea .print-page-wrapper');
+              
+              for (let i = 0; i < pages.length; i++) {
+                  btn.textContent = `Generating PDF (Page ${i+1} of ${pages.length})... ⏳`;
+                  
+                  let canvas = await html2canvas(pages[i], { 
+                      scale: 1.5, // Perfect balance of speed and clarity
+                      useCORS: true,
+                      logging: false
+                  });
+                  
+                  let imgData = canvas.toDataURL('image/jpeg', 0.95);
+                  if (i > 0) doc.addPage();
+                  doc.addImage(imgData, 'JPEG', 0, 0, 297, 210);
+              }
+
+              downloadArea.style.left = '-9999px'; // Hide again
+              doc.save('Progress_Report_Class_' + currentReportClass + '.pdf');
+
+          } else {
+              btn.textContent = "Generating PDF... ⏳";
+              doc = new jsPDF('p', 'mm', 'a4'); // Portrait
+              
+              let element = document.getElementById('tableWrapper');
+              let oldBg = element.style.background;
+              element.style.background = '#ffffff'; // Force white bg
+              
+              let canvas = await html2canvas(element, { scale: 1.5, useCORS: true, logging: false });
+              let imgData = canvas.toDataURL('image/jpeg', 0.95);
+              
+              let imgWidth = 190; // A4 width minus 10mm margins
+              let imgHeight = canvas.height * imgWidth / canvas.width;
+              
+              element.style.background = oldBg;
+              
+              // Add title manually
+              doc.setFontSize(16);
+              doc.text("SANSKRIT HS VATTOLI - Class " + currentReportClass, 105, 15, null, null, "center");
+              doc.addImage(imgData, 'JPEG', 10, 25, imgWidth, imgHeight);
+              doc.save('Class_Report_' + currentReportClass + '.pdf');
+          }
+      } catch(e) {
+          alert("Error generating PDF. Your browser might be running out of memory.");
+          console.error(e);
       }
+
+      btn.textContent = originalText;
+      btn.disabled = false;
     }
 
     function downloadExcel() {
