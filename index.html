@@ -12,9 +12,10 @@
   <!-- Excel Generation Library -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
   
-  <!-- Direct PDF Generation Libraries (Replaces html2pdf for memory efficiency) -->
+  <!-- Direct PDF Generation Libraries -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 
   <style>
     /* Aesthetic Color Palette & Typography */
@@ -145,25 +146,25 @@
     
     #message, #loginMessage, #setupPinMessage, #adminAuthMessage, #adminDashMessage { text-align: center; font-weight: bold; margin-top: 20px; min-height: 24px; padding: 10px; border-radius: 6px; }
 
-    /* Data Table Styles (Class, Top 10) */
+    /* Data Table Styles */
     .table-responsive { width: 100%; overflow-x: auto; margin-top: 15px; border-radius: 8px; border: 1px solid #e2e8f0; }
     .marks-table { width: 100%; border-collapse: collapse; font-size: 13px; }
     .marks-table th, .marks-table td { padding: 8px 4px; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; text-align: center; }
     .marks-table th { background-color: #f8fafc; color: #334155; font-weight: 700; white-space: normal; line-height: 1.2; font-size: 12px; }
     .marks-table td:first-child, .marks-table th:first-child { text-align: left; white-space: nowrap; padding-left: 8px; }
-    
     .marks-table tbody tr:nth-child(odd) { background-color: #ffffff; }
     .marks-table tbody tr:nth-child(even) { background-color: #f1f5f9; }
+    .marks-table tr { page-break-inside: avoid; } /* Important for clean PDF breaks */
 
     #loadingIndicator { text-align: center; color: #3b82f6; font-weight: bold; margin: 30px 0; font-size: 18px; }
     .developer-credit { text-align: center; margin-top: 20px; font-size: 13px; color: #94a3b8; font-weight: 500; letter-spacing: 0.3px; }
 
-    /* Container for Offscreen PDF generation (Prevents rendering glitches) */
+    /* Container for Offscreen PDF generation */
     #pdfDownloadArea {
         position: absolute;
         top: -9999px;
         left: -9999px;
-        width: 297mm; /* Force exact A4 landscape width for canvas rendering */
+        width: 297mm;
         background: #ffffff;
         z-index: -1;
     }
@@ -1169,7 +1170,6 @@
         }
     }
 
-    // --- HTML GENERATOR FOR SINGLE STUDENT REPORT ---
     function getStudentReportHtml(student, className, pivot) {
         let html = `
            <div style="font-weight: normal; text-align: center; color: #000000; margin: 0 0 5px 0; font-size: 18px;">SANSKRIT HS VATTOLI</div>
@@ -1217,7 +1217,6 @@
           return html;
     }
 
-    // --- LOGIC FOR VIEWING/PRINTING REPORTS ---
     function selectReportType(type) {
       currentReportType = type;
       showPage('page4a');
@@ -1293,10 +1292,7 @@
       }
 
       if (currentReportType === 'progress') {
-        // Build Preview for UI
         let previewHtml = `<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; padding: 10px;">`;
-        
-        // Build Strict Off-screen layout for JS-based PDF Download
         let pdfHtml = `<div style="width: 297mm; background: white; color: black; font-family: sans-serif;">`;
         
         for (let i = 0; i < displayStudents.length; i += 2) {
@@ -1334,18 +1330,22 @@
         document.getElementById('downloadExcelBtn').style.display = 'none';
 
       } else {
-        let html = '<div style="padding: 10px; background: white;"><table class="marks-table"><thead><tr><th>Student Name</th>';
-        subjectsList.forEach(sub => html += `<th>${sub}</th>`);
-        html += '<th style="background-color: #e2e8f0;">Total</th></tr></thead><tbody>';
+        // Standard Class / Top 10 Table
+        let titleSuffix = currentReportType === 'top10' ? " (Top 10 Students)" : "";
+        let html = '<div style="padding: 10px; background: white;"><h2 style="font-weight: normal; color: black; text-align: center; margin-bottom: 20px;">SANSKRIT HS VATTOLI - Class ' + className + titleSuffix + '</h2>';
+        html += '<table class="marks-table" style="width: 100%; border-collapse: collapse; border: 2px solid #000; color: black;"><thead><tr><th style="font-weight: normal; color: black; border: 1px solid #000; padding: 6px;">Student Name</th>';
+        
+        subjectsList.forEach(sub => html += `<th style="font-weight: normal; color: black; border: 1px solid #000; padding: 6px;">${sub}</th>`);
+        html += '<th style="font-weight: normal; color: black; border: 1px solid #000; padding: 6px; background-color: #f8fafc;">Total</th></tr></thead><tbody>';
 
         displayStudents.forEach((student, index) => {
           let rankOrNo = currentReportType === 'top10' ? (index + 1) : (students.indexOf(student) + 1);
-          html += `<tr><td>${rankOrNo}. ${student}</td>`;
+          html += `<tr><td style="border: 1px solid #000; padding: 6px; color: black; text-align: left; padding-left: 8px;">${rankOrNo}. ${student}</td>`;
           subjectsList.forEach(sub => {
             let mark = pivot[student].marks[currentExam][sub] !== undefined ? pivot[student].marks[currentExam][sub] : '-'; 
-            html += `<td>${mark}</td>`;
+            html += `<td style="border: 1px solid #000; padding: 6px; color: black;">${mark}</td>`;
           });
-          html += `<td style="font-weight: bold; background-color: #f8fafc;">${pivot[student].total}</td></tr>`;
+          html += `<td style="border: 1px solid #000; padding: 6px; color: black; font-weight: normal; background-color: #f8fafc;">${pivot[student].total}</td></tr>`;
         });
         html += '</tbody></table></div>';
 
@@ -1357,13 +1357,12 @@
           document.getElementById('downloadPdfBtn').style.display = 'inline-block';
           document.getElementById('downloadExcelBtn').style.display = 'none';
         } else {
-          document.getElementById('downloadPdfBtn').style.display = 'none';
+          document.getElementById('downloadPdfBtn').style.display = 'inline-block';
           document.getElementById('downloadExcelBtn').style.display = 'inline-block';
         }
       }
     }
 
-    // --- DIRECT PDF DOWNLOAD ENGINE ---
     async function downloadPDF() {
       let btn = document.getElementById('downloadPdfBtn');
       let originalText = btn.textContent;
@@ -1371,11 +1370,9 @@
 
       try {
           const { jsPDF } = window.jspdf;
-          let doc;
 
           if (currentReportType === 'progress') {
-              doc = new jsPDF('l', 'mm', 'a4'); 
-              
+              let doc = new jsPDF('l', 'mm', 'a4'); 
               let downloadArea = document.getElementById('pdfDownloadArea');
               downloadArea.style.left = '0'; 
               
@@ -1399,25 +1396,34 @@
               doc.save('Progress_Report_Class_' + currentReportClass + '.pdf');
 
           } else {
+              // --- CLASS REPORT AND TOP 10 REPORTS USING HTML2PDF AUTO PAGE-BREAKING ---
               btn.textContent = "Generating PDF... ⏳";
-              doc = new jsPDF('p', 'mm', 'a4'); 
               
-              let element = document.getElementById('tableWrapper');
-              let oldBg = element.style.background;
-              element.style.background = '#ffffff'; 
+              let sourceElement = document.getElementById('tableWrapper');
+              let oldBg = sourceElement.style.background;
+              sourceElement.style.background = '#ffffff';
+
+              let opt = {
+                  margin:       10,
+                  filename:     (currentReportType === 'top10' ? 'Top10_' : 'Class_Report_') + currentReportClass + '.pdf',
+                  image:        { type: 'jpeg', quality: 0.98 },
+                  html2canvas:  { scale: 2, useCORS: true },
+                  jsPDF:        { unit: 'mm', format: 'a4', orientation: 'landscape' },
+                  pagebreak:    { mode: 'css', avoid: 'tr' }
+              };
+
+              html2pdf().set(opt).from(sourceElement).save().then(() => {
+                  sourceElement.style.background = oldBg;
+                  btn.textContent = originalText;
+                  btn.disabled = false;
+              }).catch(e => {
+                  console.error(e);
+                  alert("Error generating PDF.");
+                  btn.textContent = originalText;
+                  btn.disabled = false;
+              });
               
-              let canvas = await html2canvas(element, { scale: 1.5, useCORS: true, logging: false });
-              let imgData = canvas.toDataURL('image/jpeg', 0.95);
-              
-              let imgWidth = 190; 
-              let imgHeight = canvas.height * imgWidth / canvas.width;
-              
-              element.style.background = oldBg;
-              
-              doc.setFontSize(16);
-              doc.text("SANSKRIT HS VATTOLI - Class " + currentReportClass, 105, 15, null, null, "center");
-              doc.addImage(imgData, 'JPEG', 10, 25, imgWidth, imgHeight);
-              doc.save('Class_Report_' + currentReportClass + '.pdf');
+              return; // html2pdf runs asynchronously, so we exit this block immediately
           }
       } catch(e) {
           alert("Error generating PDF. Your browser might be running out of memory.");
