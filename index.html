@@ -146,12 +146,13 @@
     
     #message, #loginMessage, #setupPinMessage, #adminAuthMessage, #adminDashMessage { text-align: center; font-weight: bold; margin-top: 20px; min-height: 24px; padding: 10px; border-radius: 6px; }
 
-    /* Data Table Styles */
+    /* Data Table Styles (Class, Top 10) */
     .table-responsive { width: 100%; overflow-x: auto; margin-top: 15px; border-radius: 8px; border: 1px solid #e2e8f0; }
     .marks-table { width: 100%; border-collapse: collapse; font-size: 13px; }
     .marks-table th, .marks-table td { padding: 8px 4px; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; text-align: center; }
     .marks-table th { background-color: #f8fafc; color: #334155; font-weight: 700; white-space: normal; line-height: 1.2; font-size: 12px; }
     .marks-table td:first-child, .marks-table th:first-child { text-align: left; white-space: nowrap; padding-left: 8px; }
+    
     .marks-table tbody tr:nth-child(odd) { background-color: #ffffff; }
     .marks-table tbody tr:nth-child(even) { background-color: #f1f5f9; }
     .marks-table tr { page-break-inside: avoid; } /* Important for clean PDF breaks */
@@ -185,6 +186,7 @@
         <button class="nav-btn" style="border-color:#3b82f6; color:#3b82f6;" onclick="showPage('pageLogin')">👨‍🏫 Teacher Login</button>
         <button class="admin-btn" onclick="showPage('pageAdminLogin')">⚙️ Admin Console</button>
         <button class="nav-btn" style="border-color:#f59e0b; color:#d97706; margin-top:10px;" onclick="showStatusPage('pageHome')">📋 Entry Status</button>
+        <button class="report-btn" style="margin-top:10px;" onclick="goToGuestReports()">📊 View Reports</button>
       </div>
 
       <div class="developer-credit">Designed & Developed by GRR</div>
@@ -786,6 +788,13 @@
     function goBackFromStatus() {
         showPage(statusReturnPage);
     }
+
+    function goToGuestReports() {
+        loggedInUser = "Viewer"; 
+        document.getElementById('teacherGreeting').textContent = "Public Reports Access";
+        document.getElementById('logoutBtn').style.display = "block";
+        showPage('pageClassSelect');
+    }
     
     function fetchStatus() {
         let examName = document.getElementById('statusExamSelect').value;
@@ -904,7 +913,7 @@
     }
 
     function filterDivisionsForTeacher() {
-        if (loggedInUser === "Admin") {
+        if (loggedInUser === "Admin" || loggedInUser === "Viewer") {
             ['A','B','C','D','E','F','G','H'].forEach(d => {
                 let btn = document.getElementById('btn-div-'+d);
                 btn.classList.remove('disabled-btn'); btn.disabled = false;
@@ -955,6 +964,11 @@
             
             if (loggedInUser === "Admin") {
                 btn.classList.remove('disabled-btn'); btn.disabled = false;
+                return;
+            }
+
+            if (loggedInUser === "Viewer") {
+                btn.classList.add('disabled-btn'); btn.disabled = true;
                 return;
             }
 
@@ -1330,7 +1344,6 @@
         document.getElementById('downloadExcelBtn').style.display = 'none';
 
       } else {
-        // Standard Class / Top 10 Table
         let titleSuffix = currentReportType === 'top10' ? " (Top 10 Students)" : "";
         let html = '<div style="padding: 10px; background: white;"><h2 style="font-weight: normal; color: black; text-align: center; margin-bottom: 20px;">SANSKRIT HS VATTOLI - Class ' + className + titleSuffix + '</h2>';
         html += '<table class="marks-table" style="width: 100%; border-collapse: collapse; border: 2px solid #000; color: black;"><thead><tr><th style="font-weight: normal; color: black; border: 1px solid #000; padding: 6px;">Student Name</th>';
@@ -1396,7 +1409,6 @@
               doc.save('Progress_Report_Class_' + currentReportClass + '.pdf');
 
           } else {
-              // --- CLASS REPORT AND TOP 10 REPORTS USING HTML2PDF AUTO PAGE-BREAKING ---
               btn.textContent = "Generating PDF... ⏳";
               
               let sourceElement = document.getElementById('tableWrapper');
@@ -1423,7 +1435,7 @@
                   btn.disabled = false;
               });
               
-              return; // html2pdf runs asynchronously, so we exit this block immediately
+              return; 
           }
       } catch(e) {
           alert("Error generating PDF. Your browser might be running out of memory.");
