@@ -44,95 +44,62 @@
     .button-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 15px; }
     .list-grid { display: grid; grid-template-columns: 1fr; gap: 12px; margin-top: 15px; }
     
-    /* Input Elements for Login/Admin */
-    select, input[type="password"], input[type="text"], input[type="number"], input[type="date"] {
+    /* Input Elements */
+    select, input[type="password"], input[type="text"], input[type="number"] {
         width: 100%; padding: 14px; margin-bottom: 15px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 16px; box-sizing: border-box; background-color: #f8fafc;
     }
     select:focus, input:focus { outline: none; border-color: #3b82f6; background-color: #ffffff; }
     
-    /* ------------------------------------- */
-    /* UNIFORM WHITE BUTTON STYLES           */
-    /* ------------------------------------- */
-    button { 
-      padding: 15px; font-size: 16px; font-weight: 600; cursor: pointer; border: none; border-radius: 8px; 
-      transition: all 0.15s ease; position: relative;
-    }
+    /* Custom Calendar Styles */
+    .calendar { border: 1px solid #cbd5e1; border-radius: 8px; background: white; padding: 15px; margin-bottom: 15px; box-shadow: 0 2px 5px rgba(0,0,0,0.02); }
+    .calendar-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; font-weight: bold; font-size: 16px; color: #1e293b; }
+    .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px; text-align: center; }
+    .calendar-day-name { font-size: 12px; color: #64748b; font-weight: bold; padding-bottom: 5px; }
+    .calendar-day { padding: 10px 0; border-radius: 6px; cursor: pointer; font-size: 14px; transition: 0.2s; border: 1px solid transparent; color: #334155; }
+    .calendar-day:hover:not(.empty):not(.disabled) { background-color: #f1f5f9; border-color: #cbd5e1; }
+    .calendar-day.weekend { background-color: #dcfce3; color: #15803d; font-weight: bold; }
+    .calendar-day.selected { background-color: #8b5cf6 !important; color: white !important; font-weight: bold; border-color: #7c3aed !important; box-shadow: 0 2px 4px rgba(139, 92, 246, 0.3); }
+    .calendar-day.empty { cursor: default; }
+    .calendar-day.disabled { color: #cbd5e1; cursor: not-allowed; background-color: #f8fafc; text-decoration: line-through; }
     
-    .nav-btn, .page1-div, .full-div, .top10-div, .progress-div, .sub-1, .sub-2, .sub-3, .sub-4, .sub-5, .sub-6, .sub-7, .sub-8, .sub-9 { 
-      background-color: #ffffff !important; color: #334155; border: 1px solid #cbd5e1; 
-      box-shadow: 0 4px 0 #94a3b8, 0 5px 10px rgba(0,0,0,0.05); 
-    }
-    .nav-btn:hover:not(.disabled-btn) { 
-      transform: translateY(-2px); box-shadow: 0 6px 0 #94a3b8, 0 8px 15px rgba(0,0,0,0.1); 
-    }
-    .nav-btn:active:not(.disabled-btn) { 
-      transform: translateY(4px); box-shadow: 0 0 0 transparent !important; 
-    }
+    .date-display-box { width: 100%; padding: 14px; margin-bottom: 15px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 16px; box-sizing: border-box; background-color: #f8fafc; text-align: center; color: #64748b; font-weight: bold; }
+    .date-display-box.active { color: #8b5cf6; border-color: #8b5cf6; background-color: #f5f3ff; }
 
-    /* Disabled Button State */
-    .disabled-btn {
-      background-color: #f1f5f9 !important;
-      color: #94a3b8 !important;
-      border-color: #e2e8f0 !important;
-      box-shadow: none !important;
-      cursor: not-allowed !important;
-      transform: none !important;
-    }
+    /* Button Styles */
+    button { padding: 15px; font-size: 16px; font-weight: 600; cursor: pointer; border: none; border-radius: 8px; transition: all 0.15s ease; position: relative; }
+    .nav-btn, .page1-div, .full-div, .top10-div, .progress-div, .sub-1, .sub-2, .sub-3, .sub-4, .sub-5, .sub-6, .sub-7, .sub-8, .sub-9 { background-color: #ffffff !important; color: #334155; border: 1px solid #cbd5e1; box-shadow: 0 4px 0 #94a3b8, 0 5px 10px rgba(0,0,0,0.05); }
+    .nav-btn:hover:not(.disabled-btn) { transform: translateY(-2px); box-shadow: 0 6px 0 #94a3b8, 0 8px 15px rgba(0,0,0,0.1); }
+    .nav-btn:active:not(.disabled-btn) { transform: translateY(4px); box-shadow: 0 0 0 transparent !important; }
+
+    .disabled-btn { background-color: #f1f5f9 !important; color: #94a3b8 !important; border-color: #e2e8f0 !important; box-shadow: none !important; cursor: not-allowed !important; transform: none !important; }
     
-    /* Action Button (Save/Login) */
-    .action-btn { 
-      background-color: #ffffff; color: #3b82f6; width: 100%; margin-top: 15px; font-size: 18px; border: 2px solid #3b82f6;
-      box-shadow: 0 4px 0 #2563eb, 0 5px 15px rgba(59, 130, 246, 0.2); 
-    }
+    .action-btn { background-color: #ffffff; color: #3b82f6; width: 100%; margin-top: 15px; font-size: 18px; border: 2px solid #3b82f6; box-shadow: 0 4px 0 #2563eb, 0 5px 15px rgba(59, 130, 246, 0.2); }
     .action-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 0 #2563eb, 0 8px 20px rgba(59, 130, 246, 0.3); }
     .action-btn:active { transform: translateY(4px); box-shadow: 0 0 0 transparent; }
     
-    /* Admin/Utility Button */
-    .admin-btn { 
-      background-color: #ffffff; color: #64748b; border: 2px solid #94a3b8; width: 100%; font-size: 16px; margin-top: 15px;
-      box-shadow: 0 4px 0 #cbd5e1, 0 5px 10px rgba(0,0,0,0.05); 
-    }
+    .admin-btn { background-color: #ffffff; color: #64748b; border: 2px solid #94a3b8; width: 100%; font-size: 16px; margin-top: 15px; box-shadow: 0 4px 0 #cbd5e1, 0 5px 10px rgba(0,0,0,0.05); }
     .admin-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 0 #cbd5e1, 0 8px 15px rgba(0,0,0,0.1); }
     .admin-btn:active { transform: translateY(4px); box-shadow: 0 0 0 transparent; }
 
-    /* Yellow Edit Button */
-    .edit-btn { 
-      background-color: #ffffff; color: #f59e0b; width: 100%; margin-top: 25px; font-size: 18px; display: none; border: 2px solid #f59e0b;
-      box-shadow: 0 4px 0 #d97706, 0 5px 15px rgba(245, 158, 11, 0.2); 
-    }
+    .edit-btn { background-color: #ffffff; color: #f59e0b; width: 100%; margin-top: 25px; font-size: 18px; display: none; border: 2px solid #f59e0b; box-shadow: 0 4px 0 #d97706, 0 5px 15px rgba(245, 158, 11, 0.2); }
     .edit-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 0 #d97706, 0 8px 20px rgba(245, 158, 11, 0.3); }
     .edit-btn:active { transform: translateY(4px); box-shadow: 0 0 0 transparent; }
     
-    /* Back Button */
-    .back-btn { 
-      background-color: transparent; color: #3b82f6; padding: 0; margin-bottom: 10px; font-size: 15px; 
-      width: auto; font-weight: bold; box-shadow: none !important; transform: none !important; border: none;
-    }
+    .report-btn { background-color: #ffffff; color: #92400e; border: 2px solid #fcd34d; width: 100%; font-size: 16px; box-shadow: 0 4px 0 #fcd34d, 0 5px 10px rgba(0,0,0,0.05); }
+    .report-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 0 #fcd34d, 0 8px 15px rgba(0,0,0,0.1); }
+    .report-btn:active { transform: translateY(4px); box-shadow: 0 0 0 transparent; }
+    
+    .back-btn { background-color: transparent; color: #3b82f6; padding: 0; margin-bottom: 10px; font-size: 15px; width: auto; font-weight: bold; box-shadow: none !important; transform: none !important; border: none; }
     .back-btn:hover { color: #2563eb; transform: translateX(-3px) !important; box-shadow: none !important; }
     .back-btn:active { transform: translateX(0) !important; }
 
-    /* Text-Only Logout Button Styling */
-    .logout-text-btn { 
-        display: block; width: 100%; text-align: right; color: #ef4444; font-size: 14px; font-weight: bold; 
-        background: transparent; border: none; box-shadow: none; padding: 0; margin-bottom: 15px; cursor: pointer; 
-    }
+    .logout-text-btn { display: block; width: 100%; text-align: right; color: #ef4444; font-size: 14px; font-weight: bold; background: transparent; border: none; box-shadow: none; padding: 0; margin-bottom: 15px; cursor: pointer; }
     .logout-text-btn:hover { text-decoration: underline; color: #dc2626; transform: none; box-shadow: none; }
 
-    /* ------------------------------------- */
     /* Student List Form */
-    /* ------------------------------------- */
     .student-row { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid #f1f5f9; }
-    .student-name { 
-        font-size: 15px; font-weight: 500; color: #475569; flex: 1; padding-right: 15px; 
-        text-align: left; line-height: 1.3; word-break: break-word; 
-    }
-    .mark-input { 
-        width: 45px !important; 
-        padding: 8px 4px !important; 
-        margin: 0 !important; 
-        font-size: 16px; 
-        border: 1px solid #cbd5e1; border-radius: 6px; text-align: center; color: #1e293b; font-weight: bold; background-color: #f8fafc; transition: border-color 0.2s; 
-    }
+    .student-name { font-size: 15px; font-weight: 500; color: #475569; flex: 1; padding-right: 15px; text-align: left; line-height: 1.3; word-break: break-word; }
+    .mark-input { width: 45px !important; padding: 8px 4px !important; margin: 0 !important; font-size: 16px; border: 1px solid #cbd5e1; border-radius: 6px; text-align: center; color: #1e293b; font-weight: bold; background-color: #f8fafc; transition: border-color 0.2s; }
     .mark-input:focus { outline: none; border-color: #3b82f6 !important; background-color: #ffffff !important; }
     .mark-input:disabled { background-color: #e2e8f0 !important; color: #64748b !important; border-color: #e2e8f0 !important; cursor: not-allowed; }
     
@@ -152,14 +119,7 @@
     .developer-credit { text-align: center; margin-top: 20px; font-size: 13px; color: #94a3b8; font-weight: 500; letter-spacing: 0.3px; }
 
     /* Container for Offscreen PDF generation */
-    #pdfDownloadArea {
-        position: absolute;
-        top: -9999px;
-        left: -9999px;
-        width: 297mm;
-        background: #ffffff;
-        z-index: -1;
-    }
+    #pdfDownloadArea { position: absolute; top: -9999px; left: -9999px; width: 297mm; background: #ffffff; z-index: -1; }
   </style>
 </head>
 <body>
@@ -179,7 +139,6 @@
         <button class="nav-btn" style="border-color:#f59e0b; color:#d97706; margin-top:10px;" onclick="showStatusPage('pageHome')">📋 Entry Status</button>
         <button class="nav-btn" style="border-color:#10b981; color:#10b981; margin-top:10px;" onclick="goToGuestReports()">📊 View Reports</button>
       </div>
-
       <div class="developer-credit">Designed & Developed by GRR</div>
     </div>
 
@@ -188,29 +147,19 @@
       <button class="back-btn" onclick="showPage('pageHome')">← Back to Home</button>
       <h1 class="school-name">Teacher Login</h1>
       <hr class="divider">
-      
-      <!-- Step 1: Initial Auth -->
       <div id="loginStep1">
         <label style="font-weight:bold; color:#475569; display:block; margin-bottom:5px;">Select Name</label>
-        <select id="teacherSelect">
-            <option value="" disabled selected hidden>Select Your Name</option>
-        </select>
-        
+        <select id="teacherSelect"><option value="" disabled selected hidden>Select Your Name</option></select>
         <label style="font-weight:bold; color:#475569; display:block; margin-bottom:5px;">Enter PIN</label>
         <input type="password" id="teacherPin" placeholder="Enter PIN (Default: 1234)" pattern="[0-9]*" inputmode="numeric">
-        
         <button class="action-btn" id="loginBtn" onclick="attemptLogin()">Login</button>
         <div id="loginMessage"></div>
       </div>
-      
-      <!-- Step 2: Force PIN Reset on First Login -->
       <div id="loginStep2" style="display: none; text-align: center;">
         <h3 style="color:#ef4444; margin-top: 10px;">Security Action Required</h3>
         <p style="font-size: 14px; margin-bottom: 20px; color:#475569;">Because you are using the default PIN, you must create a new personal PIN to securely remember this device.</p>
-        
         <label style="font-weight:bold; color:#475569; display:block; text-align:left; margin-bottom:5px;">Create New PIN</label>
         <input type="password" id="newTeacherPinSetup" placeholder="Minimum 4 digits" pattern="[0-9]*" inputmode="numeric">
-        
         <button class="action-btn" style="border-color:#10b981; color:#10b981;" id="saveNewPinBtn" onclick="submitNewPin()">Save New PIN & Login</button>
         <button class="back-btn" style="margin-top:15px; width:100%; text-align:center;" onclick="cancelPinSetup()">Cancel</button>
         <div id="setupPinMessage"></div>
@@ -222,10 +171,8 @@
       <button class="back-btn" onclick="showPage('pageHome')">← Back to Home</button>
       <h1 class="school-name" style="color:#dc2626;">Admin Access</h1>
       <hr class="divider">
-      
       <label style="font-weight:bold; color:#475569; display:block; margin-bottom:5px;">Admin PIN</label>
       <input type="password" id="adminPinInput" placeholder="Enter Admin PIN">
-      
       <button class="action-btn" style="border-color:#dc2626; color:#dc2626;" id="adminAuthBtn" onclick="verifyAdmin()">Enter Console</button>
       <div id="adminAuthMessage"></div>
     </div>
@@ -236,18 +183,13 @@
       <h1 class="school-name">Admin Console</h1>
       <h2>Set Teacher PINs</h2>
       <hr class="divider">
-      
       <label style="font-weight:bold; color:#475569; display:block; margin-bottom:5px;">Select Teacher</label>
       <select id="adminTeacherSelect"></select>
-      
       <label style="font-weight:bold; color:#475569; display:block; margin-bottom:5px;">Assign New PIN</label>
       <input type="password" id="newTeacherPin" placeholder="Enter new PIN (e.g. 1234)" pattern="[0-9]*" inputmode="numeric">
-      
       <button class="action-btn" id="setPinBtn" onclick="setTeacherPin()">Save Custom PIN</button>
       <button class="nav-btn" style="width: 100%; border-color:#f59e0b; color:#d97706; margin-top:15px;" onclick="resetToDefaultPin()">Reset to Default (1234)</button>
-      
       <div id="adminDashMessage"></div>
-
       <hr class="divider">
       <div class="list-grid" style="margin-top:15px;">
         <button class="action-btn" style="border-color:#3b82f6; color:#3b82f6; background: #ffffff; margin-top:0;" onclick="setAdminModeAndGo('entry')">📝 Score Entry</button>
@@ -264,9 +206,7 @@
       <h1 class="school-name" style="margin-top: 0;">SANSKRIT HS VATTOLI</h1>
       <h2 class="event-name">Vijayotsavam 2026-27</h2>
       <hr class="divider">
-      
       <h3 id="dashboardGreeting" style="color:#3b82f6; font-weight:bold; margin-bottom:25px; text-align:center;"></h3>
-      
       <h2>Main Menu</h2>
       <div class="list-grid" style="margin-top: 25px;">
         <button class="nav-btn" style="border-color:#3b82f6; color:#3b82f6; padding: 20px; font-size: 18px;" onclick="setModeAndGo('entry')">📝 Score Entry</button>
@@ -283,7 +223,6 @@
       <h1 class="school-name" style="margin-top: 0;">SANSKRIT HS VATTOLI</h1>
       <h2 class="event-name">Vijayotsavam 2026-27</h2>
       <hr class="divider">
-      
       <h2>Select Class</h2>
       <div class="list-grid" style="margin-top: 25px;">
         <button class="nav-btn sub-4" onclick="selectStandard('10')" style="padding: 20px; font-size: 18px;">📘 Class 10</button>
@@ -299,22 +238,62 @@
       <h1 class="school-name">Special Classes</h1>
       <h3 style="color:#8b5cf6; margin-top: -5px; margin-bottom: 20px;">Book Your Slots</h3>
       
-      <div class="button-grid" style="grid-template-columns: 1fr;">
-          <input type="date" id="bookDate" onchange="renderBookings()" style="margin-bottom: 0;">
-          <select id="bookClass" onchange="renderBookings()" style="margin-bottom: 0;">
-              <!-- Options populated by JS -->
-          </select>
-      </div>
+      <!-- Custom Booking Calendar -->
+      <div id="bookingDateDisplay" class="date-display-box">Selected Date: None</div>
+      <div id="bookingCalendar" class="calendar"></div>
+      
+      <select id="bookClass" onchange="renderBookings()">
+          <!-- Options populated dynamically -->
+      </select>
       
       <div id="bookingLoading" style="display:none; text-align:center; color:#8b5cf6; font-weight:bold; margin: 20px 0;">Syncing with Server... ⏳</div>
-      
-      <div id="slotsContainer" style="margin-top: 20px;">
-          <!-- Slots rendered dynamically -->
-      </div>
+      <div id="slotsContainer" style="margin-top: 20px;"></div>
       
       <hr class="divider">
-      <button class="action-btn" style="border-color:#8b5cf6; color:#8b5cf6; margin-top: 5px;" onclick="downloadTimetable()">📥 Download Timetable (PDF)</button>
+      <button class="nav-btn" style="border-color:#8b5cf6; color:#8b5cf6; width:100%; margin-top: 5px;" onclick="goToTimetableMenu()">📅 View Timetables</button>
       
+      <div class="developer-credit">Designed & Developed by GRR</div>
+    </div>
+    
+    <!-- PAGE TIMETABLE MENU: Select Timetable options -->
+    <div id="pageTimetableMenu" class="page">
+      <button class="back-btn" onclick="showPage('pageBooking')">← Back to Booking</button>
+      <h1 class="school-name">Timetables</h1>
+      <h3 style="color:#8b5cf6; margin-top: -5px; margin-bottom: 20px;">Generate PDF Timetable</h3>
+      
+      <!-- Custom TT Calendar -->
+      <div id="ttDateDisplay" class="date-display-box">Selected Date: None</div>
+      <div id="ttCalendar" class="calendar"></div>
+      
+      <div style="background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 8px; padding: 15px; margin-bottom: 15px;">
+          <h4 style="margin-top: 0; margin-bottom: 10px; color:#334155; text-align:center;">Classwise Timetable</h4>
+          <select id="ttClassSelect">
+              <option value="" disabled selected hidden>Select Class (10, 9, 8)</option>
+              <option value="10">Class 10 (All Divisions)</option>
+              <option value="9">Class 9 (All Divisions)</option>
+              <option value="8">Class 8 (All Divisions)</option>
+          </select>
+          <button id="btnGenClass" class="action-btn" style="border-color:#8b5cf6; color:#8b5cf6; margin-top:5px;" onclick="fetchAndGenerateTimetable('classwise')">Generate Classwise</button>
+      </div>
+      
+      <div style="background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 8px; padding: 15px;">
+          <h4 style="margin-top: 0; margin-bottom: 10px; color:#334155; text-align:center;">Divisionwise Timetable</h4>
+          <select id="ttDivSelect">
+              <!-- Populated by JS -->
+          </select>
+          <button id="btnGenDiv" class="action-btn" style="border-color:#8b5cf6; color:#8b5cf6; margin-top:5px;" onclick="fetchAndGenerateTimetable('divisionwise')">Generate Divisionwise</button>
+      </div>
+
+      <div class="developer-credit">Designed & Developed by GRR</div>
+    </div>
+    
+    <!-- PAGE TIMETABLE VIEW: Displays generated timetable -->
+    <div id="pageTimetableView" class="page">
+      <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px;">
+        <button class="back-btn" onclick="showPage('pageTimetableMenu')" style="margin-bottom: 0;">← Back</button>
+        <button id="downloadTtBtn" class="nav-btn" style="border-color: #8b5cf6; color: #8b5cf6; padding: 10px 15px; font-size: 14px;" onclick="downloadTimetablePDF()">📥 Download PDF</button>
+      </div>
+      <div id="ttViewContainer" style="background:white; border-radius:8px; border:1px solid #cbd5e1; padding: 10px; overflow-x: auto;"></div>
       <div class="developer-credit">Designed & Developed by GRR</div>
     </div>
 
@@ -330,11 +309,7 @@
       </select>
       
       <div id="statusLoading" style="display:none; text-align:center; color:#3b82f6; font-weight:bold; margin: 20px 0;">Scanning all classes... ⏳</div>
-      
-      <div id="statusListContainer" style="background:#fff; border:1px solid #cbd5e1; border-radius:8px; padding:15px; max-height:400px; overflow-y:auto; margin-bottom: 20px; margin-top:10px;">
-          <!-- List injected here -->
-      </div>
-      
+      <div id="statusListContainer" style="background:#fff; border:1px solid #cbd5e1; border-radius:8px; padding:15px; max-height:400px; overflow-y:auto; margin-bottom: 20px; margin-top:10px;"></div>
       <div class="developer-credit">Designed & Developed by GRR</div>
     </div>
 
@@ -343,7 +318,6 @@
       <button class="back-btn" onclick="showPage('pageClassSelect')">← Back to Classes</button>
       <h1 class="school-name">Class 10</h1>
       <hr class="divider">
-      
       <h2>Select Examination</h2>
       <div class="list-grid" style="margin-top: 25px;">
         <button class="nav-btn sub-6" onclick="selectExam('First Term Exam')" style="padding: 20px; font-size: 18px;">📄 First Term Exam</button>
@@ -358,7 +332,6 @@
       <h1 class="school-name">SANSKRIT HS VATTOLI</h1>
       <h3 class="test-name"></h3>
       <hr class="divider">
-      
       <h2>Enter Marks</h2>
       <h3 id="divisionTitle">Select Class Division</h3>
       <div class="button-grid" id="divisionGrid">
@@ -399,10 +372,8 @@
       <h2 id="marksTitle">Enter Marks</h2>
       <h3 id="marksSubtitle"></h3>
       <div id="studentListContainer"></div>
-      
       <button id="saveBtn" class="action-btn" onclick="saveMarks()">Save All Marks</button>
       <button id="editBtn" class="edit-btn" onclick="enableEditing()">✏️ Edit Marks</button>
-      
       <div id="message"></div>
       <div class="developer-credit">Designed & Developed by GRR</div>
     </div>
@@ -523,13 +494,10 @@
       "8H": ["AADIDEV P P", "AKSHIKA M", "ANMIYA", "ARSHIK DEV P", "ARUNDHATHI K", "ASWIN DEV K K", "AVANI VIJEESH", "DARSITH V R", "DEVALAKSHMI.V.C", "DEVAMGANA P B", "GOUTHAM KRISHNA A", "ISHIKA A", "KEDARNADH B.S", "NAINIKA C P", "NAYAN THEJ K C", "NIHAL S", "NIVEDYA ANIL KUMAR", "RITHUKRISHNA C P", "SAMARTH S CHANDRAN", "SARON A K", "SHANVIN PRAJITH C P", "SHIVA LAKSHMI SANAL", "SHYAMDEV S NATH", "SIVADA P M", "SIVADA SASI", "SURYA DEV V.K", "THEJA KALLYANI", "THRINAD SHAH", "VEDAJ", "VISHWADHAR P P"]
     };
     
-    // Note: IT is intentionally excluded from the Mark Entry Subject List
     const subjectsList = ['Language 1', 'Language 2', 'English', 'Hindi', 'Social Science', 'Physics', 'Chemistry', 'Biology', 'Mathematics'];
     
-    // Language Teachers List
     const languageTeachers = ["Aneesh A", "AP Najee Ahammed", "CK Leela", "KV Sheeba", "Shyna R", "Smitha KK", "T Sayad"];
 
-    // Teacher Mapping
     const teacherMapping = {
       "Biology": { 
           "10A": "ASHITHA S P", "10B": "K ROOSY CONTRACTOR", "10C": "KK RINCY", "10D": "ASHITHA S P", "10E": "KK RINCY", "10F": "K ROOSY CONTRACTOR", "10G": "K ROOSY CONTRACTOR", "10H": "ASHITHA S P", 
@@ -601,10 +569,83 @@
     let currentReportClass = "";
     let adminToken = ""; 
     let statusReturnPage = 'pageHome';
-    let appMode = 'entry'; // 'entry' or 'report'
-    
-    // Booking System State
+    let appMode = 'entry'; 
     let specialBookings = {};
+
+    // --- CALENDAR LOGIC ---
+    let bookingCalMonth = new Date().getMonth();
+    let bookingCalYear = new Date().getFullYear();
+    
+    let ttCalMonth = new Date().getMonth();
+    let ttCalYear = new Date().getFullYear();
+
+    function renderCustomCalendar(containerId, year, month, selectedDateStr, onSelectFuncStr, prefix) {
+        let firstDay = new Date(year, month, 1).getDay();
+        let daysInMonth = new Date(year, month + 1, 0).getDate();
+        let today = new Date();
+        today.setHours(0,0,0,0);
+        const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+        
+        let html = `<div class="calendar-header">
+            <button class="back-btn" style="margin:0; font-size:18px;" onclick="changeMonth('${prefix}', -1)">&lt;</button>
+            <span>${monthNames[month]} ${year}</span>
+            <button class="back-btn" style="margin:0; font-size:18px;" onclick="changeMonth('${prefix}', 1)">&gt;</button>
+        </div>
+        <div class="calendar-grid">
+            <div class="calendar-day-name">Sun</div><div class="calendar-day-name">Mon</div><div class="calendar-day-name">Tue</div><div class="calendar-day-name">Wed</div><div class="calendar-day-name">Thu</div><div class="calendar-day-name">Fri</div><div class="calendar-day-name">Sat</div>`;
+        
+        for(let i=0; i<firstDay; i++) html += `<div class="calendar-day empty"></div>`;
+        
+        for(let d=1; d<=daysInMonth; d++) {
+            let curDate = new Date(year, month, d);
+            let dateStr = `${year}-${String(month+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+            let dayOfWeek = curDate.getDay();
+            
+            let classes = ['calendar-day'];
+            if (dayOfWeek === 0 || dayOfWeek === 6) classes.push('weekend');
+            if (dateStr === selectedDateStr) classes.push('selected');
+            if (curDate < today) classes.push('disabled');
+            
+            if (curDate < today) {
+                html += `<div class="${classes.join(' ')}">${d}</div>`;
+            } else {
+                html += `<div class="${classes.join(' ')}" onclick="${onSelectFuncStr}('${dateStr}')">${d}</div>`;
+            }
+        }
+        html += `</div>`;
+        document.getElementById(containerId).innerHTML = html;
+    }
+
+    function changeMonth(prefix, offset) {
+        if (prefix === 'booking') {
+            bookingCalMonth += offset;
+            if (bookingCalMonth < 0) { bookingCalMonth = 11; bookingCalYear--; }
+            else if (bookingCalMonth > 11) { bookingCalMonth = 0; bookingCalYear++; }
+            let selDate = document.getElementById('bookDate').value;
+            renderCustomCalendar('bookingCalendar', bookingCalYear, bookingCalMonth, selDate, 'selectBookingDate', 'booking');
+        } else {
+            ttCalMonth += offset;
+            if (ttCalMonth < 0) { ttCalMonth = 11; ttCalYear--; }
+            else if (ttCalMonth > 11) { ttCalMonth = 0; ttCalYear++; }
+            let selDate = document.getElementById('bookDate').value; 
+            renderCustomCalendar('ttCalendar', ttCalYear, ttCalMonth, window.ttSelectedDate, 'selectTTDate', 'tt');
+        }
+    }
+
+    function selectBookingDate(dateStr) {
+        document.getElementById('bookDate').value = dateStr;
+        document.getElementById('bookingDateDisplay').textContent = "Selected Date: " + dateStr;
+        document.getElementById('bookingDateDisplay').classList.add('active');
+        renderCustomCalendar('bookingCalendar', bookingCalYear, bookingCalMonth, dateStr, 'selectBookingDate', 'booking');
+        renderBookings();
+    }
+
+    function selectTTDate(dateStr) {
+        window.ttSelectedDate = dateStr;
+        document.getElementById('ttDateDisplay').textContent = "Selected Date: " + dateStr;
+        document.getElementById('ttDateDisplay').classList.add('active');
+        renderCustomCalendar('ttCalendar', ttCalYear, ttCalMonth, dateStr, 'selectTTDate', 'tt');
+    }
 
     window.addEventListener('load', function() {
       const teacherSet = new Set(languageTeachers); 
@@ -641,13 +682,6 @@
       }
     });
 
-    window.history.pushState(null, null, window.location.href);
-    window.addEventListener("popstate", function(event) {
-      window.close(); 
-      document.body.innerHTML = "<h2 style='text-align:center; margin-top:50px; color:#334155;'>App closed. You can exit this tab.</h2>";
-      setTimeout(function() { window.location.href = "about:blank"; }, 300);
-    });
-
     function showPage(pageId) {
       document.querySelectorAll('.page').forEach(page => page.classList.remove('active'));
       document.getElementById(pageId).classList.add('active');
@@ -656,7 +690,7 @@
           document.body.style.backgroundColor = '#eef2f5'; 
       }
       
-      if(pageId === 'page5') {
+      if(pageId === 'page5' || pageId === 'pageTimetableView') {
         document.getElementById('mainContainer').style.display = 'none';
       } else {
         document.getElementById('mainContainer').style.display = 'block';
@@ -668,6 +702,7 @@
       });
     }
 
+    // --- AUTHENTICATION ---
     function attemptLogin() {
         const user = document.getElementById('teacherSelect').value;
         const pin = document.getElementById('teacherPin').value.trim();
@@ -800,14 +835,11 @@
     function resetToDefaultPin() {
         const targetTeacher = document.getElementById('adminTeacherSelect').value;
         const msg = document.getElementById('adminDashMessage');
-        
         if (targetTeacher === "Admin") {
-            msg.style.color = "#ef4444"; 
-            msg.style.backgroundColor = "#fee2e2"; 
+            msg.style.color = "#ef4444"; msg.style.backgroundColor = "#fee2e2"; 
             msg.textContent = "Admin PIN cannot be reset to the 1234 default.";
             return;
         }
-
         document.getElementById('newTeacherPin').value = "1234";
         setTeacherPin();
     }
@@ -884,39 +916,45 @@
         bookingReturnPage = fromPage;
         showPage('pageBooking');
         
-        let dateInput = document.getElementById('bookDate');
-        let classInput = document.getElementById('bookClass');
+        // Reset state
+        document.getElementById('bookDate').value = "";
+        document.getElementById('bookingDateDisplay').textContent = "Selected Date: None";
+        document.getElementById('bookingDateDisplay').classList.remove('active');
+        document.getElementById('slotsContainer').innerHTML = "";
         
-        if (classInput.options.length === 0) {
-            let optionsHtml = '';
-            ['10','9','8'].forEach(std => {
-                ['A','B','C','D','E','F','G','H'].forEach(div => {
-                    optionsHtml += `<option value="${std}${div}">Class ${std}${div}</option>`;
-                });
+        // Populate class dropdown dynamically based on assigned divisions
+        let classInput = document.getElementById('bookClass');
+        classInput.innerHTML = '<option value="" disabled selected hidden>Select Class</option>';
+        
+        let allowedDivs = [];
+        ['10','9','8'].forEach(std => {
+            ['A','B','C','D','E','F','G','H'].forEach(div => {
+                let cls = std + div;
+                if (loggedInUser === 'Admin' || loggedInUser === 'Viewer' || languageTeachers.includes(loggedInUser)) {
+                    allowedDivs.push(cls);
+                } else {
+                    let subs = getTeacherSubjectsForClass(loggedInUser, cls);
+                    if (subs.length > 0) allowedDivs.push(cls);
+                }
             });
-            classInput.innerHTML = optionsHtml;
-        }
+        });
+        
+        allowedDivs.forEach(cls => {
+            classInput.innerHTML += `<option value="${cls}">Class ${cls}</option>`;
+        });
 
-        if(!dateInput.value) {
-            let today = new Date();
-            let yyyy = today.getFullYear();
-            let mm = String(today.getMonth() + 1).padStart(2, '0');
-            let dd = String(today.getDate()).padStart(2, '0');
-            let todayStr = `${yyyy}-${mm}-${dd}`;
-            dateInput.min = todayStr;
-            dateInput.value = todayStr;
-        }
+        // Initialize Booking Calendar
+        bookingCalMonth = new Date().getMonth();
+        bookingCalYear = new Date().getFullYear();
+        renderCustomCalendar('bookingCalendar', bookingCalYear, bookingCalMonth, null, 'selectBookingDate', 'booking');
         
         fetchBookings();
     }
 
-    function goBackFromBooking() {
-        showPage(bookingReturnPage);
-    }
+    function goBackFromBooking() { showPage(bookingReturnPage); }
     
     function fetchBookings() {
         document.getElementById('bookingLoading').style.display = "block";
-        document.getElementById('slotsContainer').style.display = "none";
         
         fetch(scriptURL, {
             method: 'POST',
@@ -926,26 +964,18 @@
         .then(res => res.json())
         .then(data => {
             document.getElementById('bookingLoading').style.display = "none";
-            document.getElementById('slotsContainer').style.display = "block";
             if (data.status === "success") {
                 specialBookings = data.data;
                 renderBookings();
             }
-        })
-        .catch(err => {
-            document.getElementById('bookingLoading').textContent = "Network error. Try again.";
-        });
+        }).catch(err => { document.getElementById('bookingLoading').textContent = "Network error. Try again."; });
     }
 
     function getTeacherSubjectsForClass(teacher, className) {
         let subs = [];
-        if (languageTeachers.includes(teacher)) {
-            subs.push("Language");
-        }
+        if (languageTeachers.includes(teacher)) subs.push("Language");
         for (let sub in teacherMapping) {
-            if (teacherMapping[sub][className] === teacher) {
-                subs.push(sub);
-            }
+            if (teacherMapping[sub][className] === teacher) subs.push(sub);
         }
         return [...new Set(subs)];
     }
@@ -953,7 +983,10 @@
     function renderBookings() {
         let date = document.getElementById('bookDate').value;
         let cls = document.getElementById('bookClass').value;
-        if(!date || !cls) return;
+        if(!date || !cls) {
+            document.getElementById('slotsContainer').innerHTML = "<div style='text-align:center; color:#64748b;'>Please select both a date and a class.</div>";
+            return;
+        }
         
         let slots = ["9:30 AM to 11:00 AM", "11:15 AM to 12:45 PM", "2:00 PM to 3:30 PM"];
         let html = '';
@@ -1007,9 +1040,7 @@
             body: JSON.stringify({ action: "saveBooking", date: date, cls: cls, slotIndex: index, teacher: teacherName, subject: sub })
         })
         .then(res => res.json())
-        .then(data => {
-            fetchBookings(); 
-        });
+        .then(data => { fetchBookings(); });
     }
     
     function cancelBooking(date, cls, index, event) {
@@ -1024,78 +1055,148 @@
                 body: JSON.stringify({ action: "cancelBooking", date: date, cls: cls, slotIndex: index })
             })
             .then(res => res.json())
-            .then(data => {
-                fetchBookings(); 
-            });
+            .then(data => { fetchBookings(); });
         }
     }
 
-    async function downloadTimetable() {
-        let date = document.getElementById('bookDate').value;
-        if(!date) return alert("Select a date first.");
+    // --- TIMETABLE GENERATION SYSTEM ---
+    function goToTimetableMenu() {
+        showPage('pageTimetableMenu');
         
-        let btn = document.querySelector("#pageBooking .action-btn");
+        window.ttSelectedDate = null;
+        document.getElementById('ttDateDisplay').textContent = "Selected Date: None";
+        document.getElementById('ttDateDisplay').classList.remove('active');
+        
+        ttCalMonth = new Date().getMonth();
+        ttCalYear = new Date().getFullYear();
+        renderCustomCalendar('ttCalendar', ttCalYear, ttCalMonth, null, 'selectTTDate', 'tt');
+        
+        let divSelect = document.getElementById('ttDivSelect');
+        divSelect.innerHTML = '<option value="" disabled selected hidden>Select Division (10A...8H)</option>';
+        ['10','9','8'].forEach(std => {
+            ['A','B','C','D','E','F','G','H'].forEach(div => {
+                divSelect.innerHTML += `<option value="${std}${div}">Class ${std}${div}</option>`;
+            });
+        });
+    }
+    
+    function fetchAndGenerateTimetable(type) {
+        let date = window.ttSelectedDate;
+        if (!date) return alert("Please select a date on the calendar.");
+        
+        let targetValue = type === 'classwise' ? document.getElementById('ttClassSelect').value : document.getElementById('ttDivSelect').value;
+        if (!targetValue) return alert("Please select a Class or Division from the dropdown.");
+
+        let btnId = type === 'classwise' ? 'btnGenClass' : 'btnGenDiv';
+        let btn = document.getElementById(btnId);
+        let ogText = btn.textContent;
+        btn.textContent = "Loading... ⏳";
+        btn.disabled = true;
+
+        fetch(scriptURL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+            body: JSON.stringify({ action: "getBookings" })
+        })
+        .then(res => res.json())
+        .then(data => {
+            btn.textContent = ogText;
+            btn.disabled = false;
+            if (data.status === "success") {
+                specialBookings = data.data;
+                buildTimetableView(type, targetValue, date);
+            } else { alert("Failed to fetch data."); }
+        })
+        .catch(err => {
+            btn.textContent = ogText;
+            btn.disabled = false;
+            alert("Network error.");
+        });
+    }
+
+    function buildTimetableView(type, targetValue, date) {
+        showPage('pageTimetableView');
+        
+        let html = `<div style="padding: 20px; background: white; color: black; font-family: sans-serif; box-sizing:border-box;">`;
+        
+        if (type === 'classwise') {
+            html += `<h2 style="text-align: center; margin-bottom: 20px;">SANSKRIT HS VATTOLI - Class ${targetValue} Special Timetable<br><span style="font-size:16px;">${date}</span></h2>
+            <table style="width: 100%; border-collapse: collapse; border: 2px solid #000; font-size: 14px;">
+            <thead>
+                <tr>
+                    <th style="border: 1px solid #000; padding: 10px;">Division</th>
+                    <th style="border: 1px solid #000; padding: 10px;">9:30 AM - 11:00 AM</th>
+                    <th style="border: 1px solid #000; padding: 10px;">11:15 AM - 12:45 PM</th>
+                    <th style="border: 1px solid #000; padding: 10px;">2:00 PM - 3:30 PM</th>
+                </tr>
+            </thead><tbody>`;
+            
+            ['A','B','C','D','E','F','G','H'].forEach(div => {
+                let cls = targetValue + div;
+                let b0 = specialBookings[date] && specialBookings[date][cls] && specialBookings[date][cls][0] ? `${specialBookings[date][cls][0].subject}<br>(${specialBookings[date][cls][0].teacher})` : "-";
+                let b1 = specialBookings[date] && specialBookings[date][cls] && specialBookings[date][cls][1] ? `${specialBookings[date][cls][1].subject}<br>(${specialBookings[date][cls][1].teacher})` : "-";
+                let b2 = specialBookings[date] && specialBookings[date][cls] && specialBookings[date][cls][2] ? `${specialBookings[date][cls][2].subject}<br>(${specialBookings[date][cls][2].teacher})` : "-";
+                
+                html += `<tr>
+                    <td style="border: 1px solid #000; padding: 10px; font-weight: bold; text-align: center;">${cls}</td>
+                    <td style="border: 1px solid #000; padding: 10px; text-align: center;">${b0}</td>
+                    <td style="border: 1px solid #000; padding: 10px; text-align: center;">${b1}</td>
+                    <td style="border: 1px solid #000; padding: 10px; text-align: center;">${b2}</td>
+                </tr>`;
+            });
+            html += `</tbody></table></div>`;
+        } else {
+            // Divisionwise
+            html += `<h2 style="text-align: center; margin-bottom: 20px;">SANSKRIT HS VATTOLI - Class ${targetValue} Special Timetable<br><span style="font-size:16px;">${date}</span></h2>
+            <table style="width: 100%; border-collapse: collapse; border: 2px solid #000; font-size: 16px;">
+            <thead>
+                <tr>
+                    <th style="border: 1px solid #000; padding: 12px; width:40%;">Time Slot</th>
+                    <th style="border: 1px solid #000; padding: 12px;">Subject & Teacher</th>
+                </tr>
+            </thead><tbody>`;
+            
+            let cls = targetValue;
+            let slots = ["9:30 AM - 11:00 AM", "11:15 AM - 12:45 PM", "2:00 PM - 3:30 PM"];
+            slots.forEach((time, idx) => {
+                let b = specialBookings[date] && specialBookings[date][cls] && specialBookings[date][cls][idx];
+                let text = b ? `<strong>${b.subject}</strong><br>${b.teacher}` : "Free Slot";
+                html += `<tr>
+                    <td style="border: 1px solid #000; padding: 12px; text-align: center; font-weight: bold;">${time}</td>
+                    <td style="border: 1px solid #000; padding: 12px; text-align: center;">${text}</td>
+                </tr>`;
+            });
+            html += `</tbody></table></div>`;
+        }
+        
+        document.getElementById('ttViewContainer').innerHTML = html;
+    }
+
+    function downloadTimetablePDF() {
+        let btn = document.getElementById('downloadTtBtn');
         let ogText = btn.textContent;
         btn.textContent = "Generating PDF... ⏳";
         btn.disabled = true;
-        
-        let classes = [];
-        ['10','9','8'].forEach(std => {
-            ['A','B','C','D','E','F','G','H'].forEach(div => classes.push(std+div));
+
+        let element = document.getElementById('ttViewContainer');
+        let opt = {
+            margin:       10,
+            filename:     'Timetable.pdf',
+            image:        { type: 'jpeg', quality: 0.98 },
+            html2canvas:  { scale: 2, useCORS: true },
+            jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
+        };
+
+        html2pdf().set(opt).from(element).save().then(() => {
+            btn.textContent = ogText;
+            btn.disabled = false;
+        }).catch(e => {
+            btn.textContent = ogText;
+            btn.disabled = false;
+            alert("Error downloading PDF.");
         });
-        
-        let html = `<div style="padding: 20px; background: white; color: black; font-family: sans-serif; width: 297mm; box-sizing:border-box;">
-            <h2 style="text-align: center; margin-bottom: 20px;">SANSKRIT HS VATTOLI - Special Class Timetable - ${date}</h2>
-            <table style="width: 100%; border-collapse: collapse; border: 2px solid #000; font-size: 12px;">
-            <thead>
-                <tr>
-                    <th style="border: 1px solid #000; padding: 8px;">Class</th>
-                    <th style="border: 1px solid #000; padding: 8px;">9:30 AM - 11:00 AM</th>
-                    <th style="border: 1px solid #000; padding: 8px;">11:15 AM - 12:45 PM</th>
-                    <th style="border: 1px solid #000; padding: 8px;">2:00 PM - 3:30 PM</th>
-                </tr>
-            </thead>
-            <tbody>`;
-            
-        classes.forEach(cls => {
-            let b0 = specialBookings[date] && specialBookings[date][cls] && specialBookings[date][cls][0] ? `${specialBookings[date][cls][0].subject}<br>(${specialBookings[date][cls][0].teacher})` : "-";
-            let b1 = specialBookings[date] && specialBookings[date][cls] && specialBookings[date][cls][1] ? `${specialBookings[date][cls][1].subject}<br>(${specialBookings[date][cls][1].teacher})` : "-";
-            let b2 = specialBookings[date] && specialBookings[date][cls] && specialBookings[date][cls][2] ? `${specialBookings[date][cls][2].subject}<br>(${specialBookings[date][cls][2].teacher})` : "-";
-            
-            html += `<tr>
-                <td style="border: 1px solid #000; padding: 6px; font-weight: bold; text-align: center;">${cls}</td>
-                <td style="border: 1px solid #000; padding: 6px; text-align: center;">${b0}</td>
-                <td style="border: 1px solid #000; padding: 6px; text-align: center;">${b1}</td>
-                <td style="border: 1px solid #000; padding: 6px; text-align: center;">${b2}</td>
-            </tr>`;
-        });
-        
-        html += `</tbody></table></div>`;
-        
-        let container = document.getElementById('pdfDownloadArea');
-        container.innerHTML = html;
-        container.style.left = '0';
-        
-        try {
-            const { jsPDF } = window.jspdf;
-            let doc = new jsPDF('p', 'mm', 'a4'); 
-            let canvas = await html2canvas(container.children[0], { scale: 1.5, useCORS: true, logging: false });
-            let imgData = canvas.toDataURL('image/jpeg', 0.95);
-            
-            let imgWidth = 190;
-            let imgHeight = canvas.height * imgWidth / canvas.width;
-            
-            doc.addImage(imgData, 'JPEG', 10, 10, imgWidth, imgHeight);
-            doc.save(`Timetable_${date}.pdf`);
-        } catch(e) {
-            console.error(e);
-            alert("Error downloading timetable.");
-        }
-        
-        container.style.left = '-9999px';
-        btn.textContent = ogText;
-        btn.disabled = false;
     }
+
 
     // --- STATUS CHECK SYSTEM ---
     function showStatusPage(fromPage) {
@@ -1104,10 +1205,8 @@
         fetchStatus();
     }
     
-    function goBackFromStatus() {
-        showPage(statusReturnPage);
-    }
-    
+    function goBackFromStatus() { showPage(statusReturnPage); }
+
     function fetchStatus() {
         let examName = document.getElementById('statusExamSelect').value;
         document.getElementById('statusLoading').style.display = "block";
@@ -1186,720 +1285,6 @@
         document.getElementById('statusListContainer').innerHTML = html;
     }
 
-    // --- LOGIC FOR EXAM & ENTRY FLOW ---
-    function selectStandard(std) {
-        currentStandard = std;
-        
-        document.getElementById('divisionTitle').textContent = "Select Class " + std + " Division";
-        document.getElementById('reportDivisionTitle').textContent = "Select Class " + std + " Division";
-        
-        if (std === '10') {
-            document.body.style.backgroundColor = '#eef2f5';
-            showPage('page0'); 
-        } else {
-            currentExam = "First Term Exam";
-            document.querySelectorAll('.test-name').forEach(el => el.textContent = currentExam);
-            document.body.style.backgroundColor = '#e0f2fe';
-            
-            if (appMode === 'report') {
-                showPage('page4');
-            } else {
-                filterDivisionsForTeacher();
-                showPage('page1');
-            }
-        }
-    }
-
-    function selectExam(exam) {
-      currentExam = exam;
-      document.querySelectorAll('.test-name').forEach(el => el.textContent = currentExam);
-      
-      if (exam === 'First Term Exam') { document.body.style.backgroundColor = '#e0f2fe'; } 
-      else if (exam === 'First Mid Term Exam') { document.body.style.backgroundColor = '#fef3c7'; }
-      
-      if (appMode === 'report') {
-          showPage('page4');
-      } else {
-          filterDivisionsForTeacher();
-          showPage('page1');
-      }
-    }
-
-    function filterDivisionsForTeacher() {
-        if (loggedInUser === "Admin" || loggedInUser === "Viewer") {
-            ['A','B','C','D','E','F','G','H'].forEach(d => {
-                let btn = document.getElementById('btn-div-'+d);
-                btn.classList.remove('disabled-btn'); btn.disabled = false;
-            });
-            return;
-        }
-
-        if (languageTeachers.includes(loggedInUser)) {
-            ['A','B','C','D','E','F','G','H'].forEach(d => {
-                let btn = document.getElementById('btn-div-'+d);
-                btn.classList.remove('disabled-btn'); btn.disabled = false;
-            });
-            return;
-        }
-
-        let allowedDivs = [];
-        for (let sub in teacherMapping) {
-            for (let cls in teacherMapping[sub]) {
-                if (teacherMapping[sub][cls] === loggedInUser && cls.startsWith(currentStandard)) {
-                    allowedDivs.push(cls.replace(currentStandard, '')); 
-                }
-            }
-        }
-        
-        ['A','B','C','D','E','F','G','H'].forEach(d => {
-            let btn = document.getElementById('btn-div-'+d);
-            if (allowedDivs.includes(d)) {
-                btn.classList.remove('disabled-btn'); btn.disabled = false;
-            } else {
-                btn.classList.add('disabled-btn'); btn.disabled = true;
-            }
-        });
-    }
-
-    function selectDivision(div) {
-      currentDivision = div;
-      const fullClassName = currentStandard + currentDivision;
-      document.getElementById('subjectTitleClass').textContent = "Class " + fullClassName;
-      
-      filterSubjectsForTeacher(fullClassName);
-      showPage('page2');
-    }
-
-    function filterSubjectsForTeacher(className) {
-        subjectsList.forEach(sub => {
-            let btnId = 'btn-sub-' + sub.replace(/\s+/g, '');
-            let btn = document.getElementById(btnId);
-            
-            if (loggedInUser === "Admin") {
-                btn.classList.remove('disabled-btn'); btn.disabled = false;
-                return;
-            }
-
-            if (loggedInUser === "Viewer") {
-                btn.classList.add('disabled-btn'); btn.disabled = true;
-                return;
-            }
-
-            if (languageTeachers.includes(loggedInUser)) {
-                if (sub === 'Language 1' || sub === 'Language 2') {
-                    btn.classList.remove('disabled-btn'); btn.disabled = false;
-                } else {
-                    btn.classList.add('disabled-btn'); btn.disabled = true;
-                }
-                return;
-            }
-            
-            let assignedTeacher = teacherMapping[sub] && teacherMapping[sub][className] ? teacherMapping[sub][className] : null;
-            if (assignedTeacher === loggedInUser) {
-                btn.classList.remove('disabled-btn'); btn.disabled = false;
-            } else {
-                btn.classList.add('disabled-btn'); btn.disabled = true;
-            }
-        });
-    }
-
-    function selectSubject(sub) {
-      currentSubject = sub;
-      const fullClassName = currentStandard + currentDivision;
-      document.getElementById('marksTitle').textContent = "Class " + fullClassName;
-      document.getElementById('marksSubtitle').textContent = sub;
-      
-      showPage('page3');
-
-      let isEntryOpen = (currentExam === "First Term Exam") ? IS_FIRST_TERM_ENTRY_OPEN : IS_MID_TERM_ENTRY_OPEN;
-      
-      if (!isEntryOpen) {
-        document.getElementById('studentListContainer').innerHTML = "<div style='text-align:center; padding:40px 20px; font-size:22px; color:#ef4444; font-weight:bold; background:#fee2e2; border-radius:8px; margin-top:20px;'>Data entry is over for this exam.</div>";
-        document.getElementById('studentListContainer').style.display = "block";
-        document.getElementById('saveBtn').style.display = "none";
-        document.getElementById('editBtn').style.display = "none";
-        return; 
-      }
-      
-      document.getElementById('studentListContainer').style.display = "none";
-      document.getElementById('saveBtn').style.display = "none";
-      document.getElementById('editBtn').style.display = "none";
-      
-      const msg = document.getElementById('message');
-      msg.style.color = "#3b82f6"; msg.textContent = "Loading, Please Wait........";
-      
-      fetch(scriptURL, {
-        method: 'POST',
-        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-        body: JSON.stringify({ action: "getMarks", className: fullClassName })
-      })
-      .then(response => response.json())
-      .then(data => {
-        if (data.status === "success") {
-           let subjectMarks = {};
-           data.data.forEach(row => {
-             let rowExam = row.exam || "First Mid Term Exam";
-             if (rowExam === "SSLC Mid Term Examination") rowExam = "First Mid Term Exam"; 
-             
-             if (rowExam === currentExam && row.subject === currentSubject) {
-               subjectMarks[row.student] = row.mark;
-             }
-           });
-           renderStudentListWithMarks(fullClassName, subjectMarks);
-        } else {
-           msg.textContent = "Failed to load marks. Starting fresh."; msg.style.color = "#b91c1c";
-           renderStudentListWithMarks(fullClassName, {});
-        }
-      })
-      .catch(error => {
-        msg.textContent = "Network error. Starting fresh."; msg.style.color = "#b91c1c";
-        renderStudentListWithMarks(fullClassName, {});
-      });
-    }
-
-    function renderStudentListWithMarks(className, existingMarks) {
-      const container = document.getElementById('studentListContainer');
-      container.innerHTML = ""; 
-      const students = studentsData[className];
-      let hasExistingMarks = Object.keys(existingMarks).length > 0;
-
-      students.forEach((student, index) => {
-        const row = document.createElement('div');
-        row.className = 'student-row';
-        let markVal = existingMarks[student] !== undefined ? existingMarks[student] : "";
-        let disabledAttr = hasExistingMarks ? "disabled" : "";
-        
-        row.innerHTML = `<div class="student-name">${index + 1}. ${student}</div>
-                         <input type="number" class="mark-input" placeholder="0" data-student-name="${student}" value="${markVal}" ${disabledAttr}>`;
-        container.appendChild(row);
-      });
-      
-      container.style.display = "block";
-      document.getElementById('message').textContent = "";
-      
-      if (hasExistingMarks) {
-        document.getElementById('saveBtn').style.display = "none";
-        document.getElementById('editBtn').style.display = "block";
-      } else {
-        document.getElementById('saveBtn').style.display = "block";
-        document.getElementById('saveBtn').disabled = false;
-        document.getElementById('saveBtn').textContent = "Save All Marks";
-        document.getElementById('editBtn').style.display = "none";
-      }
-    }
-
-    function saveMarks() {
-      const msg = document.getElementById('message');
-      const btn = document.getElementById('saveBtn');
-      const fullClassName = currentStandard + currentDivision;
-      const inputs = document.querySelectorAll('.mark-input');
-      const marksToSave = [];
-      
-      const maxMarkAllowed = getMaxMark(currentExam, currentSubject, fullClassName);
-      let validationError = "";
-
-      for(let i=0; i<inputs.length; i++) {
-        let input = inputs[i];
-        input.style.borderColor = "#cbd5e1"; input.style.backgroundColor = "#f8fafc";
-        
-        const markValue = input.value.trim();
-        if (markValue !== "") {
-          let numValue = parseFloat(markValue);
-          if (numValue > maxMarkAllowed || numValue < 0) {
-            validationError = `Entry rejected: Mark cannot exceed ${maxMarkAllowed} for ${currentSubject}.`;
-            input.style.borderColor = "#ef4444"; input.style.backgroundColor = "#fee2e2";
-          } else {
-            marksToSave.push({ exam: currentExam, className: fullClassName, subject: currentSubject, student: input.dataset.studentName, mark: markValue });
-          }
-        }
-      }
-
-      if (validationError !== "") {
-        msg.style.color = "#b91c1c"; msg.style.backgroundColor = "#fee2e2"; msg.textContent = validationError;
-        return; 
-      }
-
-      if (marksToSave.length === 0) {
-        msg.style.color = "#b91c1c"; msg.style.backgroundColor = "#fee2e2"; msg.textContent = "No marks entered. Nothing to save.";
-        return;
-      }
-
-      btn.disabled = true; btn.textContent = "Saving...";
-      msg.textContent = ""; msg.style.backgroundColor = "transparent";
-
-      fetch(scriptURL, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify(marksToSave) })
-      .then(response => response.json())
-      .then(data => {
-        if (data.status === "error") {
-          msg.style.color = "#b91c1c"; msg.style.backgroundColor = "#fee2e2"; msg.textContent = data.message;
-          btn.disabled = false; btn.textContent = "Save All Marks";
-        } else {
-          msg.style.color = "#15803d"; msg.style.backgroundColor = "#dcfce3"; msg.textContent = data.message;
-          inputs.forEach(input => input.disabled = true);
-          btn.style.display = "none";
-          document.getElementById('editBtn').style.display = "block";
-        }
-      })
-      .catch(error => {
-        msg.style.color = "#b91c1c"; msg.style.backgroundColor = "#fee2e2"; msg.textContent = "Network Error.";
-        btn.disabled = false; btn.textContent = "Save All Marks";
-      });
-    }
-
-    function enableEditing() {
-      const inputs = document.querySelectorAll('.mark-input');
-      inputs.forEach(input => { input.disabled = false; input.style.borderColor = "#cbd5e1"; input.style.backgroundColor = "#ffffff"; });
-      document.getElementById('editBtn').style.display = "none";
-      const saveBtn = document.getElementById('saveBtn');
-      saveBtn.style.display = "block"; saveBtn.disabled = false; saveBtn.textContent = "Save All Marks";
-      document.getElementById('message').textContent = ""; 
-    }
-
-    function getMaxMark(exam, subject, className) {
-        if (className.startsWith('8')) {
-            if (subject === 'Physics' || subject === 'Chemistry' || subject === 'Biology') return 20;
-            return 40;
-        }
-
-        if (exam === "First Term Exam") {
-            if (subject === 'English' || subject === 'Social Science' || subject === 'Mathematics') return 80;
-            return 40;
-        } else {
-            if (subject === 'Social Science' || subject === 'Mathematics') return 40;
-            if (subject === 'English') {
-                if (className.includes('A') || className.includes('F')) return 40; 
-                if (className.includes('B') || className.includes('H')) return 31; 
-                return 40;
-            }
-            return 25;
-        }
-    }
-
-    function getGrade(mark, maxMark, className) {
-        let percentage = Math.round((parseFloat(mark) / maxMark) * 100);
-        
-        if (className && className.startsWith('8')) {
-            if (percentage >= 80) return 'A';
-            if (percentage >= 60) return 'B';
-            if (percentage >= 40) return 'C';
-            if (percentage >= 30) return 'D';
-            return 'E';
-        } else {
-            if (percentage >= 90) return 'A+';
-            if (percentage >= 80) return 'A';
-            if (percentage >= 70) return 'B+';
-            if (percentage >= 60) return 'B';
-            if (percentage >= 50) return 'C+';
-            if (percentage >= 40) return 'C';
-            if (percentage >= 30) return 'D+';
-            if (percentage >= 20) return 'D';
-            return 'E';
-        }
-    }
-
-    function getStudentReportHtml(student, className, pivot) {
-        let html = `
-           <div style="font-weight: normal; text-align: center; color: #000000; margin: 0 0 5px 0; font-size: 18px;">SANSKRIT HS VATTOLI</div>
-           <div style="text-align: center; font-size: 14px; color: #000000; margin-bottom: 10px; text-transform: uppercase;">
-             Academic Year 2026-27<br><br><span style="font-weight: normal; font-size: 16px;">Progress Report</span>
-           </div>
-           <div style="font-weight: normal; font-size: 14px; margin-bottom: 10px; color: #000000; padding-bottom: 5px; display: flex; justify-content: space-between;">
-             <span style="flex:1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Name: <span style="color: #000000;">${student}</span></span>
-             <span style="white-space: nowrap; margin-left: 10px;">Class: <span style="color: #000000;">${className}</span></span>
-           </div>
-           
-           <div style="flex-grow: 1; display: flex; flex-direction: column;">
-             <table style="width: 100%; height: 100%; border-collapse: collapse; border: 2px solid #000000; margin-bottom: 10px;">
-               <thead>`;
-               
-          if (currentStandard === '10') {
-              html += `<tr><th rowspan="2" style="border-bottom: 2px solid #000000; padding: 6px; font-size: 13px; border: 1px solid #000000; text-align: left; padding-left: 8px; width: 38%; font-weight: normal; color:#000000;">Subject</th><th colspan="2" style="border-bottom: 1px solid #000000; padding: 6px; font-size: 13px; border: 1px solid #000000; font-weight: normal; color:#000000;">Mid Term</th><th colspan="2" style="border-bottom: 1px solid #000000; padding: 6px; font-size: 13px; border: 1px solid #000000; font-weight: normal; color:#000000;">First Term</th></tr>
-               <tr><th style="padding: 6px; font-size: 13px; border: 1px solid #000000; border-bottom: 2px solid #000000; font-weight: normal; color:#000000;">Score</th><th style="padding: 6px; font-size: 13px; border: 1px solid #000000; border-bottom: 2px solid #000000; font-weight: normal; color:#000000;">Grade</th><th style="padding: 6px; font-size: 13px; border: 1px solid #000000; border-bottom: 2px solid #000000; font-weight: normal; color:#000000;">Score</th><th style="padding: 6px; font-size: 13px; border: 1px solid #000000; border-bottom: 2px solid #000000; font-weight: normal; color:#000000;">Grade</th></tr></thead><tbody>`;
-          } else {
-              html += `<tr><th rowspan="2" style="border-bottom: 2px solid #000000; padding: 6px; font-size: 13px; border: 1px solid #000000; text-align: left; padding-left: 8px; width: 38%; font-weight: normal; color:#000000;">Subject</th><th colspan="2" style="border-bottom: 1px solid #000000; padding: 6px; font-size: 13px; border: 1px solid #000000; font-weight: normal; color:#000000;">First Term</th></tr>
-               <tr><th style="padding: 6px; font-size: 13px; border: 1px solid #000000; border-bottom: 2px solid #000000; font-weight: normal; color:#000000;">Score</th><th style="padding: 6px; font-size: 13px; border: 1px solid #000000; border-bottom: 2px solid #000000; font-weight: normal; color:#000000;">Grade</th></tr></thead><tbody>`;
-          }
-
-          subjectsList.forEach(sub => {
-             let ftMark = pivot[student].marks["First Term Exam"][sub] !== undefined ? pivot[student].marks["First Term Exam"][sub] : '-';
-             let ftGrade = ftMark !== '-' ? getGrade(ftMark, getMaxMark("First Term Exam", sub, className), className) : '-';
-             
-             if (currentStandard === '10') {
-                 let mtMark = pivot[student].marks["First Mid Term Exam"][sub] !== undefined ? pivot[student].marks["First Mid Term Exam"][sub] : '-';
-                 let mtGrade = mtMark !== '-' ? getGrade(mtMark, getMaxMark("First Mid Term Exam", sub, className), className) : '-';
-                 html += `<tr><td style="padding: 6px; font-size: 14px; border: 1px solid #000000; text-align:left; padding-left:8px; font-weight: normal; color:#000000;">${sub}</td><td style="padding: 6px; font-size: 14px; border: 1px solid #000000; text-align: center; font-weight: normal; color:#000000;">${mtMark}</td><td style="padding: 6px; font-size: 14px; border: 1px solid #000000; font-weight: normal; text-align: center; color:#000000;">${mtGrade}</td><td style="padding: 6px; font-size: 14px; border: 1px solid #000000; text-align: center; font-weight: normal; color:#000000;">${ftMark}</td><td style="padding: 6px; font-size: 14px; border: 1px solid #000000; font-weight: normal; text-align: center; color:#000000;">${ftGrade}</td></tr>`;
-             } else {
-                 html += `<tr><td style="padding: 6px; font-size: 14px; border: 1px solid #000000; text-align:left; padding-left:8px; font-weight: normal; color:#000000;">${sub}</td><td style="padding: 6px; font-size: 14px; border: 1px solid #000000; text-align: center; font-weight: normal; color:#000000;">${ftMark}</td><td style="padding: 6px; font-size: 14px; border: 1px solid #000000; font-weight: normal; text-align: center; color:#000000;">${ftGrade}</td></tr>`;
-             }
-          });
-          
-          html += `</tbody></table>
-           </div>
-           <div style="margin-top: auto; text-align: right; margin-bottom: 5px;">
-             <div style="display: inline-block; text-align: center;">
-               <div style="font-size: 14px; font-weight: normal; color: #000000; margin-top: 15px;">Signature of Class Teacher</div>
-             </div>
-           </div>`;
-             
-          return html;
-    }
-
-    // --- LOGIC FOR VIEWING/PRINTING REPORTS ---
-    function selectReportType(type) {
-      currentReportType = type;
-      showPage('page4a');
-    }
-
-    function goBackFromReports() {
-        if (currentStandard === '10') {
-            showPage('page0');
-        } else {
-            showPage('pageClassSelect');
-        }
-    }
-
-    function goBackFromReportsView() {
-        if (currentReportType === 'schoolTop10' || currentReportType === 'specialCare') {
-            showPage('page4');
-        } else {
-            showPage('page4a');
-        }
-    }
-
-    function showSpecialCareSubjectSelect() {
-        showPage('page4b');
-    }
-
-    function fetchStandardMarksAndGenerate(mode, subject = null) {
-        currentReportType = mode;
-        currentReportClass = currentStandard + (mode === 'schoolTop10' ? '_SchoolTop10' : '_' + subject.replace(/\s+/g, '') + '_SpecialCare');
-        
-        let titleText = mode === 'schoolTop10' ? `Class ${currentStandard} - School Top 10` : `Class ${currentStandard} - Special Care (${subject})`;
-        document.getElementById('reportTitle').textContent = titleText;
-        
-        showPage('page5');
-        document.getElementById('loadingIndicator').style.display = 'block';
-        document.getElementById('tableWrapper').style.display = 'none';
-        document.getElementById('downloadPdfBtn').style.display = 'none';
-        document.getElementById('downloadExcelBtn').style.display = 'none';
-
-        fetch(scriptURL, {
-            method: 'POST',
-            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-            body: JSON.stringify({ action: "getAllMarks" })
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.status === "success") { 
-                processStandardData(data.data, mode, subject); 
-            } else { 
-                document.getElementById('loadingIndicator').textContent = "Error loading data."; 
-            }
-        })
-        .catch(error => { document.getElementById('loadingIndicator').textContent = "Network error."; });
-    }
-
-    function processStandardData(fetchedData, mode, subject) {
-        let standardStudents = [];
-        ['A','B','C','D','E','F','G','H'].forEach(div => {
-            let cls = currentStandard + div;
-            if(studentsData[cls]) {
-                studentsData[cls].forEach(stu => {
-                    standardStudents.push({ name: stu, cls: cls, marks: {}, total: 0 });
-                });
-            }
-        });
-
-        let validData = fetchedData.filter(row => {
-            let ex = row.exam || "First Mid Term Exam";
-            if (ex === "SSLC Mid Term Examination") ex = "First Mid Term Exam";
-            return ex === currentExam && row.className.startsWith(currentStandard);
-        });
-
-        validData.forEach(row => {
-            let s = standardStudents.find(x => x.name === row.student && x.cls === row.className);
-            if(s) {
-                let parsedMark = parseFloat(row.mark);
-                let mark = isNaN(parsedMark) ? 0 : Math.round(parsedMark);
-                s.marks[row.subject] = mark;
-                s.total += mark;
-            }
-        });
-
-        let displayStudents = [];
-
-        if (mode === 'schoolTop10') {
-            displayStudents = standardStudents.filter(s => {
-                if (s.total === 0) return false;
-                for (let i = 0; i < subjectsList.length; i++) {
-                    let sub = subjectsList[i];
-                    let mark = s.marks[sub];
-                    if (mark === undefined) return false; 
-                    let maxMark = getMaxMark(currentExam, sub, s.cls);
-                    if (Math.round((parseFloat(mark) / maxMark) * 100) < 30) return false; 
-                }
-                return true;
-            }).sort((a, b) => b.total - a.total).slice(0, 10);
-        } else if (mode === 'specialCare') {
-            displayStudents = standardStudents.filter(s => {
-                let mark = s.marks[subject];
-                if (mark === undefined || mark === '') return false; 
-                let maxMark = getMaxMark(currentExam, subject, s.cls);
-                let pct = Math.round((parseFloat(mark) / maxMark) * 100);
-                return pct < 30;
-            }).sort((a, b) => a.cls.localeCompare(b.cls) || a.name.localeCompare(b.name));
-        }
-
-        buildStandardTable(displayStudents, mode, subject);
-    }
-
-    function buildStandardTable(displayStudents, mode, subject) {
-        let titleSuffix = mode === 'schoolTop10' ? " - School Top 10" : ` - Special Care (${subject})`;
-        let html = '<div style="padding: 10px; background: white;"><h2 style="font-weight: normal; color: black; text-align: center; margin-bottom: 20px;">SANSKRIT HS VATTOLI - Class ' + currentStandard + titleSuffix + '</h2>';
-        html += '<table class="marks-table" style="width: 100%; border-collapse: collapse; border: 2px solid #000; color: black;"><thead><tr>';
-        html += '<th style="font-weight: normal; color: black; border: 1px solid #000; padding: 6px;">No.</th>';
-        html += '<th style="font-weight: normal; color: black; border: 1px solid #000; padding: 6px;">Student Name</th>';
-        html += '<th style="font-weight: normal; color: black; border: 1px solid #000; padding: 6px;">Class</th>';
-        
-        subjectsList.forEach(sub => html += `<th style="font-weight: normal; color: black; border: 1px solid #000; padding: 6px;">${sub}</th>`);
-        html += '<th style="font-weight: normal; color: black; border: 1px solid #000; padding: 6px; background-color: #f8fafc;">Total</th></tr></thead><tbody>';
-
-        if(displayStudents.length === 0) {
-            html += `<tr><td colspan="${subjectsList.length + 4}" style="border: 1px solid #000; padding: 10px; color: black; text-align: center;">No students found matching this criteria.</td></tr>`;
-        } else {
-            displayStudents.forEach((student, index) => {
-              html += `<tr>`;
-              html += `<td style="border: 1px solid #000; padding: 6px; color: black; text-align: center;">${index + 1}</td>`;
-              html += `<td style="border: 1px solid #000; padding: 6px; color: black; text-align: left; padding-left: 8px;">${student.name}</td>`;
-              html += `<td style="border: 1px solid #000; padding: 6px; color: black; text-align: center;">${student.cls}</td>`;
-              
-              subjectsList.forEach(sub => {
-                let mark = student.marks[sub] !== undefined ? student.marks[sub] : '-'; 
-                let bg = (mode === 'specialCare' && sub === subject) ? '#fee2e2' : 'transparent';
-                html += `<td style="border: 1px solid #000; padding: 6px; color: black; background-color: ${bg};">${mark}</td>`;
-              });
-              html += `<td style="border: 1px solid #000; padding: 6px; color: black; font-weight: normal; background-color: #f8fafc;">${student.total}</td></tr>`;
-            });
-        }
-        html += '</tbody></table></div>';
-
-        document.getElementById('tableWrapper').innerHTML = html;
-        document.getElementById('loadingIndicator').style.display = 'none';
-        document.getElementById('tableWrapper').style.display = 'block';
-        document.getElementById('downloadPdfBtn').style.display = 'inline-block';
-        document.getElementById('downloadExcelBtn').style.display = 'inline-block';
-    }
-
-    function fetchAndShowReport(divLetter) {
-      let className = currentStandard + divLetter;
-      currentReportClass = className;
-      
-      let titleSuffix = currentReportType === 'top10' ? " (Top 10 Students)" : "";
-      if (currentReportType === 'progress') titleSuffix = " Progress Reports";
-      
-      document.getElementById('reportTitle').textContent = "Class " + className + titleSuffix;
-      showPage('page5');
-      document.getElementById('loadingIndicator').style.display = 'block';
-      document.getElementById('tableWrapper').style.display = 'none';
-      document.getElementById('downloadPdfBtn').style.display = 'none';
-      document.getElementById('downloadExcelBtn').style.display = 'none';
-      
-      fetch(scriptURL, {
-        method: 'POST',
-        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-        body: JSON.stringify({ action: "getMarks", className: className })
-      })
-      .then(response => response.json())
-      .then(data => {
-        if (data.status === "success") { buildTable(className, data.data); } 
-        else { document.getElementById('loadingIndicator').textContent = "Error loading data."; }
-      })
-      .catch(error => { document.getElementById('loadingIndicator').textContent = "Network error."; });
-    }
-
-    function buildTable(className, fetchedData) {
-      let students = studentsData[className];
-      let pivot = {};
-      students.forEach(s => { 
-        pivot[s] = { total: 0, marks: { "First Term Exam": {}, "First Mid Term Exam": {} } }; 
-      }); 
-      
-      fetchedData.forEach(row => {
-        if(pivot[row.student]) {
-          let ex = row.exam || "First Mid Term Exam"; 
-          if (ex === "SSLC Mid Term Examination") ex = "First Mid Term Exam"; 
-
-          let parsedMark = parseFloat(row.mark);
-          let mark = isNaN(parsedMark) ? 0 : Math.round(parsedMark);
-          
-          if(pivot[row.student].marks[ex]) {
-             pivot[row.student].marks[ex][row.subject] = mark;
-             if (ex === currentExam) pivot[row.student].total += mark;
-          }
-        }
-      });
-
-      let displayStudents = [];
-      if (currentReportType === 'top10') {
-        displayStudents = [...students].filter(a => {
-             if (pivot[a].total === 0) return false;
-             for (let i = 0; i < subjectsList.length; i++) {
-                 let sub = subjectsList[i];
-                 let mark = pivot[a].marks[currentExam][sub] !== undefined ? pivot[a].marks[currentExam][sub] : 0;
-                 let maxMark = getMaxMark(currentExam, sub, className);
-                 if (Math.round((parseFloat(mark) / maxMark) * 100) < 30) return false; 
-             }
-             return true;
-          }).sort((a, b) => pivot[b].total - pivot[a].total).slice(0, 10);
-      } else {
-        displayStudents = students;
-      }
-
-      if (currentReportType === 'progress') {
-        let previewHtml = `<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; padding: 10px;">`;
-        let pdfHtml = `<div style="width: 297mm; background: white; color: black; font-family: sans-serif;">`;
-        
-        for (let i = 0; i < displayStudents.length; i += 2) {
-          pdfHtml += `<div style="display: flex; width: 297mm; height: 210mm; page-break-after: always; box-sizing: border-box;">`;
-          
-          for (let j = 0; j < 2; j++) {
-             if (i + j < displayStudents.length) {
-                let student = displayStudents[i + j];
-                let blockHtml = getStudentReportHtml(student, className, pivot);
-                
-                previewHtml += `<div style="border: 1px solid #cbd5e1; padding: 15px; border-radius: 8px; background: #fff; display: flex; flex-direction: column;">
-                                    ${blockHtml}
-                                </div>`;
-                
-                let borderRight = (j === 0) ? 'border-right: 1px dashed #ccc;' : '';
-                pdfHtml += `<div style="width: 148.5mm; height: 210mm; padding: 15mm; box-sizing: border-box; ${borderRight} display: flex; flex-direction: column;">
-                                ${blockHtml}
-                            </div>`;
-             } else {
-                pdfHtml += `<div style="width: 148.5mm; height: 210mm; box-sizing: border-box;"></div>`;
-             }
-          }
-          pdfHtml += `</div>`;
-        }
-        
-        previewHtml += `</div>`;
-        pdfHtml += `</div>`;
-        
-        document.getElementById('tableWrapper').innerHTML = previewHtml;
-        document.getElementById('pdfDownloadArea').innerHTML = pdfHtml;
-
-        document.getElementById('loadingIndicator').style.display = 'none';
-        document.getElementById('tableWrapper').style.display = 'block';
-        document.getElementById('downloadPdfBtn').style.display = 'inline-block';
-        document.getElementById('downloadExcelBtn').style.display = 'none';
-
-      } else {
-        let titleSuffix = currentReportType === 'top10' ? " (Top 10 Students)" : "";
-        let html = '<div style="padding: 10px; background: white;"><h2 style="font-weight: normal; color: black; text-align: center; margin-bottom: 20px;">SANSKRIT HS VATTOLI - Class ' + className + titleSuffix + '</h2>';
-        html += '<table class="marks-table" style="width: 100%; border-collapse: collapse; border: 2px solid #000; color: black;"><thead><tr><th style="font-weight: normal; color: black; border: 1px solid #000; padding: 6px;">Student Name</th>';
-        
-        subjectsList.forEach(sub => html += `<th style="font-weight: normal; color: black; border: 1px solid #000; padding: 6px;">${sub}</th>`);
-        html += '<th style="font-weight: normal; color: black; border: 1px solid #000; padding: 6px; background-color: #f8fafc;">Total</th></tr></thead><tbody>';
-
-        displayStudents.forEach((student, index) => {
-          let rankOrNo = currentReportType === 'top10' ? (index + 1) : (students.indexOf(student) + 1);
-          html += `<tr><td style="border: 1px solid #000; padding: 6px; color: black; text-align: left; padding-left: 8px;">${rankOrNo}. ${student}</td>`;
-          subjectsList.forEach(sub => {
-            let mark = pivot[student].marks[currentExam][sub] !== undefined ? pivot[student].marks[currentExam][sub] : '-'; 
-            html += `<td style="border: 1px solid #000; padding: 6px; color: black;">${mark}</td>`;
-          });
-          html += `<td style="border: 1px solid #000; padding: 6px; color: black; font-weight: normal; background-color: #f8fafc;">${pivot[student].total}</td></tr>`;
-        });
-        html += '</tbody></table></div>';
-
-        document.getElementById('tableWrapper').innerHTML = html;
-        document.getElementById('loadingIndicator').style.display = 'none';
-        document.getElementById('tableWrapper').style.display = 'block';
-
-        if (currentReportType === 'top10') {
-          document.getElementById('downloadPdfBtn').style.display = 'inline-block';
-          document.getElementById('downloadExcelBtn').style.display = 'none';
-        } else {
-          document.getElementById('downloadPdfBtn').style.display = 'inline-block';
-          document.getElementById('downloadExcelBtn').style.display = 'inline-block';
-        }
-      }
-    }
-
-    async function downloadPDF() {
-      let btn = document.getElementById('downloadPdfBtn');
-      let originalText = btn.textContent;
-      btn.disabled = true;
-
-      try {
-          const { jsPDF } = window.jspdf;
-
-          if (currentReportType === 'progress') {
-              let doc = new jsPDF('l', 'mm', 'a4'); 
-              let downloadArea = document.getElementById('pdfDownloadArea');
-              downloadArea.style.left = '0'; 
-              
-              let pages = document.querySelectorAll('#pdfDownloadArea > div > div');
-              
-              for (let i = 0; i < pages.length; i++) {
-                  btn.textContent = `Generating PDF (Page ${i+1} of ${pages.length})... ⏳`;
-                  
-                  let canvas = await html2canvas(pages[i], { 
-                      scale: 1.5, 
-                      useCORS: true,
-                      logging: false
-                  });
-                  
-                  let imgData = canvas.toDataURL('image/jpeg', 0.95);
-                  if (i > 0) doc.addPage();
-                  doc.addImage(imgData, 'JPEG', 0, 0, 297, 210);
-              }
-
-              downloadArea.style.left = '-9999px'; 
-              doc.save('Progress_Report_Class_' + currentReportClass + '.pdf');
-
-          } else {
-              btn.textContent = "Generating PDF... ⏳";
-              
-              let sourceElement = document.getElementById('tableWrapper');
-              let oldBg = sourceElement.style.background;
-              sourceElement.style.background = '#ffffff';
-
-              let opt = {
-                  margin:       10,
-                  filename:     currentReportType + '_' + currentReportClass + '.pdf',
-                  image:        { type: 'jpeg', quality: 0.98 },
-                  html2canvas:  { scale: 2, useCORS: true },
-                  jsPDF:        { unit: 'mm', format: 'a4', orientation: 'landscape' },
-                  pagebreak:    { mode: 'css', avoid: 'tr' }
-              };
-
-              html2pdf().set(opt).from(sourceElement).save().then(() => {
-                  sourceElement.style.background = oldBg;
-                  btn.textContent = originalText;
-                  btn.disabled = false;
-              }).catch(e => {
-                  console.error(e);
-                  alert("Error generating PDF.");
-                  btn.textContent = originalText;
-                  btn.disabled = false;
-              });
-              
-              return; 
-          }
-      } catch(e) {
-          alert("Error generating PDF. Your browser might be running out of memory.");
-          console.error(e);
-      }
-
-      btn.textContent = originalText;
-      btn.disabled = false;
-    }
-
-    function downloadExcel() {
-      const workbook = XLSX.utils.table_to_book(document.querySelector('#tableWrapper table'), {sheet: "Class Report"});
-      XLSX.writeFile(workbook, 'Report_' + currentReportClass + '_' + currentExam.replace(/ /g, '_') + '.xlsx');
-    }
-  </script>
+</script>
 </body>
 </html>
