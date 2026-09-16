@@ -45,7 +45,7 @@
     .list-grid { display: grid; grid-template-columns: 1fr; gap: 12px; margin-top: 15px; }
     
     /* Input Elements for Login/Admin */
-    select, input[type="password"], input[type="text"], input[type="number"] {
+    select, input[type="password"], input[type="text"], input[type="number"], input[type="date"] {
         width: 100%; padding: 14px; margin-bottom: 15px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 16px; box-sizing: border-box; background-color: #f8fafc;
     }
     select:focus, input:focus { outline: none; border-color: #3b82f6; background-color: #ffffff; }
@@ -259,6 +259,7 @@
       <hr class="divider">
       <button class="action-btn" style="border-color:#10b981; color:#10b981; background: #ffffff;" onclick="goToAdminEntry()">➔ Access Data Entry & Reports</button>
       <button class="nav-btn" style="border-color:#f59e0b; color:#d97706; margin-top:15px; width:100%;" onclick="showStatusPage('pageAdminDash')">📋 View Entry Status</button>
+      <button class="nav-btn" style="border-color:#8b5cf6; color:#8b5cf6; margin-top:15px; width:100%;" onclick="showBookingPage('pageAdminDash')">📅 Special Class Booking</button>
     </div>
 
     <!-- PAGE CLASS SELECT: Select standard (10, 9, 8) -->
@@ -279,7 +280,33 @@
 
       <hr class="divider">
       <button class="nav-btn" style="border-color:#f59e0b; color:#d97706; width:100%;" onclick="showStatusPage('pageClassSelect')">📋 Check Entry Status</button>
+      <button class="nav-btn" style="border-color:#8b5cf6; color:#8b5cf6; width:100%; margin-top: 12px;" onclick="showBookingPage('pageClassSelect')">📅 Special Class Booking</button>
 
+      <div class="developer-credit">Designed & Developed by GRR</div>
+    </div>
+
+    <!-- PAGE BOOKING: Special Class Booking System -->
+    <div id="pageBooking" class="page">
+      <button class="back-btn" onclick="goBackFromBooking()">← Back</button>
+      <h1 class="school-name">Special Classes</h1>
+      <h3 style="color:#8b5cf6; margin-top: -5px; margin-bottom: 20px;">Book Your Slots</h3>
+      
+      <div class="button-grid" style="grid-template-columns: 1fr;">
+          <input type="date" id="bookDate" onchange="renderBookings()" style="margin-bottom: 0;">
+          <select id="bookClass" onchange="renderBookings()" style="margin-bottom: 0;">
+              <!-- Options populated by JS -->
+          </select>
+      </div>
+      
+      <div id="bookingLoading" style="display:none; text-align:center; color:#8b5cf6; font-weight:bold; margin: 20px 0;">Syncing with Server... ⏳</div>
+      
+      <div id="slotsContainer" style="margin-top: 20px;">
+          <!-- Slots rendered dynamically -->
+      </div>
+      
+      <hr class="divider">
+      <button class="action-btn" style="border-color:#8b5cf6; color:#8b5cf6; margin-top: 5px;" onclick="downloadTimetable()">📥 Download Timetable (PDF)</button>
+      
       <div class="developer-credit">Designed & Developed by GRR</div>
     </div>
 
@@ -491,6 +518,7 @@
       "8H": ["AADIDEV P P", "AKSHIKA M", "ANMIYA", "ARSHIK DEV P", "ARUNDHATHI K", "ASWIN DEV K K", "AVANI VIJEESH", "DARSITH V R", "DEVALAKSHMI.V.C", "DEVAMGANA P B", "GOUTHAM KRISHNA A", "ISHIKA A", "KEDARNADH B.S", "NAINIKA C P", "NAYAN THEJ K C", "NIHAL S", "NIVEDYA ANIL KUMAR", "RITHUKRISHNA C P", "SAMARTH S CHANDRAN", "SARON A K", "SHANVIN PRAJITH C P", "SHIVA LAKSHMI SANAL", "SHYAMDEV S NATH", "SIVADA P M", "SIVADA SASI", "SURYA DEV V.K", "THEJA KALLYANI", "THRINAD SHAH", "VEDAJ", "VISHWADHAR P P"]
     };
     
+    // Note: IT is intentionally excluded from the Mark Entry Subject List
     const subjectsList = ['Language 1', 'Language 2', 'English', 'Hindi', 'Social Science', 'Physics', 'Chemistry', 'Biology', 'Mathematics'];
     
     // Language Teachers List
@@ -532,6 +560,28 @@
           "10A": "AP RAJEEVAN", "10B": "MP SREEKANTH", "10C": "AP RAJEEVAN", "10D": "NISAR EDATHIL", "10E": "NISAR EDATHIL", "10F": "MK BINDU", "10G": "MK BINDU", "10H": "NK NIJISHA",
           "9A": "MP SREEKANTH", "9B": "NK NIJISHA", "9C": "MP SREEKANTH", "9D": "NK NIJISHA", "9E": "NISAR EDATHIL", "9F": "MK BINDU", "9G": "NISAR EDATHIL", "9H": "MK BINDU",
           "8A": "AP RAJEEVAN", "8B": "MP SREEKANTH", "8C": "AP RAJEEVAN", "8D": "NK NIJISHA", "8E": "AP RAJEEVAN", "8F": "NISAR EDATHIL", "8G": "MP SREEKANTH", "8H": "MK BINDU" 
+      },
+      "IT": {
+          "8D": "ASHITHA S P",
+          "9D": "NK NIJISHA", 
+          "9H": "KK RINCY",
+          "10C": "KK SREENA",
+          "10E": "KK SREENA",
+          "9E": "CB ABHILASH",
+          "10F": "NK ABHINA",
+          "10B": "TP DIJA",
+          "10G": "TP DIJA",
+          "8A": "VK FAHEEMA",
+          "8E": "VK FAHEEMA",
+          "9A": "VP RAGILA",
+          "9C": "VP RAGILA",
+          "8B": "INDULEKHA NR",
+          "8G": "UR THRISALA",
+          "10D": "AP Najee Ahammed",
+          "10H": "AP Najee Ahammed",
+          "8H": "Smitha KK",
+          "8F": "Smitha KK",
+          "9F": "Smitha KK"
       }
     };
     
@@ -546,6 +596,9 @@
     let currentReportClass = "";
     let adminToken = ""; 
     let statusReturnPage = 'pageHome';
+    
+    // Booking System State
+    let specialBookings = {};
 
     window.addEventListener('load', function() {
       const teacherSet = new Set(languageTeachers); 
@@ -797,6 +850,227 @@
         showPage('pageClassSelect');
     }
 
+    // --- SPECIAL BOOKING SYSTEM ---
+    let bookingReturnPage = 'pageClassSelect';
+
+    function showBookingPage(fromPage) {
+        bookingReturnPage = fromPage;
+        showPage('pageBooking');
+        
+        let dateInput = document.getElementById('bookDate');
+        let classInput = document.getElementById('bookClass');
+        
+        if (classInput.options.length === 0) {
+            let optionsHtml = '';
+            ['10','9','8'].forEach(std => {
+                ['A','B','C','D','E','F','G','H'].forEach(div => {
+                    optionsHtml += `<option value="${std}${div}">Class ${std}${div}</option>`;
+                });
+            });
+            classInput.innerHTML = optionsHtml;
+        }
+
+        if(!dateInput.value) {
+            let today = new Date();
+            let yyyy = today.getFullYear();
+            let mm = String(today.getMonth() + 1).padStart(2, '0');
+            let dd = String(today.getDate()).padStart(2, '0');
+            let todayStr = `${yyyy}-${mm}-${dd}`;
+            dateInput.min = todayStr;
+            dateInput.value = todayStr;
+        }
+        
+        fetchBookings();
+    }
+
+    function goBackFromBooking() {
+        showPage(bookingReturnPage);
+    }
+    
+    function fetchBookings() {
+        document.getElementById('bookingLoading').style.display = "block";
+        document.getElementById('slotsContainer').style.display = "none";
+        
+        fetch(scriptURL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+            body: JSON.stringify({ action: "getBookings" })
+        })
+        .then(res => res.json())
+        .then(data => {
+            document.getElementById('bookingLoading').style.display = "none";
+            document.getElementById('slotsContainer').style.display = "block";
+            if (data.status === "success") {
+                specialBookings = data.data;
+                renderBookings();
+            }
+        })
+        .catch(err => {
+            document.getElementById('bookingLoading').textContent = "Network error. Try again.";
+        });
+    }
+
+    function getTeacherSubjectsForClass(teacher, className) {
+        let subs = [];
+        if (languageTeachers.includes(teacher)) {
+            subs.push("Language");
+        }
+        for (let sub in teacherMapping) {
+            if (teacherMapping[sub][className] === teacher) {
+                subs.push(sub);
+            }
+        }
+        return [...new Set(subs)];
+    }
+
+    function renderBookings() {
+        let date = document.getElementById('bookDate').value;
+        let cls = document.getElementById('bookClass').value;
+        if(!date || !cls) return;
+        
+        let slots = ["9:30 AM to 11:00 AM", "11:15 AM to 12:45 PM", "2:00 PM to 3:30 PM"];
+        let html = '';
+        
+        let availableSubs = [];
+        if (loggedInUser !== 'Admin' && loggedInUser !== 'Viewer') {
+            availableSubs = getTeacherSubjectsForClass(loggedInUser, cls);
+        } else if (loggedInUser === 'Admin') {
+            availableSubs = Object.keys(teacherMapping); 
+        }
+
+        slots.forEach((time, index) => {
+            let b = specialBookings[date] && specialBookings[date][cls] && specialBookings[date][cls][index];
+            html += `<div style="border: 1px solid #cbd5e1; border-radius: 8px; padding: 15px; margin-bottom: 10px; background: ${b ? '#fef2f2' : '#f0fdf4'};">`;
+            html += `<strong style="display:block; margin-bottom: 8px; color: #334155; font-size:16px;">${time}</strong>`;
+            
+            if (b) {
+                html += `<div style="color: #b91c1c; font-weight: bold; font-size:15px;">${b.subject} - ${b.teacher}</div>`;
+                if(b.teacher === loggedInUser || loggedInUser === 'Admin') {
+                   html += `<button class="nav-btn" style="padding: 8px; font-size: 13px; margin-top: 10px; border-color: #ef4444; color: #ef4444;" onclick="cancelBooking('${date}', '${cls}', ${index}, event)">Cancel Booking</button>`;
+                }
+            } else {
+                html += `<div style="color: #15803d; font-weight: bold; font-size:15px;">Available</div>`;
+                if(loggedInUser !== 'Viewer' && availableSubs.length > 0) {
+                    html += `<div style="margin-top: 10px;">
+                        <select id="bookSub_${index}" style="width: 58%; display: inline-block; margin-bottom: 0; padding:10px;">`;
+                    availableSubs.forEach(s => html += `<option value="${s}">${s}</option>`);
+                    html += `</select>
+                        <button class="nav-btn" style="padding: 10px; font-size: 14px; width: 38%; display: inline-block; border-color: #10b981; color: #10b981;" onclick="bookSlot('${date}', '${cls}', ${index}, event)">Book Slot</button>
+                    </div>`;
+                } else if (loggedInUser !== 'Admin' && loggedInUser !== 'Viewer') {
+                    html += `<div style="font-size: 13px; color: #64748b; margin-top: 5px;">You do not handle subjects for this class.</div>`;
+                }
+            }
+            html += `</div>`;
+        });
+        document.getElementById('slotsContainer').innerHTML = html;
+    }
+
+    function bookSlot(date, cls, index, event) {
+        let sub = document.getElementById(`bookSub_${index}`).value;
+        let teacherName = loggedInUser === 'Admin' ? 'Admin' : loggedInUser;
+        
+        let btn = event.target;
+        btn.textContent = "Booking...";
+        btn.disabled = true;
+
+        fetch(scriptURL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+            body: JSON.stringify({ action: "saveBooking", date: date, cls: cls, slotIndex: index, teacher: teacherName, subject: sub })
+        })
+        .then(res => res.json())
+        .then(data => {
+            fetchBookings(); 
+        });
+    }
+    
+    function cancelBooking(date, cls, index, event) {
+        if(confirm("Cancel this booking?")) {
+            let btn = event.target;
+            btn.textContent = "Canceling...";
+            btn.disabled = true;
+
+            fetch(scriptURL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                body: JSON.stringify({ action: "cancelBooking", date: date, cls: cls, slotIndex: index })
+            })
+            .then(res => res.json())
+            .then(data => {
+                fetchBookings(); 
+            });
+        }
+    }
+
+    async function downloadTimetable() {
+        let date = document.getElementById('bookDate').value;
+        if(!date) return alert("Select a date first.");
+        
+        let btn = document.querySelector("#pageBooking .action-btn");
+        let ogText = btn.textContent;
+        btn.textContent = "Generating PDF... ⏳";
+        btn.disabled = true;
+        
+        let classes = [];
+        ['10','9','8'].forEach(std => {
+            ['A','B','C','D','E','F','G','H'].forEach(div => classes.push(std+div));
+        });
+        
+        let html = `<div style="padding: 20px; background: white; color: black; font-family: sans-serif; width: 297mm; box-sizing:border-box;">
+            <h2 style="text-align: center; margin-bottom: 20px;">SANSKRIT HS VATTOLI - Special Class Timetable - ${date}</h2>
+            <table style="width: 100%; border-collapse: collapse; border: 2px solid #000; font-size: 12px;">
+            <thead>
+                <tr>
+                    <th style="border: 1px solid #000; padding: 8px;">Class</th>
+                    <th style="border: 1px solid #000; padding: 8px;">9:30 AM - 11:00 AM</th>
+                    <th style="border: 1px solid #000; padding: 8px;">11:15 AM - 12:45 PM</th>
+                    <th style="border: 1px solid #000; padding: 8px;">2:00 PM - 3:30 PM</th>
+                </tr>
+            </thead>
+            <tbody>`;
+            
+        classes.forEach(cls => {
+            let b0 = specialBookings[date] && specialBookings[date][cls] && specialBookings[date][cls][0] ? `${specialBookings[date][cls][0].subject}<br>(${specialBookings[date][cls][0].teacher})` : "-";
+            let b1 = specialBookings[date] && specialBookings[date][cls] && specialBookings[date][cls][1] ? `${specialBookings[date][cls][1].subject}<br>(${specialBookings[date][cls][1].teacher})` : "-";
+            let b2 = specialBookings[date] && specialBookings[date][cls] && specialBookings[date][cls][2] ? `${specialBookings[date][cls][2].subject}<br>(${specialBookings[date][cls][2].teacher})` : "-";
+            
+            html += `<tr>
+                <td style="border: 1px solid #000; padding: 6px; font-weight: bold; text-align: center;">${cls}</td>
+                <td style="border: 1px solid #000; padding: 6px; text-align: center;">${b0}</td>
+                <td style="border: 1px solid #000; padding: 6px; text-align: center;">${b1}</td>
+                <td style="border: 1px solid #000; padding: 6px; text-align: center;">${b2}</td>
+            </tr>`;
+        });
+        
+        html += `</tbody></table></div>`;
+        
+        let container = document.getElementById('pdfDownloadArea');
+        container.innerHTML = html;
+        container.style.left = '0';
+        
+        try {
+            const { jsPDF } = window.jspdf;
+            let doc = new jsPDF('p', 'mm', 'a4'); 
+            let canvas = await html2canvas(container.children[0], { scale: 1.5, useCORS: true, logging: false });
+            let imgData = canvas.toDataURL('image/jpeg', 0.95);
+            
+            let imgWidth = 190;
+            let imgHeight = canvas.height * imgWidth / canvas.width;
+            
+            doc.addImage(imgData, 'JPEG', 10, 10, imgWidth, imgHeight);
+            doc.save(`Timetable_${date}.pdf`);
+        } catch(e) {
+            console.error(e);
+            alert("Error downloading timetable.");
+        }
+        
+        container.style.left = '-9999px';
+        btn.textContent = ogText;
+        btn.disabled = false;
+    }
+
+    // --- STATUS CHECK SYSTEM ---
     function showStatusPage(fromPage) {
         statusReturnPage = fromPage;
         showPage('pageStatus');
@@ -892,6 +1166,7 @@
         document.getElementById('statusListContainer').innerHTML = html;
     }
 
+    // --- LOGIC FOR EXAM & ENTRY FLOW ---
     function selectStandard(std) {
         currentStandard = std;
         
@@ -1202,7 +1477,6 @@
         }
     }
 
-    // --- HTML GENERATOR FOR SINGLE STUDENT PROGRESS REPORT ---
     function getStudentReportHtml(student, className, pivot) {
         let html = `
            <div style="font-weight: normal; text-align: center; color: #000000; margin: 0 0 5px 0; font-size: 18px;">SANSKRIT HS VATTOLI</div>
@@ -1250,7 +1524,6 @@
           return html;
     }
 
-    // --- LOGIC FOR VIEWING/PRINTING REPORTS ---
     function selectReportType(type) {
       currentReportType = type;
       showPage('page4a');
@@ -1268,7 +1541,6 @@
         }
     }
 
-    // --- STANDARD WIDE REPORTS (SCHOOL TOP 10 & SPECIAL CARE) ---
     function showSpecialCareSubjectSelect() {
         showPage('page4b');
     }
@@ -1337,7 +1609,7 @@
                 for (let i = 0; i < subjectsList.length; i++) {
                     let sub = subjectsList[i];
                     let mark = s.marks[sub];
-                    if (mark === undefined) return false; // Avoid missing
+                    if (mark === undefined) return false; 
                     let maxMark = getMaxMark(currentExam, sub, s.cls);
                     if (Math.round((parseFloat(mark) / maxMark) * 100) < 30) return false; 
                 }
@@ -1346,7 +1618,7 @@
         } else if (mode === 'specialCare') {
             displayStudents = standardStudents.filter(s => {
                 let mark = s.marks[subject];
-                if (mark === undefined || mark === '') return false; // strictly avoid missing marks
+                if (mark === undefined || mark === '') return false; 
                 let maxMark = getMaxMark(currentExam, subject, s.cls);
                 let pct = Math.round((parseFloat(mark) / maxMark) * 100);
                 return pct < 30;
@@ -1393,7 +1665,6 @@
         document.getElementById('downloadExcelBtn').style.display = 'inline-block';
     }
 
-    // --- STANDARD CLASS/DIVISION REPORTS ---
     function fetchAndShowReport(divLetter) {
       let className = currentStandard + divLetter;
       currentReportClass = className;
@@ -1498,7 +1769,6 @@
         document.getElementById('downloadExcelBtn').style.display = 'none';
 
       } else {
-        // Standard Class / Top 10 Table
         let titleSuffix = currentReportType === 'top10' ? " (Top 10 Students)" : "";
         let html = '<div style="padding: 10px; background: white;"><h2 style="font-weight: normal; color: black; text-align: center; margin-bottom: 20px;">SANSKRIT HS VATTOLI - Class ' + className + titleSuffix + '</h2>';
         html += '<table class="marks-table" style="width: 100%; border-collapse: collapse; border: 2px solid #000; color: black;"><thead><tr><th style="font-weight: normal; color: black; border: 1px solid #000; padding: 6px;">Student Name</th>';
@@ -1564,7 +1834,6 @@
               doc.save('Progress_Report_Class_' + currentReportClass + '.pdf');
 
           } else {
-              // --- CLASS REPORT, TOP 10, SCHOOL TOP 10, AND SPECIAL CARE REPORTS USING HTML2PDF AUTO PAGE-BREAKING ---
               btn.textContent = "Generating PDF... ⏳";
               
               let sourceElement = document.getElementById('tableWrapper');
