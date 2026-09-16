@@ -146,16 +146,15 @@
     
     #message, #loginMessage, #setupPinMessage, #adminAuthMessage, #adminDashMessage { text-align: center; font-weight: bold; margin-top: 20px; min-height: 24px; padding: 10px; border-radius: 6px; }
 
-    /* Data Table Styles (Class, Top 10) */
+    /* Data Table Styles */
     .table-responsive { width: 100%; overflow-x: auto; margin-top: 15px; border-radius: 8px; border: 1px solid #e2e8f0; }
     .marks-table { width: 100%; border-collapse: collapse; font-size: 13px; }
     .marks-table th, .marks-table td { padding: 8px 4px; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; text-align: center; }
     .marks-table th { background-color: #f8fafc; color: #334155; font-weight: 700; white-space: normal; line-height: 1.2; font-size: 12px; }
     .marks-table td:first-child, .marks-table th:first-child { text-align: left; white-space: nowrap; padding-left: 8px; }
-    
     .marks-table tbody tr:nth-child(odd) { background-color: #ffffff; }
     .marks-table tbody tr:nth-child(even) { background-color: #f1f5f9; }
-    .marks-table tr { page-break-inside: avoid; } /* Important for clean PDF breaks */
+    .marks-table tr { page-break-inside: avoid; } 
 
     #loadingIndicator { text-align: center; color: #3b82f6; font-weight: bold; margin: 30px 0; font-size: 18px; }
     .developer-credit { text-align: center; margin-top: 20px; font-size: 13px; color: #94a3b8; font-weight: 500; letter-spacing: 0.3px; }
@@ -382,10 +381,13 @@
       <h2 class="test-name"></h2>
       <h3>Select report type</h3>
       
-      <div style="display: flex; flex-direction: column; align-items: center; gap: 20px; margin-top: 30px;">
-        <button class="nav-btn full-div" style="width: 85%; max-width: 300px; padding: 20px;" onclick="selectReportType('full')">📄 Class Report</button>
-        <button class="nav-btn top10-div" style="width: 85%; max-width: 300px; padding: 20px;" onclick="selectReportType('top10')">🏆 Top 10 Students</button>
-        <button class="nav-btn progress-div" style="width: 85%; max-width: 300px; padding: 20px;" onclick="selectReportType('progress')">📈 Progress Report</button>
+      <div style="display: flex; flex-direction: column; align-items: center; gap: 15px; margin-top: 20px;">
+        <button class="nav-btn full-div" style="width: 85%; max-width: 300px; padding: 15px;" onclick="selectReportType('full')">📄 Class Report</button>
+        <button class="nav-btn top10-div" style="width: 85%; max-width: 300px; padding: 15px;" onclick="selectReportType('top10')">🏆 Class Top 10</button>
+        <button class="nav-btn progress-div" style="width: 85%; max-width: 300px; padding: 15px;" onclick="selectReportType('progress')">📈 Progress Report</button>
+        <hr style="width: 85%; max-width: 300px; border-top: 1px solid #cbd5e1;">
+        <button class="nav-btn" style="width: 85%; max-width: 300px; padding: 15px; border-color:#3b82f6; color:#3b82f6;" onclick="fetchStandardMarksAndGenerate('schoolTop10')">🌟 School Top 10</button>
+        <button class="nav-btn" style="width: 85%; max-width: 300px; padding: 15px; border-color:#ef4444; color:#ef4444;" onclick="showSpecialCareSubjectSelect()">⚠️ Special Care Students</button>
       </div>
       <div class="developer-credit">Designed & Developed by GRR</div>
     </div>
@@ -404,18 +406,34 @@
         <button class="nav-btn report-class-btn" onclick="fetchAndShowReport('G')">G</button>
         <button class="nav-btn report-class-btn" onclick="fetchAndShowReport('H')">H</button>
       </div>
-      
-      <div id="progressLoadingIndicator" style="display: none; text-align: center; color: #3b82f6; font-weight: bold; margin-top: 25px;">
-        Fetching Data... Please wait ⏳
+      <div class="developer-credit">Designed & Developed by GRR</div>
+    </div>
+    
+    <!-- PAGE 4b: Select Subject for Special Care -->
+    <div id="page4b" class="page">
+      <button class="back-btn" onclick="showPage('page4')">← Back to Reports</button>
+      <h2 class="test-name"></h2>
+      <h3>Special Care - Select Subject</h3>
+      <div class="list-grid">
+        <button class="nav-btn sub-1" onclick="fetchStandardMarksAndGenerate('specialCare', 'Language 1')">Language 1</button>
+        <button class="nav-btn sub-2" onclick="fetchStandardMarksAndGenerate('specialCare', 'Language 2')">Language 2</button>
+        <button class="nav-btn sub-3" onclick="fetchStandardMarksAndGenerate('specialCare', 'English')">English</button>
+        <button class="nav-btn sub-4" onclick="fetchStandardMarksAndGenerate('specialCare', 'Hindi')">Hindi</button>
+        <button class="nav-btn sub-5" onclick="fetchStandardMarksAndGenerate('specialCare', 'Social Science')">Social Science</button>
+        <button class="nav-btn sub-6" onclick="fetchStandardMarksAndGenerate('specialCare', 'Physics')">Physics</button>
+        <button class="nav-btn sub-7" onclick="fetchStandardMarksAndGenerate('specialCare', 'Chemistry')">Chemistry</button>
+        <button class="nav-btn sub-8" onclick="fetchStandardMarksAndGenerate('specialCare', 'Biology')">Biology</button>
+        <button class="nav-btn sub-9" onclick="fetchStandardMarksAndGenerate('specialCare', 'Mathematics')">Mathematics</button>
       </div>
       <div class="developer-credit">Designed & Developed by GRR</div>
     </div>
+
   </div>
 
   <!-- VIEW REPORT CONTAINER (Page 5) -->
   <div class="table-container-wrapper page" id="page5">
     <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px;">
-      <button class="back-btn" onclick="showPage('page4a')" style="margin-bottom: 0;">← Back</button>
+      <button class="back-btn" onclick="goBackFromReportsView()" style="margin-bottom: 0;">← Back</button>
       <div style="text-align: right;">
         <button id="downloadPdfBtn" class="nav-btn" style="display: none; border-color: #3b82f6; color: #3b82f6; padding: 10px 15px; font-size: 14px; margin-bottom: 10px;" onclick="downloadPDF()">📥 Download as PDF</button>
         <button id="downloadExcelBtn" class="nav-btn" style="display: none; border-color: #10b981; color: #10b981; padding: 10px 15px; font-size: 14px; margin-bottom: 10px;" onclick="downloadExcel()">📊 Download as Excel</button>
@@ -1184,6 +1202,7 @@
         }
     }
 
+    // --- HTML GENERATOR FOR SINGLE STUDENT PROGRESS REPORT ---
     function getStudentReportHtml(student, className, pivot) {
         let html = `
            <div style="font-weight: normal; text-align: center; color: #000000; margin: 0 0 5px 0; font-size: 18px;">SANSKRIT HS VATTOLI</div>
@@ -1231,6 +1250,7 @@
           return html;
     }
 
+    // --- LOGIC FOR VIEWING/PRINTING REPORTS ---
     function selectReportType(type) {
       currentReportType = type;
       showPage('page4a');
@@ -1240,6 +1260,140 @@
         showPage('page1');
     }
 
+    function goBackFromReportsView() {
+        if (currentReportType === 'schoolTop10' || currentReportType === 'specialCare') {
+            showPage('page4');
+        } else {
+            showPage('page4a');
+        }
+    }
+
+    // --- STANDARD WIDE REPORTS (SCHOOL TOP 10 & SPECIAL CARE) ---
+    function showSpecialCareSubjectSelect() {
+        showPage('page4b');
+    }
+
+    function fetchStandardMarksAndGenerate(mode, subject = null) {
+        currentReportType = mode;
+        currentReportClass = currentStandard + (mode === 'schoolTop10' ? '_SchoolTop10' : '_' + subject.replace(/\s+/g, '') + '_SpecialCare');
+        
+        let titleText = mode === 'schoolTop10' ? `Class ${currentStandard} - School Top 10` : `Class ${currentStandard} - Special Care (${subject})`;
+        document.getElementById('reportTitle').textContent = titleText;
+        
+        showPage('page5');
+        document.getElementById('loadingIndicator').style.display = 'block';
+        document.getElementById('tableWrapper').style.display = 'none';
+        document.getElementById('downloadPdfBtn').style.display = 'none';
+        document.getElementById('downloadExcelBtn').style.display = 'none';
+
+        fetch(scriptURL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+            body: JSON.stringify({ action: "getAllMarks" })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === "success") { 
+                processStandardData(data.data, mode, subject); 
+            } else { 
+                document.getElementById('loadingIndicator').textContent = "Error loading data."; 
+            }
+        })
+        .catch(error => { document.getElementById('loadingIndicator').textContent = "Network error."; });
+    }
+
+    function processStandardData(fetchedData, mode, subject) {
+        let standardStudents = [];
+        ['A','B','C','D','E','F','G','H'].forEach(div => {
+            let cls = currentStandard + div;
+            if(studentsData[cls]) {
+                studentsData[cls].forEach(stu => {
+                    standardStudents.push({ name: stu, cls: cls, marks: {}, total: 0 });
+                });
+            }
+        });
+
+        let validData = fetchedData.filter(row => {
+            let ex = row.exam || "First Mid Term Exam";
+            if (ex === "SSLC Mid Term Examination") ex = "First Mid Term Exam";
+            return ex === currentExam && row.className.startsWith(currentStandard);
+        });
+
+        validData.forEach(row => {
+            let s = standardStudents.find(x => x.name === row.student && x.cls === row.className);
+            if(s) {
+                let parsedMark = parseFloat(row.mark);
+                let mark = isNaN(parsedMark) ? 0 : Math.round(parsedMark);
+                s.marks[row.subject] = mark;
+                s.total += mark;
+            }
+        });
+
+        let displayStudents = [];
+
+        if (mode === 'schoolTop10') {
+            displayStudents = standardStudents.filter(s => {
+                if (s.total === 0) return false;
+                for (let i = 0; i < subjectsList.length; i++) {
+                    let sub = subjectsList[i];
+                    let mark = s.marks[sub];
+                    if (mark === undefined) return false; // Avoid missing
+                    let maxMark = getMaxMark(currentExam, sub, s.cls);
+                    if (Math.round((parseFloat(mark) / maxMark) * 100) < 30) return false; 
+                }
+                return true;
+            }).sort((a, b) => b.total - a.total).slice(0, 10);
+        } else if (mode === 'specialCare') {
+            displayStudents = standardStudents.filter(s => {
+                let mark = s.marks[subject];
+                if (mark === undefined || mark === '') return false; // strictly avoid missing marks
+                let maxMark = getMaxMark(currentExam, subject, s.cls);
+                let pct = Math.round((parseFloat(mark) / maxMark) * 100);
+                return pct < 30;
+            }).sort((a, b) => a.cls.localeCompare(b.cls) || a.name.localeCompare(b.name));
+        }
+
+        buildStandardTable(displayStudents, mode, subject);
+    }
+
+    function buildStandardTable(displayStudents, mode, subject) {
+        let titleSuffix = mode === 'schoolTop10' ? " - School Top 10" : ` - Special Care (${subject})`;
+        let html = '<div style="padding: 10px; background: white;"><h2 style="font-weight: normal; color: black; text-align: center; margin-bottom: 20px;">SANSKRIT HS VATTOLI - Class ' + currentStandard + titleSuffix + '</h2>';
+        html += '<table class="marks-table" style="width: 100%; border-collapse: collapse; border: 2px solid #000; color: black;"><thead><tr>';
+        html += '<th style="font-weight: normal; color: black; border: 1px solid #000; padding: 6px;">No.</th>';
+        html += '<th style="font-weight: normal; color: black; border: 1px solid #000; padding: 6px;">Student Name</th>';
+        html += '<th style="font-weight: normal; color: black; border: 1px solid #000; padding: 6px;">Class</th>';
+        
+        subjectsList.forEach(sub => html += `<th style="font-weight: normal; color: black; border: 1px solid #000; padding: 6px;">${sub}</th>`);
+        html += '<th style="font-weight: normal; color: black; border: 1px solid #000; padding: 6px; background-color: #f8fafc;">Total</th></tr></thead><tbody>';
+
+        if(displayStudents.length === 0) {
+            html += `<tr><td colspan="${subjectsList.length + 4}" style="border: 1px solid #000; padding: 10px; color: black; text-align: center;">No students found matching this criteria.</td></tr>`;
+        } else {
+            displayStudents.forEach((student, index) => {
+              html += `<tr>`;
+              html += `<td style="border: 1px solid #000; padding: 6px; color: black; text-align: center;">${index + 1}</td>`;
+              html += `<td style="border: 1px solid #000; padding: 6px; color: black; text-align: left; padding-left: 8px;">${student.name}</td>`;
+              html += `<td style="border: 1px solid #000; padding: 6px; color: black; text-align: center;">${student.cls}</td>`;
+              
+              subjectsList.forEach(sub => {
+                let mark = student.marks[sub] !== undefined ? student.marks[sub] : '-'; 
+                let bg = (mode === 'specialCare' && sub === subject) ? '#fee2e2' : 'transparent';
+                html += `<td style="border: 1px solid #000; padding: 6px; color: black; background-color: ${bg};">${mark}</td>`;
+              });
+              html += `<td style="border: 1px solid #000; padding: 6px; color: black; font-weight: normal; background-color: #f8fafc;">${student.total}</td></tr>`;
+            });
+        }
+        html += '</tbody></table></div>';
+
+        document.getElementById('tableWrapper').innerHTML = html;
+        document.getElementById('loadingIndicator').style.display = 'none';
+        document.getElementById('tableWrapper').style.display = 'block';
+        document.getElementById('downloadPdfBtn').style.display = 'inline-block';
+        document.getElementById('downloadExcelBtn').style.display = 'inline-block';
+    }
+
+    // --- STANDARD CLASS/DIVISION REPORTS ---
     function fetchAndShowReport(divLetter) {
       let className = currentStandard + divLetter;
       currentReportClass = className;
@@ -1344,6 +1498,7 @@
         document.getElementById('downloadExcelBtn').style.display = 'none';
 
       } else {
+        // Standard Class / Top 10 Table
         let titleSuffix = currentReportType === 'top10' ? " (Top 10 Students)" : "";
         let html = '<div style="padding: 10px; background: white;"><h2 style="font-weight: normal; color: black; text-align: center; margin-bottom: 20px;">SANSKRIT HS VATTOLI - Class ' + className + titleSuffix + '</h2>';
         html += '<table class="marks-table" style="width: 100%; border-collapse: collapse; border: 2px solid #000; color: black;"><thead><tr><th style="font-weight: normal; color: black; border: 1px solid #000; padding: 6px;">Student Name</th>';
@@ -1409,6 +1564,7 @@
               doc.save('Progress_Report_Class_' + currentReportClass + '.pdf');
 
           } else {
+              // --- CLASS REPORT, TOP 10, SCHOOL TOP 10, AND SPECIAL CARE REPORTS USING HTML2PDF AUTO PAGE-BREAKING ---
               btn.textContent = "Generating PDF... ⏳";
               
               let sourceElement = document.getElementById('tableWrapper');
@@ -1417,7 +1573,7 @@
 
               let opt = {
                   margin:       10,
-                  filename:     (currentReportType === 'top10' ? 'Top10_' : 'Class_Report_') + currentReportClass + '.pdf',
+                  filename:     currentReportType + '_' + currentReportClass + '.pdf',
                   image:        { type: 'jpeg', quality: 0.98 },
                   html2canvas:  { scale: 2, useCORS: true },
                   jsPDF:        { unit: 'mm', format: 'a4', orientation: 'landscape' },
@@ -1448,7 +1604,7 @@
 
     function downloadExcel() {
       const workbook = XLSX.utils.table_to_book(document.querySelector('#tableWrapper table'), {sheet: "Class Report"});
-      XLSX.writeFile(workbook, 'Class_' + currentReportClass + '_' + currentExam.replace(/ /g, '_') + '.xlsx');
+      XLSX.writeFile(workbook, 'Report_' + currentReportClass + '_' + currentExam.replace(/ /g, '_') + '.xlsx');
     }
   </script>
 </body>
