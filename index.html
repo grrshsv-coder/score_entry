@@ -195,7 +195,9 @@
       <hr class="divider">
       
       <label style="font-weight:bold; color:#475569; display:block; margin-bottom:5px;">Select Teacher</label>
-      <select id="adminTeacherSelect"></select>
+      <select id="adminTeacherSelect">
+        <option value="" disabled selected hidden>Select Teacher</option>
+      </select>
       <label style="font-weight:bold; color:#475569; display:block; margin-bottom:5px;">Assign New PIN</label>
       <input type="password" id="newTeacherPin" placeholder="Enter new PIN (e.g. 1234)" pattern="[0-9]*" inputmode="numeric">
       
@@ -287,7 +289,7 @@
       <div style="background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 8px; padding: 15px; margin-bottom: 15px;">
           <h4 style="margin-top: 0; margin-bottom: 10px; color:#334155; text-align:center;">Classwise Timetable</h4>
           <select id="ttClassSelect" style="margin-bottom: 10px;">
-              <option value="" disabled selected hidden>Select Class (10, 9, 8)</option>
+              <option value="" disabled selected hidden>Select Class</option>
               <option value="10">Class 10 (All Divisions)</option>
               <option value="9">Class 9 (All Divisions)</option>
               <option value="8">Class 8 (All Divisions)</option>
@@ -298,7 +300,7 @@
       <div style="background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 8px; padding: 15px;">
           <h4 style="margin-top: 0; margin-bottom: 10px; color:#334155; text-align:center;">Divisionwise Timetable</h4>
           <select id="ttDivSelect" style="margin-bottom: 10px;">
-              <option value="" disabled selected hidden>Select Division (10A...8H)</option>
+              <option value="" disabled selected hidden>Select Division</option>
               <!-- Populated by JS -->
           </select>
           <button id="btnGenDiv" class="action-btn" style="border-color:#8b5cf6; color:#8b5cf6; margin-top:5px;" onclick="fetchAndGenerateTimetable('divisionwise')">Generate Divisionwise</button>
@@ -314,12 +316,15 @@
       
       <label style="font-weight:bold; color:#475569; display:block; margin-top:15px; margin-bottom:5px;">Select Exam</label>
       <select id="statusExamSelect" onchange="fetchStatus()">
-          <option value="First Term Exam" selected>First Term Exam</option>
+          <option value="" disabled selected hidden>Select Exam</option>
+          <option value="First Term Exam">First Term Exam</option>
           <option value="First Mid Term Exam">First Mid Term Exam (Class 10)</option>
       </select>
       
       <div id="statusLoading" style="display:none; text-align:center; color:#3b82f6; font-weight:bold; margin: 20px 0;">Scanning all classes... ⏳</div>
-      <div id="statusListContainer" style="background:#fff; border:1px solid #cbd5e1; border-radius:8px; padding:15px; max-height:400px; overflow-y:auto; margin-bottom: 20px; margin-top:10px;"></div>
+      <div id="statusListContainer" style="background:#fff; border:1px solid #cbd5e1; border-radius:8px; padding:15px; max-height:400px; overflow-y:auto; margin-bottom: 20px; margin-top:10px;">
+          <div style='text-align:center; color:#64748b;'>Please select an exam to check status.</div>
+      </div>
       <div class="developer-credit">Designed & Developed by GRR</div>
     </div>
 
@@ -512,7 +517,9 @@
       "8H": ["AADIDEV P P", "AKSHIKA M", "ANMIYA", "ARSHIK DEV P", "ARUNDHATHI K", "ASWIN DEV K K", "AVANI VIJEESH", "DARSITH V R", "DEVALAKSHMI.V.C", "DEVAMGANA P B", "GOUTHAM KRISHNA A", "ISHIKA A", "KEDARNADH B.S", "NAINIKA C P", "NAYAN THEJ K C", "NIHAL S", "NIVEDYA ANIL KUMAR", "RITHUKRISHNA C P", "SAMARTH S CHANDRAN", "SARON A K", "SHANVIN PRAJITH C P", "SHIVA LAKSHMI SANAL", "SHYAMDEV S NATH", "SIVADA P M", "SIVADA SASI", "SURYA DEV V.K", "THEJA KALLYANI", "THRINAD SHAH", "VEDAJ", "VISHWADHAR P P"]
     };
     
+    // Note: IT is intentionally excluded from the Mark Entry Subject List
     const subjectsList = ['Language 1', 'Language 2', 'English', 'Hindi', 'Social Science', 'Physics', 'Chemistry', 'Biology', 'Mathematics'];
+    
     const languageTeachers = ["Aneesh A", "AP Najee Ahammed", "CK Leela", "KV Sheeba", "Shyna R", "Smitha KK", "T Sayad"];
 
     const teacherMapping = {
@@ -581,6 +588,8 @@
     let ttCalYear = new Date().getFullYear();
     window.bookingSelectedDate = null;
     window.ttSelectedDate = null;
+    window.currentTimetableTarget = null;
+    window.currentTimetableDate = null;
 
     function renderCustomCalendar(containerId, year, month, selectedDateStr, onSelectFuncStr, prefix) {
         let firstDay = new Date(year, month, 1).getDay();
@@ -661,8 +670,6 @@
       
       const selectLogin = document.getElementById('teacherSelect');
       const selectAdmin = document.getElementById('adminTeacherSelect');
-      
-      selectLogin.innerHTML = '<option value="" disabled selected hidden>Select Your Name</option>';
       
       let adminOpt = document.createElement('option'); 
       adminOpt.value = "Admin"; adminOpt.textContent = "Admin (Change my PIN)";
@@ -845,9 +852,9 @@
     function resetToDefaultPin() {
         const targetTeacher = document.getElementById('adminTeacherSelect').value;
         const msg = document.getElementById('adminDashMessage');
-        if (targetTeacher === "Admin") {
+        if (targetTeacher === "Admin" || targetTeacher === "") {
             msg.style.color = "#ef4444"; msg.style.backgroundColor = "#fee2e2"; 
-            msg.textContent = "Admin PIN cannot be reset to the 1234 default.";
+            msg.textContent = "Select a valid teacher.";
             return;
         }
         document.getElementById('newTeacherPin').value = "1234";
@@ -860,6 +867,7 @@
         const msg = document.getElementById('adminDashMessage');
         const btn = document.getElementById('setPinBtn');
         
+        if(!targetTeacher) { msg.style.color = "#ef4444"; msg.textContent = "Please select a teacher."; return; }
         if(!newPin || newPin.length < 4) { msg.style.color = "#ef4444"; msg.textContent = "PIN must be at least 4 digits."; return; }
         
         btn.textContent = "Saving..."; btn.disabled = true;
@@ -933,7 +941,6 @@
         document.getElementById('bookingDateDisplay').classList.remove('active');
         document.getElementById('slotsContainer').innerHTML = "";
         
-        // Populate class dropdown dynamically based on assigned divisions
         let classInput = document.getElementById('bookClass');
         classInput.innerHTML = '<option value="" disabled selected hidden>Select Class</option>';
         
@@ -954,7 +961,6 @@
             classInput.innerHTML += `<option value="${cls}">Class ${cls}</option>`;
         });
 
-        // Initialize Booking Calendar
         bookingCalMonth = new Date().getMonth();
         bookingCalYear = new Date().getFullYear();
         renderCustomCalendar('bookingCalendar', bookingCalYear, bookingCalMonth, null, 'selectBookingDate', 'booking');
@@ -1019,10 +1025,10 @@
                 }
             } else {
                 html += `<div style="color: #15803d; font-weight: bold; font-size:15px;">Available</div>`;
-                // Only show booking UI if NOT Viewer, NOT Admin, and they have subjects.
                 if(loggedInUser !== 'Viewer' && loggedInUser !== 'Admin' && availableSubs.length > 0) {
                     html += `<div style="margin-top: 10px;">
-                        <select id="bookSub_${index}" style="width: 58%; display: inline-block; margin-bottom: 0; padding:10px;">`;
+                        <select id="bookSub_${index}" style="width: 58%; display: inline-block; margin-bottom: 0; padding:10px;">
+                        <option value="" disabled selected hidden>Select Subject</option>`;
                     availableSubs.forEach(s => html += `<option value="${s}">${s}</option>`);
                     html += `</select>
                         <button class="nav-btn" style="padding: 10px; font-size: 14px; width: 38%; display: inline-block; border-color: #10b981; color: #10b981;" onclick="bookSlot('${date}', '${cls}', ${index}, event)">Book Slot</button>
@@ -1038,8 +1044,12 @@
 
     function bookSlot(date, cls, index, event) {
         let sub = document.getElementById(`bookSub_${index}`).value;
+        if (!sub) {
+            alert("Please select a subject before booking.");
+            return;
+        }
+
         let teacherName = loggedInUser === 'Admin' ? 'Admin' : loggedInUser;
-        
         let btn = event.target;
         btn.textContent = "Booking...";
         btn.disabled = true;
@@ -1082,12 +1092,14 @@
         renderCustomCalendar('ttCalendar', ttCalYear, ttCalMonth, null, 'selectTTDate', 'tt');
         
         let divSelect = document.getElementById('ttDivSelect');
-        divSelect.innerHTML = '<option value="" disabled selected hidden>Select Division (10A...8H)</option>';
+        divSelect.innerHTML = '<option value="" disabled selected hidden>Select Division</option>';
         ['10','9','8'].forEach(std => {
             ['A','B','C','D','E','F','G','H'].forEach(div => {
                 divSelect.innerHTML += `<option value="${std}${div}">Class ${std}${div}</option>`;
             });
         });
+        
+        document.getElementById('ttClassSelect').value = "";
     }
     
     function fetchAndGenerateTimetable(type) {
@@ -1096,6 +1108,9 @@
         
         let targetValue = type === 'classwise' ? document.getElementById('ttClassSelect').value : document.getElementById('ttDivSelect').value;
         if (!targetValue) return alert("Please select a Class or Division from the dropdown.");
+
+        window.currentTimetableTarget = targetValue;
+        window.currentTimetableDate = date;
 
         let btnId = type === 'classwise' ? 'btnGenClass' : 'btnGenDiv';
         let btn = document.getElementById(btnId);
@@ -1143,9 +1158,9 @@
             
             ['A','B','C','D','E','F','G','H'].forEach(div => {
                 let cls = targetValue + div;
-                let b0 = specialBookings[date] && specialBookings[date][cls] && specialBookings[date][cls][0] ? `${specialBookings[date][cls][0].subject}<br>(${specialBookings[date][cls][0].teacher})` : "-";
-                let b1 = specialBookings[date] && specialBookings[date][cls] && specialBookings[date][cls][1] ? `${specialBookings[date][cls][1].subject}<br>(${specialBookings[date][cls][1].teacher})` : "-";
-                let b2 = specialBookings[date] && specialBookings[date][cls] && specialBookings[date][cls][2] ? `${specialBookings[date][cls][2].subject}<br>(${specialBookings[date][cls][2].teacher})` : "-";
+                let b0 = specialBookings[date] && specialBookings[date][cls] && specialBookings[date][cls][0] ? `${specialBookings[date][cls][0].subject}<br>(${specialBookings[date][cls][0].teacher})` : "";
+                let b1 = specialBookings[date] && specialBookings[date][cls] && specialBookings[date][cls][1] ? `${specialBookings[date][cls][1].subject}<br>(${specialBookings[date][cls][1].teacher})` : "";
+                let b2 = specialBookings[date] && specialBookings[date][cls] && specialBookings[date][cls][2] ? `${specialBookings[date][cls][2].subject}<br>(${specialBookings[date][cls][2].teacher})` : "";
                 
                 html += `<tr>
                     <td style="border: 1px solid #000; padding: 10px; font-weight: bold; text-align: center;">${cls}</td>
@@ -1161,7 +1176,7 @@
             <table style="width: 100%; border-collapse: collapse; border: 2px solid #000; font-size: 16px;">
             <thead>
                 <tr>
-                    <th style="border: 1px solid #000; padding: 12px; width:40%;">Time Slot</th>
+                    <th style="border: 1px solid #000; padding: 12px; width:40%;">Time</th>
                     <th style="border: 1px solid #000; padding: 12px;">Subject & Teacher</th>
                 </tr>
             </thead><tbody>`;
@@ -1170,7 +1185,7 @@
             let slots = ["9:30 AM - 11:00 AM", "11:15 AM - 12:45 PM", "2:00 PM - 3:30 PM"];
             slots.forEach((time, idx) => {
                 let b = specialBookings[date] && specialBookings[date][cls] && specialBookings[date][cls][idx];
-                let text = b ? `<strong>${b.subject}</strong><br>${b.teacher}` : "Free Slot";
+                let text = b ? `<strong>${b.subject}</strong><br>${b.teacher}` : "";
                 html += `<tr>
                     <td style="border: 1px solid #000; padding: 12px; text-align: center; font-weight: bold;">${time}</td>
                     <td style="border: 1px solid #000; padding: 12px; text-align: center;">${text}</td>
@@ -1188,10 +1203,13 @@
         btn.textContent = "Generating PDF... ⏳";
         btn.disabled = true;
 
+        let target = window.currentTimetableTarget || 'Class';
+        let dateStr = window.currentTimetableDate || '';
+
         let element = document.getElementById('ttViewContainer');
         let opt = {
             margin:       10,
-            filename:     'Timetable.pdf',
+            filename:     `Timetable_${target}_${dateStr}.pdf`,
             image:        { type: 'jpeg', quality: 0.98 },
             html2canvas:  { scale: 2, useCORS: true },
             jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
@@ -1211,13 +1229,16 @@
     function showStatusPage(fromPage) {
         statusReturnPage = fromPage;
         showPage('pageStatus');
-        fetchStatus();
+        document.getElementById('statusExamSelect').value = "";
+        document.getElementById('statusListContainer').innerHTML = "<div style='text-align:center; color:#64748b;'>Please select an exam to check status.</div>";
     }
     
     function goBackFromStatus() { showPage(statusReturnPage); }
 
     function fetchStatus() {
         let examName = document.getElementById('statusExamSelect').value;
+        if (!examName) return;
+
         document.getElementById('statusLoading').style.display = "block";
         document.getElementById('statusListContainer').innerHTML = "";
         
@@ -1294,723 +1315,6 @@
         document.getElementById('statusListContainer').innerHTML = html;
     }
 
-    // --- LOGIC FOR EXAM & ENTRY FLOW ---
-    function selectStandard(std) {
-        currentStandard = std;
-        
-        document.getElementById('divisionTitle').textContent = "Select Class " + std + " Division";
-        document.getElementById('reportDivisionTitle').textContent = "Select Class " + std + " Division";
-        
-        if (std === '10') {
-            document.body.style.backgroundColor = '#eef2f5';
-            showPage('page0'); 
-        } else {
-            currentExam = "First Term Exam";
-            document.querySelectorAll('.test-name').forEach(el => el.textContent = currentExam);
-            document.body.style.backgroundColor = '#e0f2fe';
-            
-            if (appMode === 'report') {
-                showPage('page4');
-            } else {
-                filterDivisionsForTeacher();
-                showPage('page1');
-            }
-        }
-    }
-
-    function selectExam(exam) {
-      currentExam = exam;
-      document.querySelectorAll('.test-name').forEach(el => el.textContent = currentExam);
-      
-      if (exam === 'First Term Exam') { document.body.style.backgroundColor = '#e0f2fe'; } 
-      else if (exam === 'First Mid Term Exam') { document.body.style.backgroundColor = '#fef3c7'; }
-      
-      if (appMode === 'report') {
-          showPage('page4');
-      } else {
-          filterDivisionsForTeacher();
-          showPage('page1');
-      }
-    }
-
-    function goBackFromDivisions() {
-        if (currentStandard === '10') {
-            showPage('page0');
-        } else {
-            showPage('pageClassSelect');
-        }
-    }
-
-    function filterDivisionsForTeacher() {
-        if (loggedInUser === "Admin" || loggedInUser === "Viewer") {
-            ['A','B','C','D','E','F','G','H'].forEach(d => {
-                let btn = document.getElementById('btn-div-'+d);
-                btn.classList.remove('disabled-btn'); btn.disabled = false;
-            });
-            return;
-        }
-
-        if (languageTeachers.includes(loggedInUser)) {
-            ['A','B','C','D','E','F','G','H'].forEach(d => {
-                let btn = document.getElementById('btn-div-'+d);
-                btn.classList.remove('disabled-btn'); btn.disabled = false;
-            });
-            return;
-        }
-
-        let allowedDivs = [];
-        for (let sub in teacherMapping) {
-            for (let cls in teacherMapping[sub]) {
-                if (teacherMapping[sub][cls] === loggedInUser && cls.startsWith(currentStandard)) {
-                    allowedDivs.push(cls.replace(currentStandard, '')); 
-                }
-            }
-        }
-        
-        ['A','B','C','D','E','F','G','H'].forEach(d => {
-            let btn = document.getElementById('btn-div-'+d);
-            if (allowedDivs.includes(d)) {
-                btn.classList.remove('disabled-btn'); btn.disabled = false;
-            } else {
-                btn.classList.add('disabled-btn'); btn.disabled = true;
-            }
-        });
-    }
-
-    function selectDivision(div) {
-      currentDivision = div;
-      const fullClassName = currentStandard + currentDivision;
-      document.getElementById('subjectTitleClass').textContent = "Class " + fullClassName;
-      
-      filterSubjectsForTeacher(fullClassName);
-      showPage('page2');
-    }
-
-    function filterSubjectsForTeacher(className) {
-        subjectsList.forEach(sub => {
-            let btnId = 'btn-sub-' + sub.replace(/\s+/g, '');
-            let btn = document.getElementById(btnId);
-            
-            if (loggedInUser === "Admin" || loggedInUser === "Viewer") {
-                btn.classList.add('disabled-btn'); btn.disabled = true;
-                return;
-            }
-
-            if (languageTeachers.includes(loggedInUser)) {
-                if (sub === 'Language 1' || sub === 'Language 2') {
-                    btn.classList.remove('disabled-btn'); btn.disabled = false;
-                } else {
-                    btn.classList.add('disabled-btn'); btn.disabled = true;
-                }
-                return;
-            }
-            
-            let assignedTeacher = teacherMapping[sub] && teacherMapping[sub][className] ? teacherMapping[sub][className] : null;
-            if (assignedTeacher === loggedInUser) {
-                btn.classList.remove('disabled-btn'); btn.disabled = false;
-            } else {
-                btn.classList.add('disabled-btn'); btn.disabled = true;
-            }
-        });
-    }
-
-    function selectSubject(sub) {
-      currentSubject = sub;
-      const fullClassName = currentStandard + currentDivision;
-      document.getElementById('marksTitle').textContent = "Class " + fullClassName;
-      document.getElementById('marksSubtitle').textContent = sub;
-      
-      showPage('page3');
-
-      let isEntryOpen = (currentExam === "First Term Exam") ? IS_FIRST_TERM_ENTRY_OPEN : IS_MID_TERM_ENTRY_OPEN;
-      
-      if (!isEntryOpen) {
-        document.getElementById('studentListContainer').innerHTML = "<div style='text-align:center; padding:40px 20px; font-size:22px; color:#ef4444; font-weight:bold; background:#fee2e2; border-radius:8px; margin-top:20px;'>Data entry is over for this exam.</div>";
-        document.getElementById('studentListContainer').style.display = "block";
-        document.getElementById('saveBtn').style.display = "none";
-        document.getElementById('editBtn').style.display = "none";
-        return; 
-      }
-      
-      document.getElementById('studentListContainer').style.display = "none";
-      document.getElementById('saveBtn').style.display = "none";
-      document.getElementById('editBtn').style.display = "none";
-      
-      const msg = document.getElementById('message');
-      msg.style.color = "#3b82f6"; msg.textContent = "Loading, Please Wait........";
-      
-      fetch(scriptURL, {
-        method: 'POST',
-        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-        body: JSON.stringify({ action: "getMarks", className: fullClassName })
-      })
-      .then(response => response.json())
-      .then(data => {
-        if (data.status === "success") {
-           let subjectMarks = {};
-           data.data.forEach(row => {
-             let rowExam = row.exam || "First Mid Term Exam";
-             if (rowExam === "SSLC Mid Term Examination") rowExam = "First Mid Term Exam"; 
-             
-             if (rowExam === currentExam && row.subject === currentSubject) {
-               subjectMarks[row.student] = row.mark;
-             }
-           });
-           renderStudentListWithMarks(fullClassName, subjectMarks);
-        } else {
-           msg.textContent = "Failed to load marks. Starting fresh."; msg.style.color = "#b91c1c";
-           renderStudentListWithMarks(fullClassName, {});
-        }
-      })
-      .catch(error => {
-        msg.textContent = "Network error. Starting fresh."; msg.style.color = "#b91c1c";
-        renderStudentListWithMarks(fullClassName, {});
-      });
-    }
-
-    function renderStudentListWithMarks(className, existingMarks) {
-      const container = document.getElementById('studentListContainer');
-      container.innerHTML = ""; 
-      const students = studentsData[className];
-      let hasExistingMarks = Object.keys(existingMarks).length > 0;
-
-      students.forEach((student, index) => {
-        const row = document.createElement('div');
-        row.className = 'student-row';
-        let markVal = existingMarks[student] !== undefined ? existingMarks[student] : "";
-        let disabledAttr = hasExistingMarks ? "disabled" : "";
-        
-        row.innerHTML = `<div class="student-name">${index + 1}. ${student}</div>
-                         <input type="number" class="mark-input" placeholder="0" data-student-name="${student}" value="${markVal}" ${disabledAttr}>`;
-        container.appendChild(row);
-      });
-      
-      container.style.display = "block";
-      document.getElementById('message').textContent = "";
-      
-      if (hasExistingMarks) {
-        document.getElementById('saveBtn').style.display = "none";
-        document.getElementById('editBtn').style.display = "block";
-      } else {
-        document.getElementById('saveBtn').style.display = "block";
-        document.getElementById('saveBtn').disabled = false;
-        document.getElementById('saveBtn').textContent = "Save All Marks";
-        document.getElementById('editBtn').style.display = "none";
-      }
-    }
-
-    function saveMarks() {
-      const msg = document.getElementById('message');
-      const btn = document.getElementById('saveBtn');
-      const fullClassName = currentStandard + currentDivision;
-      const inputs = document.querySelectorAll('.mark-input');
-      const marksToSave = [];
-      
-      const maxMarkAllowed = getMaxMark(currentExam, currentSubject, fullClassName);
-      let validationError = "";
-
-      for(let i=0; i<inputs.length; i++) {
-        let input = inputs[i];
-        input.style.borderColor = "#cbd5e1"; input.style.backgroundColor = "#f8fafc";
-        
-        const markValue = input.value.trim();
-        if (markValue !== "") {
-          let numValue = parseFloat(markValue);
-          if (numValue > maxMarkAllowed || numValue < 0) {
-            validationError = `Entry rejected: Mark cannot exceed ${maxMarkAllowed} for ${currentSubject}.`;
-            input.style.borderColor = "#ef4444"; input.style.backgroundColor = "#fee2e2";
-          } else {
-            marksToSave.push({ exam: currentExam, className: fullClassName, subject: currentSubject, student: input.dataset.studentName, mark: markValue });
-          }
-        }
-      }
-
-      if (validationError !== "") {
-        msg.style.color = "#b91c1c"; msg.style.backgroundColor = "#fee2e2"; msg.textContent = validationError;
-        return; 
-      }
-
-      if (marksToSave.length === 0) {
-        msg.style.color = "#b91c1c"; msg.style.backgroundColor = "#fee2e2"; msg.textContent = "No marks entered. Nothing to save.";
-        return;
-      }
-
-      btn.disabled = true; btn.textContent = "Saving...";
-      msg.textContent = ""; msg.style.backgroundColor = "transparent";
-
-      fetch(scriptURL, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify(marksToSave) })
-      .then(response => response.json())
-      .then(data => {
-        if (data.status === "error") {
-          msg.style.color = "#b91c1c"; msg.style.backgroundColor = "#fee2e2"; msg.textContent = data.message;
-          btn.disabled = false; btn.textContent = "Save All Marks";
-        } else {
-          msg.style.color = "#15803d"; msg.style.backgroundColor = "#dcfce3"; msg.textContent = data.message;
-          inputs.forEach(input => input.disabled = true);
-          btn.style.display = "none";
-          document.getElementById('editBtn').style.display = "block";
-        }
-      })
-      .catch(error => {
-        msg.style.color = "#b91c1c"; msg.style.backgroundColor = "#fee2e2"; msg.textContent = "Network Error.";
-        btn.disabled = false; btn.textContent = "Save All Marks";
-      });
-    }
-
-    function enableEditing() {
-      const inputs = document.querySelectorAll('.mark-input');
-      inputs.forEach(input => { input.disabled = false; input.style.borderColor = "#cbd5e1"; input.style.backgroundColor = "#ffffff"; });
-      document.getElementById('editBtn').style.display = "none";
-      const saveBtn = document.getElementById('saveBtn');
-      saveBtn.style.display = "block"; saveBtn.disabled = false; saveBtn.textContent = "Save All Marks";
-      document.getElementById('message').textContent = ""; 
-    }
-
-    function getMaxMark(exam, subject, className) {
-        if (className.startsWith('8')) {
-            if (subject === 'Physics' || subject === 'Chemistry' || subject === 'Biology') return 20;
-            return 40;
-        }
-
-        if (exam === "First Term Exam") {
-            if (subject === 'English' || subject === 'Social Science' || subject === 'Mathematics') return 80;
-            return 40;
-        } else {
-            if (subject === 'Social Science' || subject === 'Mathematics') return 40;
-            if (subject === 'English') {
-                if (className.includes('A') || className.includes('F')) return 40; 
-                if (className.includes('B') || className.includes('H')) return 31; 
-                return 40;
-            }
-            return 25;
-        }
-    }
-
-    function getGrade(mark, maxMark, className) {
-        let percentage = Math.round((parseFloat(mark) / maxMark) * 100);
-        
-        if (className && className.startsWith('8')) {
-            if (percentage >= 80) return 'A';
-            if (percentage >= 60) return 'B';
-            if (percentage >= 40) return 'C';
-            if (percentage >= 30) return 'D';
-            return 'E';
-        } else {
-            if (percentage >= 90) return 'A+';
-            if (percentage >= 80) return 'A';
-            if (percentage >= 70) return 'B+';
-            if (percentage >= 60) return 'B';
-            if (percentage >= 50) return 'C+';
-            if (percentage >= 40) return 'C';
-            if (percentage >= 30) return 'D+';
-            if (percentage >= 20) return 'D';
-            return 'E';
-        }
-    }
-
-    function getStudentReportHtml(student, className, pivot) {
-        let html = `
-           <div style="font-weight: normal; text-align: center; color: #000000; margin: 0 0 5px 0; font-size: 18px;">SANSKRIT HS VATTOLI</div>
-           <div style="text-align: center; font-size: 14px; color: #000000; margin-bottom: 10px; text-transform: uppercase;">
-             Academic Year 2026-27<br><br><span style="font-weight: normal; font-size: 16px;">Progress Report</span>
-           </div>
-           <div style="font-weight: normal; font-size: 14px; margin-bottom: 10px; color: #000000; padding-bottom: 5px; display: flex; justify-content: space-between;">
-             <span style="flex:1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Name: <span style="color: #000000;">${student}</span></span>
-             <span style="white-space: nowrap; margin-left: 10px;">Class: <span style="color: #000000;">${className}</span></span>
-           </div>
-           
-           <div style="flex-grow: 1; display: flex; flex-direction: column;">
-             <table style="width: 100%; height: 100%; border-collapse: collapse; border: 2px solid #000000; margin-bottom: 10px;">
-               <thead>`;
-               
-          if (currentStandard === '10') {
-              html += `<tr><th rowspan="2" style="border-bottom: 2px solid #000000; padding: 6px; font-size: 13px; border: 1px solid #000000; text-align: left; padding-left: 8px; width: 38%; font-weight: normal; color:#000000;">Subject</th><th colspan="2" style="border-bottom: 1px solid #000000; padding: 6px; font-size: 13px; border: 1px solid #000000; font-weight: normal; color:#000000;">Mid Term</th><th colspan="2" style="border-bottom: 1px solid #000000; padding: 6px; font-size: 13px; border: 1px solid #000000; font-weight: normal; color:#000000;">First Term</th></tr>
-               <tr><th style="padding: 6px; font-size: 13px; border: 1px solid #000000; border-bottom: 2px solid #000000; font-weight: normal; color:#000000;">Score</th><th style="padding: 6px; font-size: 13px; border: 1px solid #000000; border-bottom: 2px solid #000000; font-weight: normal; color:#000000;">Grade</th><th style="padding: 6px; font-size: 13px; border: 1px solid #000000; border-bottom: 2px solid #000000; font-weight: normal; color:#000000;">Score</th><th style="padding: 6px; font-size: 13px; border: 1px solid #000000; border-bottom: 2px solid #000000; font-weight: normal; color:#000000;">Grade</th></tr></thead><tbody>`;
-          } else {
-              html += `<tr><th rowspan="2" style="border-bottom: 2px solid #000000; padding: 6px; font-size: 13px; border: 1px solid #000000; text-align: left; padding-left: 8px; width: 38%; font-weight: normal; color:#000000;">Subject</th><th colspan="2" style="border-bottom: 1px solid #000000; padding: 6px; font-size: 13px; border: 1px solid #000000; font-weight: normal; color:#000000;">First Term</th></tr>
-               <tr><th style="padding: 6px; font-size: 13px; border: 1px solid #000000; border-bottom: 2px solid #000000; font-weight: normal; color:#000000;">Score</th><th style="padding: 6px; font-size: 13px; border: 1px solid #000000; border-bottom: 2px solid #000000; font-weight: normal; color:#000000;">Grade</th></tr></thead><tbody>`;
-          }
-
-          subjectsList.forEach(sub => {
-             let ftMark = pivot[student].marks["First Term Exam"][sub] !== undefined ? pivot[student].marks["First Term Exam"][sub] : '-';
-             let ftGrade = ftMark !== '-' ? getGrade(ftMark, getMaxMark("First Term Exam", sub, className), className) : '-';
-             
-             if (currentStandard === '10') {
-                 let mtMark = pivot[student].marks["First Mid Term Exam"][sub] !== undefined ? pivot[student].marks["First Mid Term Exam"][sub] : '-';
-                 let mtGrade = mtMark !== '-' ? getGrade(mtMark, getMaxMark("First Mid Term Exam", sub, className), className) : '-';
-                 html += `<tr><td style="padding: 6px; font-size: 14px; border: 1px solid #000000; text-align:left; padding-left:8px; font-weight: normal; color:#000000;">${sub}</td><td style="padding: 6px; font-size: 14px; border: 1px solid #000000; text-align: center; font-weight: normal; color:#000000;">${mtMark}</td><td style="padding: 6px; font-size: 14px; border: 1px solid #000000; font-weight: normal; text-align: center; color:#000000;">${mtGrade}</td><td style="padding: 6px; font-size: 14px; border: 1px solid #000000; text-align: center; font-weight: normal; color:#000000;">${ftMark}</td><td style="padding: 6px; font-size: 14px; border: 1px solid #000000; font-weight: normal; text-align: center; color:#000000;">${ftGrade}</td></tr>`;
-             } else {
-                 html += `<tr><td style="padding: 6px; font-size: 14px; border: 1px solid #000000; text-align:left; padding-left:8px; font-weight: normal; color:#000000;">${sub}</td><td style="padding: 6px; font-size: 14px; border: 1px solid #000000; text-align: center; font-weight: normal; color:#000000;">${ftMark}</td><td style="padding: 6px; font-size: 14px; border: 1px solid #000000; font-weight: normal; text-align: center; color:#000000;">${ftGrade}</td></tr>`;
-             }
-          });
-          
-          html += `</tbody></table>
-           </div>
-           <div style="margin-top: auto; text-align: right; margin-bottom: 5px;">
-             <div style="display: inline-block; text-align: center;">
-               <div style="font-size: 14px; font-weight: normal; color: #000000; margin-top: 15px;">Signature of Class Teacher</div>
-             </div>
-           </div>`;
-             
-          return html;
-    }
-
-    // --- LOGIC FOR VIEWING/PRINTING REPORTS ---
-    function selectReportType(type) {
-      currentReportType = type;
-      showPage('page4a');
-    }
-
-    function goBackFromReports() {
-        if (currentStandard === '10') {
-            showPage('page0');
-        } else {
-            showPage('pageClassSelect');
-        }
-    }
-
-    function goBackFromReportsView() {
-        if (currentReportType === 'schoolTop10' || currentReportType === 'specialCare') {
-            showPage('page4');
-        } else {
-            showPage('page4a');
-        }
-    }
-
-    function showSpecialCareSubjectSelect() {
-        showPage('page4b');
-    }
-
-    function fetchStandardMarksAndGenerate(mode, subject = null) {
-        currentReportType = mode;
-        currentReportClass = currentStandard + (mode === 'schoolTop10' ? '_SchoolTop10' : '_' + subject.replace(/\s+/g, '') + '_SpecialCare');
-        
-        let titleText = mode === 'schoolTop10' ? `Class ${currentStandard} - School Top 10` : `Class ${currentStandard} - Special Care (${subject})`;
-        document.getElementById('reportTitle').textContent = titleText;
-        
-        showPage('page5');
-        document.getElementById('loadingIndicator').style.display = 'block';
-        document.getElementById('tableWrapper').style.display = 'none';
-        document.getElementById('downloadPdfBtn').style.display = 'none';
-        document.getElementById('downloadExcelBtn').style.display = 'none';
-
-        fetch(scriptURL, {
-            method: 'POST',
-            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-            body: JSON.stringify({ action: "getAllMarks" })
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.status === "success") { 
-                processStandardData(data.data, mode, subject); 
-            } else { 
-                document.getElementById('loadingIndicator').textContent = "Error loading data."; 
-            }
-        })
-        .catch(error => { document.getElementById('loadingIndicator').textContent = "Network error."; });
-    }
-
-    function processStandardData(fetchedData, mode, subject) {
-        let standardStudents = [];
-        ['A','B','C','D','E','F','G','H'].forEach(div => {
-            let cls = currentStandard + div;
-            if(studentsData[cls]) {
-                studentsData[cls].forEach(stu => {
-                    standardStudents.push({ name: stu, cls: cls, marks: {}, total: 0 });
-                });
-            }
-        });
-
-        let validData = fetchedData.filter(row => {
-            let ex = row.exam || "First Mid Term Exam";
-            if (ex === "SSLC Mid Term Examination") ex = "First Mid Term Exam";
-            return ex === currentExam && row.className.startsWith(currentStandard);
-        });
-
-        validData.forEach(row => {
-            let s = standardStudents.find(x => x.name === row.student && x.cls === row.className);
-            if(s) {
-                let parsedMark = parseFloat(row.mark);
-                let mark = isNaN(parsedMark) ? 0 : Math.round(parsedMark);
-                s.marks[row.subject] = mark;
-                s.total += mark;
-            }
-        });
-
-        let displayStudents = [];
-
-        if (mode === 'schoolTop10') {
-            displayStudents = standardStudents.filter(s => {
-                if (s.total === 0) return false;
-                for (let i = 0; i < subjectsList.length; i++) {
-                    let sub = subjectsList[i];
-                    let mark = s.marks[sub];
-                    if (mark === undefined || mark === '' || mark === null) return false; 
-                    let maxMark = getMaxMark(currentExam, sub, s.cls);
-                    if (Math.round((parseFloat(mark) / maxMark) * 100) < 30) return false; 
-                }
-                return true;
-            }).sort((a, b) => b.total - a.total).slice(0, 10);
-        } else if (mode === 'specialCare') {
-            displayStudents = standardStudents.filter(s => {
-                let mark = s.marks[subject];
-                if (mark === undefined || mark === '' || mark === null) return false; 
-                let maxMark = getMaxMark(currentExam, subject, s.cls);
-                let pct = Math.round((parseFloat(mark) / maxMark) * 100);
-                return pct < 30;
-            }).sort((a, b) => a.cls.localeCompare(b.cls) || a.name.localeCompare(b.name));
-        }
-
-        buildStandardTable(displayStudents, mode, subject);
-    }
-
-    function buildStandardTable(displayStudents, mode, subject) {
-        let titleSuffix = mode === 'schoolTop10' ? " - School Top 10" : ` - Special Care (${subject})`;
-        let html = '<div style="padding: 10px; background: white;"><h2 style="font-weight: normal; color: black; text-align: center; margin-bottom: 20px;">SANSKRIT HS VATTOLI - Class ' + currentStandard + titleSuffix + '</h2>';
-        html += '<table class="marks-table" style="width: 100%; border-collapse: collapse; border: 2px solid #000; color: black;"><thead><tr>';
-        html += '<th style="font-weight: normal; color: black; border: 1px solid #000; padding: 6px;">No.</th>';
-        html += '<th style="font-weight: normal; color: black; border: 1px solid #000; padding: 6px;">Student Name</th>';
-        html += '<th style="font-weight: normal; color: black; border: 1px solid #000; padding: 6px;">Class</th>';
-        
-        subjectsList.forEach(sub => html += `<th style="font-weight: normal; color: black; border: 1px solid #000; padding: 6px;">${sub}</th>`);
-        html += '<th style="font-weight: normal; color: black; border: 1px solid #000; padding: 6px; background-color: #f8fafc;">Total</th></tr></thead><tbody>';
-
-        if(displayStudents.length === 0) {
-            html += `<tr><td colspan="${subjectsList.length + 4}" style="border: 1px solid #000; padding: 10px; color: black; text-align: center;">No students found matching this criteria.</td></tr>`;
-        } else {
-            displayStudents.forEach((student, index) => {
-              html += `<tr>`;
-              html += `<td style="border: 1px solid #000; padding: 6px; color: black; text-align: center;">${index + 1}</td>`;
-              html += `<td style="border: 1px solid #000; padding: 6px; color: black; text-align: left; padding-left: 8px;">${student.name}</td>`;
-              html += `<td style="border: 1px solid #000; padding: 6px; color: black; text-align: center;">${student.cls}</td>`;
-              
-              subjectsList.forEach(sub => {
-                let mark = student.marks[sub] !== undefined ? student.marks[sub] : '-'; 
-                let bg = (mode === 'specialCare' && sub === subject) ? '#fee2e2' : 'transparent';
-                html += `<td style="border: 1px solid #000; padding: 6px; color: black; background-color: ${bg};">${mark}</td>`;
-              });
-              html += `<td style="border: 1px solid #000; padding: 6px; color: black; font-weight: normal; background-color: #f8fafc;">${student.total}</td></tr>`;
-            });
-        }
-        html += '</tbody></table></div>';
-
-        document.getElementById('tableWrapper').innerHTML = html;
-        document.getElementById('loadingIndicator').style.display = 'none';
-        document.getElementById('tableWrapper').style.display = 'block';
-        document.getElementById('downloadPdfBtn').style.display = 'inline-block';
-        document.getElementById('downloadExcelBtn').style.display = 'inline-block';
-    }
-
-    function fetchAndShowReport(divLetter) {
-      let className = currentStandard + divLetter;
-      currentReportClass = className;
-      
-      let titleSuffix = currentReportType === 'top10' ? " (Top 10 Students)" : "";
-      if (currentReportType === 'progress') titleSuffix = " Progress Reports";
-      
-      document.getElementById('reportTitle').textContent = "Class " + className + titleSuffix;
-      showPage('page5');
-      document.getElementById('loadingIndicator').style.display = 'block';
-      document.getElementById('tableWrapper').style.display = 'none';
-      document.getElementById('downloadPdfBtn').style.display = 'none';
-      document.getElementById('downloadExcelBtn').style.display = 'none';
-      
-      fetch(scriptURL, {
-        method: 'POST',
-        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-        body: JSON.stringify({ action: "getMarks", className: className })
-      })
-      .then(response => response.json())
-      .then(data => {
-        if (data.status === "success") { buildTable(className, data.data); } 
-        else { document.getElementById('loadingIndicator').textContent = "Error loading data."; }
-      })
-      .catch(error => { document.getElementById('loadingIndicator').textContent = "Network error."; });
-    }
-
-    function buildTable(className, fetchedData) {
-      let students = studentsData[className];
-      let pivot = {};
-      students.forEach(s => { 
-        pivot[s] = { total: 0, marks: { "First Term Exam": {}, "First Mid Term Exam": {} } }; 
-      }); 
-      
-      fetchedData.forEach(row => {
-        if(pivot[row.student]) {
-          let ex = row.exam || "First Mid Term Exam"; 
-          if (ex === "SSLC Mid Term Examination") ex = "First Mid Term Exam"; 
-
-          let parsedMark = parseFloat(row.mark);
-          let mark = isNaN(parsedMark) ? 0 : Math.round(parsedMark);
-          
-          if(pivot[row.student].marks[ex]) {
-             pivot[row.student].marks[ex][row.subject] = mark;
-             if (ex === currentExam) pivot[row.student].total += mark;
-          }
-        }
-      });
-
-      let displayStudents = [];
-      if (currentReportType === 'top10') {
-        displayStudents = [...students].filter(a => {
-             if (pivot[a].total === 0) return false;
-             for (let i = 0; i < subjectsList.length; i++) {
-                 let sub = subjectsList[i];
-                 let mark = pivot[a].marks[currentExam][sub] !== undefined ? pivot[a].marks[currentExam][sub] : 0;
-                 let maxMark = getMaxMark(currentExam, sub, className);
-                 if (Math.round((parseFloat(mark) / maxMark) * 100) < 30) return false; 
-             }
-             return true;
-          }).sort((a, b) => pivot[b].total - pivot[a].total).slice(0, 10);
-      } else {
-        displayStudents = students;
-      }
-
-      if (currentReportType === 'progress') {
-        let previewHtml = `<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; padding: 10px;">`;
-        let pdfHtml = `<div style="width: 297mm; background: white; color: black; font-family: sans-serif;">`;
-        
-        for (let i = 0; i < displayStudents.length; i += 2) {
-          pdfHtml += `<div style="display: flex; width: 297mm; height: 210mm; page-break-after: always; box-sizing: border-box;">`;
-          
-          for (let j = 0; j < 2; j++) {
-             if (i + j < displayStudents.length) {
-                let student = displayStudents[i + j];
-                let blockHtml = getStudentReportHtml(student, className, pivot);
-                
-                previewHtml += `<div style="border: 1px solid #cbd5e1; padding: 15px; border-radius: 8px; background: #fff; display: flex; flex-direction: column;">
-                                    ${blockHtml}
-                                </div>`;
-                
-                let borderRight = (j === 0) ? 'border-right: 1px dashed #ccc;' : '';
-                pdfHtml += `<div style="width: 148.5mm; height: 210mm; padding: 15mm; box-sizing: border-box; ${borderRight} display: flex; flex-direction: column;">
-                                ${blockHtml}
-                            </div>`;
-             } else {
-                pdfHtml += `<div style="width: 148.5mm; height: 210mm; box-sizing: border-box;"></div>`;
-             }
-          }
-          pdfHtml += `</div>`;
-        }
-        
-        previewHtml += `</div>`;
-        pdfHtml += `</div>`;
-        
-        document.getElementById('tableWrapper').innerHTML = previewHtml;
-        document.getElementById('pdfDownloadArea').innerHTML = pdfHtml;
-
-        document.getElementById('loadingIndicator').style.display = 'none';
-        document.getElementById('tableWrapper').style.display = 'block';
-        document.getElementById('downloadPdfBtn').style.display = 'inline-block';
-        document.getElementById('downloadExcelBtn').style.display = 'none';
-
-      } else {
-        let titleSuffix = currentReportType === 'top10' ? " (Top 10 Students)" : "";
-        let html = '<div style="padding: 10px; background: white;"><h2 style="font-weight: normal; color: black; text-align: center; margin-bottom: 20px;">SANSKRIT HS VATTOLI - Class ' + className + titleSuffix + '</h2>';
-        html += '<table class="marks-table" style="width: 100%; border-collapse: collapse; border: 2px solid #000; color: black;"><thead><tr><th style="font-weight: normal; color: black; border: 1px solid #000; padding: 6px;">Student Name</th>';
-        
-        subjectsList.forEach(sub => html += `<th style="font-weight: normal; color: black; border: 1px solid #000; padding: 6px;">${sub}</th>`);
-        html += '<th style="font-weight: normal; color: black; border: 1px solid #000; padding: 6px; background-color: #f8fafc;">Total</th></tr></thead><tbody>';
-
-        displayStudents.forEach((student, index) => {
-          let rankOrNo = currentReportType === 'top10' ? (index + 1) : (students.indexOf(student) + 1);
-          html += `<tr><td style="border: 1px solid #000; padding: 6px; color: black; text-align: left; padding-left: 8px;">${rankOrNo}. ${student}</td>`;
-          subjectsList.forEach(sub => {
-            let mark = pivot[student].marks[currentExam][sub] !== undefined ? pivot[student].marks[currentExam][sub] : '-'; 
-            html += `<td style="border: 1px solid #000; padding: 6px; color: black;">${mark}</td>`;
-          });
-          html += `<td style="border: 1px solid #000; padding: 6px; color: black; font-weight: normal; background-color: #f8fafc;">${pivot[student].total}</td></tr>`;
-        });
-        html += '</tbody></table></div>';
-
-        document.getElementById('tableWrapper').innerHTML = html;
-        document.getElementById('loadingIndicator').style.display = 'none';
-        document.getElementById('tableWrapper').style.display = 'block';
-
-        if (currentReportType === 'top10') {
-          document.getElementById('downloadPdfBtn').style.display = 'inline-block';
-          document.getElementById('downloadExcelBtn').style.display = 'none';
-        } else {
-          document.getElementById('downloadPdfBtn').style.display = 'inline-block';
-          document.getElementById('downloadExcelBtn').style.display = 'inline-block';
-        }
-      }
-    }
-
-    async function downloadPDF() {
-      let btn = document.getElementById('downloadPdfBtn');
-      let originalText = btn.textContent;
-      btn.disabled = true;
-
-      try {
-          const { jsPDF } = window.jspdf;
-
-          if (currentReportType === 'progress') {
-              let doc = new jsPDF('l', 'mm', 'a4'); 
-              let downloadArea = document.getElementById('pdfDownloadArea');
-              downloadArea.style.left = '0'; 
-              
-              let pages = document.querySelectorAll('#pdfDownloadArea > div > div');
-              
-              for (let i = 0; i < pages.length; i++) {
-                  btn.textContent = `Generating PDF (Page ${i+1} of ${pages.length})... ⏳`;
-                  
-                  let canvas = await html2canvas(pages[i], { 
-                      scale: 1.5, 
-                      useCORS: true,
-                      logging: false
-                  });
-                  
-                  let imgData = canvas.toDataURL('image/jpeg', 0.95);
-                  if (i > 0) doc.addPage();
-                  doc.addImage(imgData, 'JPEG', 0, 0, 297, 210);
-              }
-
-              downloadArea.style.left = '-9999px'; 
-              doc.save('Progress_Report_Class_' + currentReportClass + '.pdf');
-
-          } else {
-              btn.textContent = "Generating PDF... ⏳";
-              
-              let sourceElement = document.getElementById('tableWrapper');
-              let oldBg = sourceElement.style.background;
-              sourceElement.style.background = '#ffffff';
-
-              let opt = {
-                  margin:       10,
-                  filename:     currentReportType + '_' + currentReportClass + '.pdf',
-                  image:        { type: 'jpeg', quality: 0.98 },
-                  html2canvas:  { scale: 2, useCORS: true },
-                  jsPDF:        { unit: 'mm', format: 'a4', orientation: 'landscape' },
-                  pagebreak:    { mode: 'css', avoid: 'tr' }
-              };
-
-              html2pdf().set(opt).from(sourceElement).save().then(() => {
-                  sourceElement.style.background = oldBg;
-                  btn.textContent = originalText;
-                  btn.disabled = false;
-              }).catch(e => {
-                  console.error(e);
-                  alert("Error generating PDF.");
-                  btn.textContent = originalText;
-                  btn.disabled = false;
-              });
-              
-              return; 
-          }
-      } catch(e) {
-          alert("Error generating PDF. Your browser might be running out of memory.");
-          console.error(e);
-      }
-
-      btn.textContent = originalText;
-      btn.disabled = false;
-    }
-
-    function downloadExcel() {
-      const workbook = XLSX.utils.table_to_book(document.querySelector('#tableWrapper table'), {sheet: "Class Report"});
-      XLSX.writeFile(workbook, 'Report_' + currentReportClass + '_' + currentExam.replace(/ /g, '_') + '.xlsx');
-    }
-  </script>
+</script>
 </body>
 </html>
