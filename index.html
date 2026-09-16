@@ -103,14 +103,6 @@
     .edit-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 0 #d97706, 0 8px 20px rgba(245, 158, 11, 0.3); }
     .edit-btn:active { transform: translateY(4px); box-shadow: 0 0 0 transparent; }
     
-    /* Report Button */
-    .report-btn { 
-      background-color: #ffffff; color: #92400e; border: 2px solid #fcd34d; width: 100%; font-size: 16px; 
-      box-shadow: 0 4px 0 #fcd34d, 0 5px 10px rgba(0,0,0,0.05); 
-    }
-    .report-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 0 #fcd34d, 0 8px 15px rgba(0,0,0,0.1); }
-    .report-btn:active { transform: translateY(4px); box-shadow: 0 0 0 transparent; }
-    
     /* Back Button */
     .back-btn { 
       background-color: transparent; color: #3b82f6; padding: 0; margin-bottom: 10px; font-size: 15px; 
@@ -185,7 +177,7 @@
         <button class="nav-btn" style="border-color:#3b82f6; color:#3b82f6;" onclick="showPage('pageLogin')">👨‍🏫 Teacher Login</button>
         <button class="admin-btn" onclick="showPage('pageAdminLogin')">⚙️ Admin Console</button>
         <button class="nav-btn" style="border-color:#f59e0b; color:#d97706; margin-top:10px;" onclick="showStatusPage('pageHome')">📋 Entry Status</button>
-        <button class="report-btn" style="margin-top:10px;" onclick="goToGuestReports()">📊 View Reports</button>
+        <button class="nav-btn" style="border-color:#10b981; color:#10b981; margin-top:10px;" onclick="goToGuestReports()">📊 View Reports</button>
       </div>
 
       <div class="developer-credit">Designed & Developed by GRR</div>
@@ -238,7 +230,7 @@
       <div id="adminAuthMessage"></div>
     </div>
 
-    <!-- PAGE ADMIN DASHBOARD: Set/Reset PINs -->
+    <!-- PAGE ADMIN DASHBOARD -->
     <div id="pageAdminDash" class="page">
       <button class="back-btn" onclick="logoutAdmin()">← Exit Admin</button>
       <h1 class="school-name">Admin Console</h1>
@@ -257,19 +249,40 @@
       <div id="adminDashMessage"></div>
 
       <hr class="divider">
-      <button class="action-btn" style="border-color:#10b981; color:#10b981; background: #ffffff;" onclick="goToAdminEntry()">➔ Access Data Entry & Reports</button>
-      <button class="nav-btn" style="border-color:#f59e0b; color:#d97706; margin-top:15px; width:100%;" onclick="showStatusPage('pageAdminDash')">📋 View Entry Status</button>
-      <button class="nav-btn" style="border-color:#8b5cf6; color:#8b5cf6; margin-top:15px; width:100%;" onclick="showBookingPage('pageAdminDash')">📅 Special Class Booking</button>
+      <div class="list-grid" style="margin-top:15px;">
+        <button class="action-btn" style="border-color:#3b82f6; color:#3b82f6; background: #ffffff; margin-top:0;" onclick="setAdminModeAndGo('entry')">📝 Score Entry</button>
+        <button class="nav-btn" style="border-color:#10b981; color:#10b981;" onclick="setAdminModeAndGo('report')">📊 View All Reports</button>
+        <button class="nav-btn" style="border-color:#8b5cf6; color:#8b5cf6;" onclick="showBookingPage('pageAdminDash')">📅 Special Class Booking</button>
+        <button class="nav-btn" style="border-color:#f59e0b; color:#d97706;" onclick="showStatusPage('pageAdminDash')">📋 View Entry Status</button>
+      </div>
+      <div class="developer-credit">Designed & Developed by GRR</div>
     </div>
 
-    <!-- PAGE CLASS SELECT: Select standard (10, 9, 8) -->
-    <div id="pageClassSelect" class="page">
-      <button class="logout-text-btn" id="logoutBtn" onclick="logoutDevice()" style="display:none;">Logout Device</button>
+    <!-- PAGE DASHBOARD: Teacher Main Menu -->
+    <div id="pageDashboard" class="page">
+      <button class="logout-text-btn" id="logoutBtnDash" onclick="logoutDevice()" style="display:none;">Logout Device</button>
       <h1 class="school-name" style="margin-top: 0;">SANSKRIT HS VATTOLI</h1>
       <h2 class="event-name">Vijayotsavam 2026-27</h2>
       <hr class="divider">
       
-      <h3 id="teacherGreeting" style="color:#3b82f6; font-weight:bold; margin-bottom:25px;"></h3>
+      <h3 id="dashboardGreeting" style="color:#3b82f6; font-weight:bold; margin-bottom:25px; text-align:center;"></h3>
+      
+      <h2>Main Menu</h2>
+      <div class="list-grid" style="margin-top: 25px;">
+        <button class="nav-btn" style="border-color:#3b82f6; color:#3b82f6; padding: 20px; font-size: 18px;" onclick="setModeAndGo('entry')">📝 Score Entry</button>
+        <button class="nav-btn" style="border-color:#10b981; color:#10b981; padding: 20px; font-size: 18px;" onclick="setModeAndGo('report')">📊 View All Reports</button>
+        <button class="nav-btn" style="border-color:#8b5cf6; color:#8b5cf6; padding: 20px; font-size: 18px;" onclick="showBookingPage('pageDashboard')">📅 Special Class Booking</button>
+        <button class="nav-btn" style="border-color:#f59e0b; color:#d97706; padding: 20px; font-size: 18px;" onclick="showStatusPage('pageDashboard')">📋 Entry Status</button>
+      </div>
+      <div class="developer-credit">Designed & Developed by GRR</div>
+    </div>
+
+    <!-- PAGE CLASS SELECT: Select standard (10, 9, 8) -->
+    <div id="pageClassSelect" class="page">
+      <button class="back-btn" onclick="goBackFromClassSelect()">← Back</button>
+      <h1 class="school-name" style="margin-top: 0;">SANSKRIT HS VATTOLI</h1>
+      <h2 class="event-name">Vijayotsavam 2026-27</h2>
+      <hr class="divider">
       
       <h2>Select Class</h2>
       <div class="list-grid" style="margin-top: 25px;">
@@ -277,11 +290,6 @@
         <button class="nav-btn sub-5" onclick="selectStandard('9')" style="padding: 20px; font-size: 18px;">📗 Class 9</button>
         <button class="nav-btn sub-6" onclick="selectStandard('8')" style="padding: 20px; font-size: 18px;">📙 Class 8</button>
       </div>
-
-      <hr class="divider">
-      <button class="nav-btn" style="border-color:#f59e0b; color:#d97706; width:100%;" onclick="showStatusPage('pageClassSelect')">📋 Check Entry Status</button>
-      <button class="nav-btn" style="border-color:#8b5cf6; color:#8b5cf6; width:100%; margin-top: 12px;" onclick="showBookingPage('pageClassSelect')">📅 Special Class Booking</button>
-
       <div class="developer-credit">Designed & Developed by GRR</div>
     </div>
 
@@ -363,9 +371,6 @@
         <button class="nav-btn page1-div" id="btn-div-G" onclick="selectDivision('G')">G</button>
         <button class="nav-btn page1-div" id="btn-div-H" onclick="selectDivision('H')">H</button>
       </div>
-
-      <hr class="divider">
-      <button class="report-btn" onclick="showPage('page4')">View Class Reports</button>
       <div class="developer-credit">Designed & Developed by GRR</div>
     </div>
 
@@ -596,6 +601,7 @@
     let currentReportClass = "";
     let adminToken = ""; 
     let statusReturnPage = 'pageHome';
+    let appMode = 'entry'; // 'entry' or 'report'
     
     // Booking System State
     let specialBookings = {};
@@ -629,9 +635,9 @@
       const savedTeacher = localStorage.getItem('loggedTeacher');
       if (savedTeacher) {
           loggedInUser = savedTeacher;
-          document.getElementById('teacherGreeting').textContent = "Welcome, " + savedTeacher;
-          document.getElementById('logoutBtn').style.display = "block";
-          showPage('pageClassSelect'); 
+          document.getElementById('dashboardGreeting').textContent = "Welcome, " + savedTeacher;
+          document.getElementById('logoutBtnDash').style.display = "block";
+          showPage('pageDashboard'); 
       }
     });
 
@@ -646,7 +652,7 @@
       document.querySelectorAll('.page').forEach(page => page.classList.remove('active'));
       document.getElementById(pageId).classList.add('active');
       
-      if (pageId === 'pageHome' || pageId === 'pageClassSelect' || pageId === 'page0' || pageId === 'pageLogin' || pageId === 'pageAdminLogin') {
+      if (pageId === 'pageHome' || pageId === 'pageDashboard' || pageId === 'pageClassSelect' || pageId === 'page0' || pageId === 'pageLogin' || pageId === 'pageAdminLogin') {
           document.body.style.backgroundColor = '#eef2f5'; 
       }
       
@@ -742,21 +748,21 @@
         loggedInUser = user;
         localStorage.setItem('loggedTeacher', user); 
         
-        document.getElementById('teacherGreeting').textContent = "Welcome, " + user;
+        document.getElementById('dashboardGreeting').textContent = "Welcome, " + user;
         document.getElementById('teacherPin').value = ""; 
         document.getElementById('newTeacherPinSetup').value = ""; 
         document.getElementById('loginStep1').style.display = "block";
         document.getElementById('loginStep2').style.display = "none";
         
-        document.getElementById('logoutBtn').style.display = "block";
-        showPage('pageClassSelect'); 
+        document.getElementById('logoutBtnDash').style.display = "block";
+        showPage('pageDashboard'); 
     }
 
     function logoutDevice() {
         loggedInUser = null;
         adminToken = "";
         localStorage.removeItem('loggedTeacher'); 
-        document.getElementById('logoutBtn').style.display = "none";
+        document.getElementById('logoutBtnDash').style.display = "none";
         showPage('pageHome');
     }
 
@@ -843,15 +849,36 @@
         showPage('pageHome');
     }
 
-    function goToAdminEntry() {
-        loggedInUser = "Admin"; 
-        document.getElementById('teacherGreeting').textContent = "Welcome, Admin Mode";
-        document.getElementById('logoutBtn').style.display = "block";
+    // --- NAVIGATION HELPERS ---
+    function setModeAndGo(mode) {
+        appMode = mode;
+        showPage('pageClassSelect');
+    }
+
+    function setAdminModeAndGo(mode) {
+        loggedInUser = "Admin";
+        appMode = mode;
+        showPage('pageClassSelect');
+    }
+
+    function goBackFromClassSelect() {
+        if (loggedInUser === "Viewer") {
+            showPage('pageHome');
+        } else if (loggedInUser === "Admin") {
+            showPage('pageAdminDash');
+        } else {
+            showPage('pageDashboard');
+        }
+    }
+
+    function goToGuestReports() {
+        loggedInUser = "Viewer"; 
+        appMode = 'report';
         showPage('pageClassSelect');
     }
 
     // --- SPECIAL BOOKING SYSTEM ---
-    let bookingReturnPage = 'pageClassSelect';
+    let bookingReturnPage = 'pageDashboard';
 
     function showBookingPage(fromPage) {
         bookingReturnPage = fromPage;
@@ -1080,13 +1107,6 @@
     function goBackFromStatus() {
         showPage(statusReturnPage);
     }
-
-    function goToGuestReports() {
-        loggedInUser = "Viewer"; 
-        document.getElementById('teacherGreeting').textContent = "Public Reports Access";
-        document.getElementById('logoutBtn').style.display = "block";
-        showPage('pageClassSelect');
-    }
     
     function fetchStatus() {
         let examName = document.getElementById('statusExamSelect').value;
@@ -1129,7 +1149,7 @@
         let pendingGroups = {};
         
         for (let subject in teacherMapping) {
-            if (subject === 'Language 1' || subject === 'Language 2') continue;
+            if (subject === 'Language 1' || subject === 'Language 2' || subject === 'IT') continue;
             
             for (let cls in teacherMapping[subject]) {
                 if (examName === "First Mid Term Exam" && !cls.startsWith("10")) continue;
@@ -1181,8 +1201,12 @@
             document.querySelectorAll('.test-name').forEach(el => el.textContent = currentExam);
             document.body.style.backgroundColor = '#e0f2fe';
             
-            filterDivisionsForTeacher();
-            showPage('page1');
+            if (appMode === 'report') {
+                showPage('page4');
+            } else {
+                filterDivisionsForTeacher();
+                showPage('page1');
+            }
         }
     }
 
@@ -1193,16 +1217,12 @@
       if (exam === 'First Term Exam') { document.body.style.backgroundColor = '#e0f2fe'; } 
       else if (exam === 'First Mid Term Exam') { document.body.style.backgroundColor = '#fef3c7'; }
       
-      filterDivisionsForTeacher();
-      showPage('page1');
-    }
-
-    function goBackFromDivisions() {
-        if (currentStandard === '10') {
-            showPage('page0');
-        } else {
-            showPage('pageClassSelect');
-        }
+      if (appMode === 'report') {
+          showPage('page4');
+      } else {
+          filterDivisionsForTeacher();
+          showPage('page1');
+      }
     }
 
     function filterDivisionsForTeacher() {
@@ -1524,13 +1544,18 @@
           return html;
     }
 
+    // --- LOGIC FOR VIEWING/PRINTING REPORTS ---
     function selectReportType(type) {
       currentReportType = type;
       showPage('page4a');
     }
 
     function goBackFromReports() {
-        showPage('page1');
+        if (currentStandard === '10') {
+            showPage('page0');
+        } else {
+            showPage('pageClassSelect');
+        }
     }
 
     function goBackFromReportsView() {
