@@ -316,9 +316,6 @@
           </select>
           <button id="btnGenDiv" class="action-btn" style="border-color:#8b5cf6; color:#8b5cf6; margin-top:5px;" onclick="fetchAndGenerateTimetable('divisionwise')">Generate Divisionwise</button>
       </div>
-      
-      <!-- IN APP ERROR MESSAGE -->
-      <div id="ttMessage" style="text-align:center; color:#ef4444; font-weight:bold; margin-top: 15px; min-height: 24px;"></div>
 
       <div class="developer-credit">Designed & Developed by GRR</div>
     </div>
@@ -1156,30 +1153,15 @@
                 html += `<div style="color: #15803d; font-weight: bold; font-size:15px;">Available</div>`;
                 
                 if(loggedInUser !== 'Viewer' && loggedInUser !== 'Admin') {
-                    // Check if IT slots are fully booked (2 slots max across all classes for this time)
-                    let itCount = 0;
-                    if (specialBookings[date]) {
-                        for (let c in specialBookings[date]) {
-                            if (specialBookings[date][c][index] && specialBookings[date][c][index].subject === 'IT') {
-                                itCount++;
-                            }
-                        }
-                    }
-
-                    // Remove IT from dropdown if it is fully booked globally for this time slot
-                    let slotAvailableSubs = availableSubs.filter(s => !(s === 'IT' && itCount >= 2));
-
-                    if (slotAvailableSubs.length > 0) {
+                    if (availableSubs.length > 0) {
                         html += `<div style="margin-top: 10px;">
                             <select id="bookSub_${index}" style="width: 58%; display: inline-block; margin-bottom: 0; padding:10px;">
                             <option value="" disabled selected hidden>Select Subject</option>`;
-                        slotAvailableSubs.forEach(s => html += `<option value="${s}">${s}</option>`);
+                        availableSubs.forEach(s => html += `<option value="${s}">${s}</option>`);
                         html += `</select>
                             <button class="nav-btn" style="padding: 10px; font-size: 14px; width: 38%; display: inline-block; border-color: #10b981; color: #10b981;" onclick="bookSlot('${date}', '${cls}', ${index}, event)">Book Slot</button>
                             <div id="slotMsg_${index}" style="color: #ef4444; font-size: 13px; margin-top: 5px; font-weight:bold; display:none;"></div>
                         </div>`;
-                    } else if (availableSubs.length > 0) {
-                        html += `<div style="font-size: 13px; color: #ef4444; margin-top: 5px; font-weight:bold;">IT slots are fully booked for this time.</div>`;
                     } else {
                         html += `<div style="font-size: 13px; color: #64748b; margin-top: 5px;">You do not handle subjects for this class.</div>`;
                     }
@@ -1229,7 +1211,10 @@
             body: JSON.stringify({ action: "saveBooking", date: date, cls: cls, slotIndex: index, teacher: teacherName, subject: sub })
         })
         .then(res => res.json())
-        .then(data => { fetchBookings(); })
+        .then(data => { 
+            showGlobalMessage("Successfully booked slot!", false);
+            fetchBookings(); 
+        })
         .catch(err => {
             msgDiv.textContent = "Failed to save booking. Network error.";
             msgDiv.style.display = 'block';
@@ -1264,7 +1249,10 @@
             body: JSON.stringify({ action: "cancelBooking", date: date, cls: cls, slotIndex: index })
         })
         .then(res => res.json())
-        .then(data => { fetchBookings(); })
+        .then(data => { 
+            showGlobalMessage("Booking cancelled.", false);
+            fetchBookings(); 
+        })
         .catch(err => {
             let p = btn.parentElement;
             let errDiv = p.querySelector('.cancel-err');
@@ -1332,13 +1320,13 @@
         
         let date = window.ttSelectedDate;
         if (!date) {
-            msg.textContent = "Please select a date on the calendar.";
+            showGlobalMessage("Please select a date on the calendar.", true);
             return;
         }
         
         let targetValue = type === 'classwise' ? document.getElementById('ttClassSelect').value : document.getElementById('ttDivSelect').value;
         if (!targetValue) {
-            msg.textContent = "Please select a Class or Division from the dropdown.";
+            showGlobalMessage("Please select a Class or Division from the dropdown.", true);
             return;
         }
 
