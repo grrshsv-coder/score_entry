@@ -258,11 +258,11 @@
     <div id="pageBooking" class="page">
       <button class="back-btn" onclick="goBackFromBooking()">← Back</button>
       <h1 class="school-name">Special Classes</h1>
-      <h3 style="color:#8b5cf6; margin-top: -5px; margin-bottom: 20px;">Book Your Slots</h3>
+      <h3 id="bookingSubtitle" style="color:#8b5cf6; margin-top: -5px; margin-bottom: 20px;">Book Your Slots</h3>
       
       <!-- MY BOOKINGS SECTION (At a glance) -->
       <div id="myBookingsSection" style="display:none; background:#f8fafc; border:1px solid #cbd5e1; border-radius:8px; padding:15px; margin-bottom:20px;">
-         <h4 style="margin-top:0; margin-bottom:15px; color:#3b82f6; text-align:center;">📋 My Bookings</h4>
+         <h4 id="myBookingsTitle" style="margin-top:0; margin-bottom:15px; color:#3b82f6; text-align:center;">📋 My Bookings</h4>
          <div id="myBookingsList"></div>
       </div>
       
@@ -710,6 +710,8 @@
       const selectLogin = document.getElementById('teacherSelect');
       const selectAdmin = document.getElementById('adminTeacherSelect');
       
+      selectLogin.innerHTML = '<option value="" disabled selected hidden>Select Your Name</option>';
+      
       let adminOpt = document.createElement('option'); 
       adminOpt.value = "Admin"; adminOpt.textContent = "Admin (Change my PIN)";
       selectAdmin.appendChild(adminOpt);
@@ -980,6 +982,13 @@
         bookingReturnPage = fromPage;
         showPage('pageBooking');
         
+        let subtitle = document.getElementById('bookingSubtitle');
+        if (loggedInUser === 'Admin') {
+            subtitle.textContent = "Check the slots";
+        } else {
+            subtitle.textContent = "Book Your Slots";
+        }
+        
         // Reset state
         document.getElementById('bookDate').value = "";
         window.bookingSelectedDate = null;
@@ -1043,10 +1052,17 @@
     function renderMyBookings() {
         let container = document.getElementById('myBookingsList');
         let section = document.getElementById('myBookingsSection');
+        let title = document.getElementById('myBookingsTitle');
         
         if (loggedInUser === 'Viewer') { 
             section.style.display = 'none'; 
             return; 
+        }
+
+        if (loggedInUser === 'Admin') {
+            title.textContent = "📋 All Bookings";
+        } else {
+            title.textContent = "📋 My Bookings";
         }
 
         let myB = [];
@@ -1070,7 +1086,9 @@
         }
 
         if (myB.length === 0) {
-            section.style.display = 'none';
+            let msg = loggedInUser === 'Admin' ? "No bookings exist." : "You have no bookings.";
+            container.innerHTML = `<div style="padding: 10px; text-align:center; color:#64748b; font-weight:bold;">${msg}</div>`;
+            section.style.display = 'block';
             return;
         }
 
@@ -1080,13 +1098,18 @@
         let slotsText = ["9:30 AM - 11:00 AM", "11:15 AM - 12:45 PM", "2:00 PM - 3:30 PM"];
         let html = '';
         myB.forEach(b => {
-            let title = loggedInUser === 'Admin' ? `${b.subject} (${b.teacher})` : b.subject;
+            let titleText = loggedInUser === 'Admin' ? `${b.subject} (${b.teacher})` : b.subject;
+            let cancelBtnHtml = '';
+            if (loggedInUser !== 'Admin') {
+                cancelBtnHtml = `<button class="nav-btn" style="padding: 6px 12px; font-size: 13px; border-color: #ef4444; color: #ef4444; margin: 0; min-width: 75px;" onclick="cancelBooking('${b.date}', '${b.cls}', ${b.slotIndex}, event)">Cancel</button>`;
+            }
+
             html += `<div style="background: #ffffff; border: 1px solid #cbd5e1; padding: 10px; border-radius: 8px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center;">
                 <div style="line-height:1.4;">
                     <strong style="color: #3b82f6;">${b.date}</strong> | <span style="font-weight:bold; color:#1e293b;">Class ${b.cls}</span><br>
-                    <span style="font-size: 13px; color: #64748b;">${slotsText[b.slotIndex]} - ${title}</span>
+                    <span style="font-size: 13px; color: #64748b;">${slotsText[b.slotIndex]} - ${titleText}</span>
                 </div>
-                <button class="nav-btn" style="padding: 6px 12px; font-size: 13px; border-color: #ef4444; color: #ef4444; margin: 0; min-width: 75px;" onclick="cancelBooking('${b.date}', '${b.cls}', ${b.slotIndex}, event)">Cancel</button>
+                ${cancelBtnHtml}
             </div>`;
         });
         container.innerHTML = html;
@@ -1125,11 +1148,12 @@
             
             if (b) {
                 html += `<div style="color: #b91c1c; font-weight: bold; font-size:15px;">${b.subject} - ${b.teacher}</div>`;
-                if(b.teacher === loggedInUser || loggedInUser === 'Admin') {
+                if(b.teacher === loggedInUser) {
                    html += `<button class="nav-btn" style="padding: 8px; font-size: 13px; margin-top: 10px; border-color: #ef4444; color: #ef4444; min-width: 75px;" onclick="cancelBooking('${date}', '${cls}', ${index}, event)">Cancel</button>`;
                 }
             } else {
                 html += `<div style="color: #15803d; font-weight: bold; font-size:15px;">Available</div>`;
+                // Only show booking UI if NOT Viewer, NOT Admin, and they have subjects.
                 if(loggedInUser !== 'Viewer' && loggedInUser !== 'Admin' && availableSubs.length > 0) {
                     html += `<div style="margin-top: 10px;">
                         <select id="bookSub_${index}" style="width: 58%; display: inline-block; margin-bottom: 0; padding:10px;">
@@ -1827,6 +1851,7 @@
           return html;
     }
 
+    // --- LOGIC FOR VIEWING/PRINTING REPORTS ---
     function selectReportType(type) {
       currentReportType = type;
       showPage('page4a');
