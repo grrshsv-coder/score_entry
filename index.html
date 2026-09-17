@@ -148,9 +148,6 @@
   <!-- MAIN APP CONTAINER -->
   <div class="container" id="mainContainer">
 
-    <!-- GLOBAL IN-APP MESSAGES (TOP) -->
-    <div id="topGlobalMessage" style="display: none; padding: 10px; margin-bottom: 15px; border-radius: 8px; text-align: center; font-weight: bold;"></div>
-
     <!-- PAGE HOME: Landing Page -->
     <div id="pageHome" class="page active">
       <h1 class="school-name">SANSKRIT HS VATTOLI</h1>
@@ -298,6 +295,8 @@
       <div id="bookingDateDisplay" class="date-display-box">Select Date</div>
       <div id="bookingCalendar" class="calendar"></div>
       
+      <input type="hidden" id="bookDate">
+      
       <!-- Custom Booking Class Select -->
       <div class="custom-select-container">
           <div class="custom-select-display" id="display_bookClass" onclick="toggleCustomSelect('bookClass')">Select Class</div>
@@ -329,11 +328,7 @@
           
           <div class="custom-select-container" style="margin-bottom: 10px;">
               <div class="custom-select-display" id="display_ttClassSelect" onclick="toggleCustomSelect('ttClassSelect')">Select Class</div>
-              <div class="custom-select-options" id="options_ttClassSelect">
-                  <div class="custom-select-option" onclick="selectCustomOption('ttClassSelect', '10', 'Class 10 (All Divisions)', '')">Class 10 (All Divisions)</div>
-                  <div class="custom-select-option" onclick="selectCustomOption('ttClassSelect', '9', 'Class 9 (All Divisions)', '')">Class 9 (All Divisions)</div>
-                  <div class="custom-select-option" onclick="selectCustomOption('ttClassSelect', '8', 'Class 8 (All Divisions)', '')">Class 8 (All Divisions)</div>
-              </div>
+              <div class="custom-select-options" id="options_ttClassSelect"></div>
               <input type="hidden" id="ttClassSelect">
           </div>
           
@@ -351,6 +346,9 @@
           
           <button id="btnGenDiv" class="action-btn" style="border-color:#8b5cf6; color:#8b5cf6; margin-top:5px;" onclick="fetchAndGenerateTimetable('divisionwise')">Generate Divisionwise</button>
       </div>
+      
+      <!-- IN APP ERROR MESSAGE -->
+      <div id="ttMessage" style="text-align:center; color:#ef4444; font-weight:bold; margin-top: 15px; min-height: 24px;"></div>
 
       <div class="developer-credit">Designed & Developed by GRR</div>
     </div>
@@ -362,12 +360,10 @@
       
       <label style="font-weight:bold; color:#475569; display:block; margin-top:15px; margin-bottom:5px;">Select Exam</label>
       
+      <!-- Custom Select for Exam Status -->
       <div class="custom-select-container">
           <div class="custom-select-display" id="display_statusExamSelect" onclick="toggleCustomSelect('statusExamSelect')">Select Exam</div>
-          <div class="custom-select-options" id="options_statusExamSelect">
-              <div class="custom-select-option" onclick="selectCustomOption('statusExamSelect', 'First Term Exam', 'First Term Exam', 'fetchStatus')">First Term Exam</div>
-              <div class="custom-select-option" onclick="selectCustomOption('statusExamSelect', 'First Mid Term Exam', 'First Mid Term Exam (Class 10)', 'fetchStatus')">First Mid Term Exam (Class 10)</div>
-          </div>
+          <div class="custom-select-options" id="options_statusExamSelect"></div>
           <input type="hidden" id="statusExamSelect">
       </div>
       
@@ -496,9 +492,6 @@
       <div class="developer-credit">Designed & Developed by GRR</div>
     </div>
 
-    <!-- GLOBAL IN-APP MESSAGES (BOTTOM) -->
-    <div id="botGlobalMessage" style="display: none; padding: 10px; margin-top: 15px; border-radius: 8px; text-align: center; font-weight: bold;"></div>
-
   </div> <!-- CLOSE MAIN CONTAINER -->
 
   <!-- ALL FULL-WIDTH PDF / VIEW CONTAINERS GO HERE SO THEY ARE NOT HIDDEN -->
@@ -509,6 +502,9 @@
       <button class="back-btn" onclick="showPage('pageTimetableMenu')" style="margin-bottom: 0;">← Back</button>
       <button id="downloadTtBtn" class="nav-btn" style="border-color: #8b5cf6; color: #8b5cf6; padding: 10px 15px; font-size: 14px;" onclick="downloadTimetablePDF()">📥 Download PDF</button>
     </div>
+    
+    <div id="ttViewMessage" style="text-align:center; color:#ef4444; font-weight:bold; margin-bottom: 10px; display:none;"></div>
+    
     <div id="ttViewContainer" style="background:white; border-radius:8px; border:1px solid #cbd5e1; padding: 10px; overflow-x: auto;"></div>
     <div class="developer-credit">Designed & Developed by GRR</div>
   </div>
@@ -617,7 +613,6 @@
       "8H": ["AADIDEV P P", "AKSHIKA M", "ANMIYA", "ARSHIK DEV P", "ARUNDHATHI K", "ASWIN DEV K K", "AVANI VIJEESH", "DARSITH V R", "DEVALAKSHMI.V.C", "DEVAMGANA P B", "GOUTHAM KRISHNA A", "ISHIKA A", "KEDARNADH B.S", "NAINIKA C P", "NAYAN THEJ K C", "NIHAL S", "NIVEDYA ANIL KUMAR", "RITHUKRISHNA C P", "SAMARTH S CHANDRAN", "SARON A K", "SHANVIN PRAJITH C P", "SHIVA LAKSHMI SANAL", "SHYAMDEV S NATH", "SIVADA P M", "SIVADA SASI", "SURYA DEV V.K", "THEJA KALLYANI", "THRINAD SHAH", "VEDAJ", "VISHWADHAR P P"]
     };
     
-    // Note: IT is intentionally excluded from the Mark Entry Subject List
     const subjectsList = ['Language 1', 'Language 2', 'English', 'Hindi', 'Social Science', 'Physics', 'Chemistry', 'Biology', 'Mathematics'];
     
     const languageTeachers = ["Aneesh A", "AP Najee Ahammed", "CK Leela", "KV Sheeba", "Shyna R", "Smitha KK", "T Sayad"];
@@ -690,31 +685,6 @@
     window.ttSelectedDate = null;
     window.currentTimetableTarget = null;
     window.currentTimetableDate = null;
-
-    // --- GLOBAL MESSAGING SYSTEM ---
-    function showGlobalMessage(msg, isError = true) {
-        const topMsg = document.getElementById('topGlobalMessage');
-        const botMsg = document.getElementById('botGlobalMessage');
-        const color = isError ? '#ef4444' : '#10b981';
-        const bg = isError ? '#fee2e2' : '#dcfce3';
-        
-        if (msg) {
-            topMsg.style.color = color; topMsg.style.backgroundColor = bg; topMsg.style.borderColor = color;
-            botMsg.style.color = color; botMsg.style.backgroundColor = bg; botMsg.style.borderColor = color;
-            topMsg.style.border = `1px solid ${color}`; botMsg.style.border = `1px solid ${color}`;
-            
-            topMsg.innerHTML = msg; botMsg.innerHTML = msg;
-            topMsg.style.display = 'block'; botMsg.style.display = 'block';
-            
-            setTimeout(() => { 
-                topMsg.style.display = 'none'; 
-                botMsg.style.display = 'none'; 
-            }, 4000);
-        } else {
-            topMsg.style.display = 'none'; 
-            botMsg.style.display = 'none';
-        }
-    }
 
     function renderCustomCalendar(containerId, year, month, selectedDateStr, onSelectFuncStr, prefix) {
         let firstDay = new Date(year, month, 1).getDay();
@@ -1118,7 +1088,8 @@
             }
         }).catch(err => { 
             document.getElementById('bookingLoading').style.display = "none";
-            showGlobalMessage("Network error syncing bookings.", true); 
+            let c = document.getElementById('slotsContainer');
+            c.innerHTML = `<div style='text-align:center; color:#ef4444; font-weight:bold;'>Network error syncing bookings.</div>`;
         });
     }
 
@@ -1257,6 +1228,7 @@
         msgDiv.style.display = 'none';
 
         if (!sub) {
+            msgDiv.style.color = '#ef4444';
             msgDiv.textContent = "Please select a subject before booking.";
             msgDiv.style.display = 'block';
             return;
@@ -1273,6 +1245,7 @@
                 }
             }
             if (itCount >= 2) {
+                msgDiv.style.color = '#ef4444';
                 msgDiv.textContent = "No IT slot available for this time.";
                 msgDiv.style.display = 'block';
                 return;
@@ -1291,10 +1264,13 @@
         })
         .then(res => res.json())
         .then(data => { 
-            showGlobalMessage("Successfully booked slot!", false);
+            msgDiv.style.color = '#10b981';
+            msgDiv.textContent = "Successfully booked slot!";
+            msgDiv.style.display = 'block';
             fetchBookings(); 
         })
         .catch(err => {
+            msgDiv.style.color = '#ef4444';
             msgDiv.textContent = "Failed to save booking. Network error.";
             msgDiv.style.display = 'block';
             btn.textContent = "Book Slot";
@@ -1328,10 +1304,7 @@
             body: JSON.stringify({ action: "cancelBooking", date: date, cls: cls, slotIndex: index })
         })
         .then(res => res.json())
-        .then(data => { 
-            showGlobalMessage("Booking cancelled.", false);
-            fetchBookings(); 
-        })
+        .then(data => { fetchBookings(); })
         .catch(err => {
             let p = btn.parentElement;
             let errDiv = p.querySelector('.cancel-err');
@@ -1356,6 +1329,8 @@
     function goToTimetableMenu(fromPage) {
         ttReturnPage = fromPage || 'pageBooking';
         showPage('pageTimetableMenu');
+        
+        document.getElementById('ttMessage').textContent = "";
         
         // Sync selected date from Booking to Timetable
         if (window.bookingSelectedDate) {
@@ -1396,15 +1371,18 @@
     }
     
     function fetchAndGenerateTimetable(type) {
+        let msg = document.getElementById('ttMessage');
+        msg.textContent = "";
+        
         let date = window.ttSelectedDate;
         if (!date) {
-            showGlobalMessage("Please select a date on the calendar.", true);
+            msg.textContent = "Please select a date on the calendar.";
             return;
         }
         
         let targetValue = type === 'classwise' ? document.getElementById('ttClassSelect').value : document.getElementById('ttDivSelect').value;
         if (!targetValue) {
-            showGlobalMessage("Please select a Class or Division from the dropdown.", true);
+            msg.textContent = "Please select a Class or Division from the dropdown.";
             return;
         }
 
@@ -1429,14 +1407,12 @@
             if (data.status === "success") {
                 specialBookings = data.data;
                 buildTimetableView(type, targetValue, date);
-            } else { 
-                showGlobalMessage("Failed to fetch data.", true); 
-            }
+            } else { msg.textContent = "Failed to fetch data."; }
         })
         .catch(err => {
             btn.textContent = ogText;
             btn.disabled = false;
-            showGlobalMessage("Network error.", true);
+            msg.textContent = "Network error.";
         });
     }
 
@@ -1496,10 +1472,14 @@
         }
         
         document.getElementById('ttViewContainer').innerHTML = html;
+        document.getElementById('ttViewMessage').style.display = 'none';
     }
 
     function downloadTimetablePDF() {
         let btn = document.getElementById('downloadTtBtn');
+        let msg = document.getElementById('ttViewMessage');
+        msg.style.display = 'none';
+        
         let ogText = btn.textContent;
         btn.textContent = "Generating PDF... ⏳";
         btn.disabled = true;
@@ -1522,7 +1502,8 @@
         }).catch(e => {
             btn.textContent = ogText;
             btn.disabled = false;
-            showGlobalMessage("Error downloading PDF.", true);
+            msg.textContent = "Error downloading PDF.";
+            msg.style.display = 'block';
         });
     }
 
@@ -2318,7 +2299,6 @@
                   btn.disabled = false;
               }).catch(e => {
                   console.error(e);
-                  showGlobalMessage("Error generating PDF.", true);
                   btn.textContent = originalText;
                   btn.disabled = false;
               });
@@ -2326,7 +2306,6 @@
               return; 
           }
       } catch(e) {
-          showGlobalMessage("Error generating PDF. Your browser might be running out of memory.", true);
           console.error(e);
       }
 
