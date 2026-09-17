@@ -710,8 +710,6 @@
       const selectLogin = document.getElementById('teacherSelect');
       const selectAdmin = document.getElementById('adminTeacherSelect');
       
-      selectLogin.innerHTML = '<option value="" disabled selected hidden>Select Your Name</option>';
-      
       let adminOpt = document.createElement('option'); 
       adminOpt.value = "Admin"; adminOpt.textContent = "Admin (Change my PIN)";
       selectAdmin.appendChild(adminOpt);
@@ -1146,6 +1144,17 @@
             html += `<div style="border: 1px solid #cbd5e1; border-radius: 8px; padding: 15px; margin-bottom: 10px; background: ${b ? '#fef2f2' : '#f0fdf4'};">`;
             html += `<strong style="display:block; margin-bottom: 8px; color: #334155; font-size:16px;">${time}</strong>`;
             
+            // Limit IT bookings to 2
+            let itCount = 0;
+            if (specialBookings[date]) {
+                for (let c in specialBookings[date]) {
+                    if (specialBookings[date][c][index] && specialBookings[date][c][index].subject === 'IT') {
+                        itCount++;
+                    }
+                }
+            }
+            let slotAvailableSubs = availableSubs.filter(s => !(s === 'IT' && itCount >= 2));
+
             if (b) {
                 html += `<div style="color: #b91c1c; font-weight: bold; font-size:15px;">${b.subject} - ${b.teacher}</div>`;
                 if(b.teacher === loggedInUser) {
@@ -1153,17 +1162,21 @@
                 }
             } else {
                 html += `<div style="color: #15803d; font-weight: bold; font-size:15px;">Available</div>`;
-                // Only show booking UI if NOT Viewer, NOT Admin, and they have subjects.
-                if(loggedInUser !== 'Viewer' && loggedInUser !== 'Admin' && availableSubs.length > 0) {
-                    html += `<div style="margin-top: 10px;">
-                        <select id="bookSub_${index}" style="width: 58%; display: inline-block; margin-bottom: 0; padding:10px;">
-                        <option value="" disabled selected hidden>Select Subject</option>`;
-                    availableSubs.forEach(s => html += `<option value="${s}">${s}</option>`);
-                    html += `</select>
-                        <button class="nav-btn" style="padding: 10px; font-size: 14px; width: 38%; display: inline-block; border-color: #10b981; color: #10b981;" onclick="bookSlot('${date}', '${cls}', ${index}, event)">Book Slot</button>
-                    </div>`;
-                } else if (loggedInUser !== 'Admin' && loggedInUser !== 'Viewer') {
-                    html += `<div style="font-size: 13px; color: #64748b; margin-top: 5px;">You do not handle subjects for this class.</div>`;
+                
+                if(loggedInUser !== 'Viewer' && loggedInUser !== 'Admin') {
+                    if (slotAvailableSubs.length > 0) {
+                        html += `<div style="margin-top: 10px;">
+                            <select id="bookSub_${index}" style="width: 58%; display: inline-block; margin-bottom: 0; padding:10px;">
+                            <option value="" disabled selected hidden>Select Subject</option>`;
+                        slotAvailableSubs.forEach(s => html += `<option value="${s}">${s}</option>`);
+                        html += `</select>
+                            <button class="nav-btn" style="padding: 10px; font-size: 14px; width: 38%; display: inline-block; border-color: #10b981; color: #10b981;" onclick="bookSlot('${date}', '${cls}', ${index}, event)">Book Slot</button>
+                        </div>`;
+                    } else if (availableSubs.length > 0) {
+                        html += `<div style="font-size: 13px; color: #ef4444; margin-top: 5px; font-weight:bold;">IT slots are fully booked for this time.</div>`;
+                    } else {
+                        html += `<div style="font-size: 13px; color: #64748b; margin-top: 5px;">You do not handle subjects for this class.</div>`;
+                    }
                 }
             }
             html += `</div>`;
@@ -1176,6 +1189,22 @@
         if (!sub) {
             showGlobalMessage("Please select a subject before booking.", true);
             return;
+        }
+
+        if (sub === 'IT') {
+            let itCount = 0;
+            if (specialBookings[date]) {
+                for (let c in specialBookings[date]) {
+                    if (specialBookings[date][c][index] && specialBookings[date][c][index].subject === 'IT') {
+                        itCount++;
+                    }
+                }
+            }
+            if (itCount >= 2) {
+                showGlobalMessage("IT slots are fully booked for this time.", true);
+                renderBookings(); 
+                return;
+            }
         }
 
         let teacherName = loggedInUser === 'Admin' ? 'Admin' : loggedInUser;
@@ -1245,6 +1274,8 @@
         ttReturnPage = fromPage || 'pageBooking';
         showPage('pageTimetableMenu');
         
+        document.getElementById('ttMessage').textContent = "";
+        
         window.ttSelectedDate = null;
         document.getElementById('ttDateDisplay').textContent = "Select Date";
         document.getElementById('ttDateDisplay').classList.remove('active');
@@ -1270,6 +1301,9 @@
     }
     
     function fetchAndGenerateTimetable(type) {
+        let msg = document.getElementById('ttMessage');
+        msg.textContent = "";
+        
         let date = window.ttSelectedDate;
         if (!date) {
             showGlobalMessage("Please select a date on the calendar.", true);
@@ -1303,14 +1337,12 @@
             if (data.status === "success") {
                 specialBookings = data.data;
                 buildTimetableView(type, targetValue, date);
-            } else { 
-                showGlobalMessage("Failed to fetch data.", true); 
-            }
+            } else { msg.textContent = "Failed to fetch data."; }
         })
         .catch(err => {
             btn.textContent = ogText;
             btn.disabled = false;
-            showGlobalMessage("Network error.", true);
+            msg.textContent = "Network error.";
         });
     }
 
@@ -1396,7 +1428,7 @@
         }).catch(e => {
             btn.textContent = ogText;
             btn.disabled = false;
-            showGlobalMessage("Error downloading PDF.", true);
+            alert("Error downloading PDF.");
         });
     }
 
