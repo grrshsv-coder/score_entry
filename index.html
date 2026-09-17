@@ -127,6 +127,9 @@
   <!-- MAIN APP CONTAINER -->
   <div class="container" id="mainContainer">
 
+    <!-- GLOBAL IN-APP MESSAGES (TOP) -->
+    <div id="topGlobalMessage" style="display: none; padding: 10px; margin-bottom: 15px; border-radius: 8px; text-align: center; font-weight: bold;"></div>
+
     <!-- PAGE HOME: Landing Page -->
     <div id="pageHome" class="page active">
       <h1 class="school-name">SANSKRIT HS VATTOLI</h1>
@@ -257,6 +260,12 @@
       <h1 class="school-name">Special Classes</h1>
       <h3 style="color:#8b5cf6; margin-top: -5px; margin-bottom: 20px;">Book Your Slots</h3>
       
+      <!-- MY BOOKINGS SECTION (At a glance) -->
+      <div id="myBookingsSection" style="display:none; background:#f8fafc; border:1px solid #cbd5e1; border-radius:8px; padding:15px; margin-bottom:20px;">
+         <h4 style="margin-top:0; margin-bottom:15px; color:#3b82f6; text-align:center;">📋 My Bookings</h4>
+         <div id="myBookingsList"></div>
+      </div>
+      
       <!-- Custom Booking Calendar -->
       <div id="bookingDateDisplay" class="date-display-box">Select Date</div>
       <div id="bookingCalendar" class="calendar"></div>
@@ -307,9 +316,6 @@
           </select>
           <button id="btnGenDiv" class="action-btn" style="border-color:#8b5cf6; color:#8b5cf6; margin-top:5px;" onclick="fetchAndGenerateTimetable('divisionwise')">Generate Divisionwise</button>
       </div>
-      
-      <!-- IN APP ERROR MESSAGE -->
-      <div id="ttMessage" style="text-align:center; color:#ef4444; font-weight:bold; margin-top: 15px; min-height: 24px;"></div>
 
       <div class="developer-credit">Designed & Developed by GRR</div>
     </div>
@@ -450,6 +456,9 @@
       </div>
       <div class="developer-credit">Designed & Developed by GRR</div>
     </div>
+
+    <!-- GLOBAL IN-APP MESSAGES (BOTTOM) -->
+    <div id="botGlobalMessage" style="display: none; padding: 10px; margin-top: 15px; border-radius: 8px; text-align: center; font-weight: bold;"></div>
 
   </div> <!-- CLOSE MAIN CONTAINER -->
 
@@ -596,6 +605,31 @@
     window.currentTimetableTarget = null;
     window.currentTimetableDate = null;
 
+    // --- GLOBAL MESSAGING SYSTEM ---
+    function showGlobalMessage(msg, isError = true) {
+        const topMsg = document.getElementById('topGlobalMessage');
+        const botMsg = document.getElementById('botGlobalMessage');
+        const color = isError ? '#ef4444' : '#10b981';
+        const bg = isError ? '#fee2e2' : '#dcfce3';
+        
+        if (msg) {
+            topMsg.style.color = color; topMsg.style.backgroundColor = bg; topMsg.style.borderColor = color;
+            botMsg.style.color = color; botMsg.style.backgroundColor = bg; botMsg.style.borderColor = color;
+            topMsg.style.border = `1px solid ${color}`; botMsg.style.border = `1px solid ${color}`;
+            
+            topMsg.innerHTML = msg; botMsg.innerHTML = msg;
+            topMsg.style.display = 'block'; botMsg.style.display = 'block';
+            
+            setTimeout(() => { 
+                topMsg.style.display = 'none'; 
+                botMsg.style.display = 'none'; 
+            }, 4000);
+        } else {
+            topMsg.style.display = 'none'; 
+            botMsg.style.display = 'none';
+        }
+    }
+
     function renderCustomCalendar(containerId, year, month, selectedDateStr, onSelectFuncStr, prefix) {
         let firstDay = new Date(year, month, 1).getDay();
         let daysInMonth = new Date(year, month + 1, 0).getDate();
@@ -675,8 +709,6 @@
       
       const selectLogin = document.getElementById('teacherSelect');
       const selectAdmin = document.getElementById('adminTeacherSelect');
-      
-      selectLogin.innerHTML = '<option value="" disabled selected hidden>Select Your Name</option>';
       
       let adminOpt = document.createElement('option'); 
       adminOpt.value = "Admin"; adminOpt.textContent = "Admin (Change my PIN)";
@@ -954,6 +986,7 @@
         document.getElementById('bookingDateDisplay').textContent = "Select Date";
         document.getElementById('bookingDateDisplay').classList.remove('active');
         document.getElementById('slotsContainer').innerHTML = "";
+        document.getElementById('myBookingsSection').style.display = 'none';
         
         let classInput = document.getElementById('bookClass');
         classInput.innerHTML = '<option value="" disabled selected hidden>Select Class</option>';
@@ -998,9 +1031,66 @@
             document.getElementById('bookingLoading').style.display = "none";
             if (data.status === "success") {
                 specialBookings = data.data;
+                renderMyBookings();
                 renderBookings();
             }
-        }).catch(err => { document.getElementById('bookingLoading').textContent = "Network error. Try again."; });
+        }).catch(err => { 
+            document.getElementById('bookingLoading').style.display = "none";
+            showGlobalMessage("Network error syncing bookings.", true); 
+        });
+    }
+
+    function renderMyBookings() {
+        let container = document.getElementById('myBookingsList');
+        let section = document.getElementById('myBookingsSection');
+        
+        if (loggedInUser === 'Viewer') { 
+            section.style.display = 'none'; 
+            return; 
+        }
+
+        let myB = [];
+        let today = new Date();
+        today.setHours(0,0,0,0);
+
+        for (let date in specialBookings) {
+            let parts = date.split('-');
+            if(parts.length !== 3) continue;
+            let dObj = new Date(parts[0], parts[1]-1, parts[2]);
+            if (dObj < today) continue; // skip past dates
+            
+            for (let cls in specialBookings[date]) {
+                for (let slot in specialBookings[date][cls]) {
+                    let b = specialBookings[date][cls][slot];
+                    if (b.teacher === loggedInUser || loggedInUser === 'Admin') {
+                        myB.push({ date: date, cls: cls, slotIndex: slot, subject: b.subject, teacher: b.teacher });
+                    }
+                }
+            }
+        }
+
+        if (myB.length === 0) {
+            section.style.display = 'none';
+            return;
+        }
+
+        // Sort by date
+        myB.sort((a,b) => new Date(a.date) - new Date(b.date));
+
+        let slotsText = ["9:30 AM - 11:00 AM", "11:15 AM - 12:45 PM", "2:00 PM - 3:30 PM"];
+        let html = '';
+        myB.forEach(b => {
+            let title = loggedInUser === 'Admin' ? `${b.subject} (${b.teacher})` : b.subject;
+            html += `<div style="background: #ffffff; border: 1px solid #cbd5e1; padding: 10px; border-radius: 8px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center;">
+                <div style="line-height:1.4;">
+                    <strong style="color: #3b82f6;">${b.date}</strong> | <span style="font-weight:bold; color:#1e293b;">Class ${b.cls}</span><br>
+                    <span style="font-size: 13px; color: #64748b;">${slotsText[b.slotIndex]} - ${title}</span>
+                </div>
+                <button class="nav-btn" style="padding: 6px 12px; font-size: 13px; border-color: #ef4444; color: #ef4444; margin: 0; min-width: 75px;" onclick="cancelBooking('${b.date}', '${b.cls}', ${b.slotIndex}, event)">Cancel</button>
+            </div>`;
+        });
+        container.innerHTML = html;
+        section.style.display = 'block';
     }
 
     function getTeacherSubjectsForClass(teacher, className) {
@@ -1016,7 +1106,7 @@
         let date = document.getElementById('bookDate').value;
         let cls = document.getElementById('bookClass').value;
         if(!date || !cls) {
-            document.getElementById('slotsContainer').innerHTML = "<div style='text-align:center; color:#64748b;'>Please select both a date and a class.</div>";
+            document.getElementById('slotsContainer').innerHTML = "<div style='text-align:center; color:#64748b;'>Please select both a date and a class to view/book slots.</div>";
             return;
         }
         
@@ -1036,7 +1126,7 @@
             if (b) {
                 html += `<div style="color: #b91c1c; font-weight: bold; font-size:15px;">${b.subject} - ${b.teacher}</div>`;
                 if(b.teacher === loggedInUser || loggedInUser === 'Admin') {
-                   html += `<button class="nav-btn" style="padding: 8px; font-size: 13px; margin-top: 10px; border-color: #ef4444; color: #ef4444;" onclick="cancelBooking('${date}', '${cls}', ${index}, event)">Cancel Booking</button>`;
+                   html += `<button class="nav-btn" style="padding: 8px; font-size: 13px; margin-top: 10px; border-color: #ef4444; color: #ef4444; min-width: 75px;" onclick="cancelBooking('${date}', '${cls}', ${index}, event)">Cancel</button>`;
                 }
             } else {
                 html += `<div style="color: #15803d; font-weight: bold; font-size:15px;">Available</div>`;
@@ -1060,7 +1150,7 @@
     function bookSlot(date, cls, index, event) {
         let sub = document.getElementById(`bookSub_${index}`).value;
         if (!sub) {
-            alert("Please select a subject before booking.");
+            showGlobalMessage("Please select a subject before booking.", true);
             return;
         }
 
@@ -1075,23 +1165,53 @@
             body: JSON.stringify({ action: "saveBooking", date: date, cls: cls, slotIndex: index, teacher: teacherName, subject: sub })
         })
         .then(res => res.json())
-        .then(data => { fetchBookings(); });
+        .then(data => { 
+            showGlobalMessage("Successfully booked slot!", false);
+            fetchBookings(); 
+        })
+        .catch(err => {
+            showGlobalMessage("Failed to save booking.", true);
+            btn.textContent = "Book Slot";
+            btn.disabled = false;
+        });
     }
     
     function cancelBooking(date, cls, index, event) {
-        if(confirm("Cancel this booking?")) {
-            let btn = event.target;
-            btn.textContent = "Canceling...";
-            btn.disabled = true;
-
-            fetch(scriptURL, {
-                method: 'POST',
-                headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-                body: JSON.stringify({ action: "cancelBooking", date: date, cls: cls, slotIndex: index })
-            })
-            .then(res => res.json())
-            .then(data => { fetchBookings(); });
+        let btn = event.target;
+        if (!btn.classList.contains('confirm-mode')) {
+            btn.dataset.ogText = btn.textContent;
+            btn.textContent = "Sure?";
+            btn.style.backgroundColor = "#fee2e2";
+            btn.classList.add('confirm-mode');
+            setTimeout(() => { 
+                if(btn.classList.contains('confirm-mode')) {
+                    btn.textContent = btn.dataset.ogText; 
+                    btn.style.backgroundColor = "transparent";
+                    btn.classList.remove('confirm-mode');
+                }
+            }, 3000);
+            return;
         }
+
+        btn.textContent = "Canceling...";
+        btn.disabled = true;
+
+        fetch(scriptURL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+            body: JSON.stringify({ action: "cancelBooking", date: date, cls: cls, slotIndex: index })
+        })
+        .then(res => res.json())
+        .then(data => { 
+            showGlobalMessage("Booking cancelled.", false);
+            fetchBookings(); 
+        })
+        .catch(err => {
+            showGlobalMessage("Failed to cancel.", true);
+            btn.textContent = btn.dataset.ogText;
+            btn.disabled = false;
+            btn.classList.remove('confirm-mode');
+        });
     }
 
     // --- TIMETABLE GENERATION SYSTEM ---
@@ -1100,8 +1220,6 @@
     function goToTimetableMenu(fromPage) {
         ttReturnPage = fromPage || 'pageBooking';
         showPage('pageTimetableMenu');
-        
-        document.getElementById('ttMessage').textContent = "";
         
         window.ttSelectedDate = null;
         document.getElementById('ttDateDisplay').textContent = "Select Date";
@@ -1128,18 +1246,15 @@
     }
     
     function fetchAndGenerateTimetable(type) {
-        let msg = document.getElementById('ttMessage');
-        msg.textContent = "";
-        
         let date = window.ttSelectedDate;
         if (!date) {
-            msg.textContent = "Please select a date on the calendar.";
+            showGlobalMessage("Please select a date on the calendar.", true);
             return;
         }
         
         let targetValue = type === 'classwise' ? document.getElementById('ttClassSelect').value : document.getElementById('ttDivSelect').value;
         if (!targetValue) {
-            msg.textContent = "Please select a Class or Division from the dropdown.";
+            showGlobalMessage("Please select a Class or Division from the dropdown.", true);
             return;
         }
 
@@ -1164,12 +1279,14 @@
             if (data.status === "success") {
                 specialBookings = data.data;
                 buildTimetableView(type, targetValue, date);
-            } else { msg.textContent = "Failed to fetch data."; }
+            } else { 
+                showGlobalMessage("Failed to fetch data.", true); 
+            }
         })
         .catch(err => {
             btn.textContent = ogText;
             btn.disabled = false;
-            msg.textContent = "Network error.";
+            showGlobalMessage("Network error.", true);
         });
     }
 
@@ -1255,7 +1372,7 @@
         }).catch(e => {
             btn.textContent = ogText;
             btn.disabled = false;
-            alert("Error downloading PDF.");
+            showGlobalMessage("Error downloading PDF.", true);
         });
     }
 
@@ -1710,7 +1827,6 @@
           return html;
     }
 
-    // --- LOGIC FOR VIEWING/PRINTING REPORTS ---
     function selectReportType(type) {
       currentReportType = type;
       showPage('page4a');
@@ -2046,7 +2162,7 @@
                   btn.disabled = false;
               }).catch(e => {
                   console.error(e);
-                  alert("Error generating PDF.");
+                  showGlobalMessage("Error generating PDF.", true);
                   btn.textContent = originalText;
                   btn.disabled = false;
               });
@@ -2054,7 +2170,7 @@
               return; 
           }
       } catch(e) {
-          alert("Error generating PDF. Your browser might be running out of memory.");
+          showGlobalMessage("Error generating PDF. Your browser might be running out of memory.", true);
           console.error(e);
       }
 
