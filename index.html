@@ -310,6 +310,7 @@
       </div>
       
       <div id="bookingLoading" style="display:none; text-align:center; color:#8b5cf6; font-weight:bold; margin: 20px 0;">Syncing with Server... ⏳</div>
+      <div id="bookingMsg" style="display:none; text-align:center; color:#ef4444; font-weight:bold; margin: 10px 0;"></div>
       <div id="slotsContainer" style="margin-top: 20px;"></div>
       
       <hr class="divider">
@@ -737,31 +738,6 @@
     window.ttSelectedDate = null;
     window.currentTimetableTarget = null;
     window.currentTimetableDate = null;
-
-    // --- GLOBAL MESSAGING SYSTEM ---
-    function showGlobalMessage(msg, isError = true) {
-        const topMsg = document.getElementById('topGlobalMessage');
-        const botMsg = document.getElementById('botGlobalMessage');
-        const color = isError ? '#ef4444' : '#10b981';
-        const bg = isError ? '#fee2e2' : '#dcfce3';
-        
-        if (msg) {
-            topMsg.style.color = color; topMsg.style.backgroundColor = bg; topMsg.style.borderColor = color;
-            botMsg.style.color = color; botMsg.style.backgroundColor = bg; botMsg.style.borderColor = color;
-            topMsg.style.border = `1px solid ${color}`; botMsg.style.border = `1px solid ${color}`;
-            
-            topMsg.innerHTML = msg; botMsg.innerHTML = msg;
-            topMsg.style.display = 'block'; botMsg.style.display = 'block';
-            
-            setTimeout(() => { 
-                topMsg.style.display = 'none'; 
-                botMsg.style.display = 'none'; 
-            }, 4000);
-        } else {
-            topMsg.style.display = 'none'; 
-            botMsg.style.display = 'none';
-        }
-    }
 
     // --- DIVIDE CLASSES SYSTEM ---
     function goToDividePage(fromPage) {
