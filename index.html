@@ -190,7 +190,7 @@
         <input type="password" id="teacherPin" placeholder="Enter PIN (Default: 1234)" pattern="[0-9]*" inputmode="numeric">
         
         <button class="action-btn" id="loginBtn" onclick="attemptLogin()">Login</button>
-        <div id="loginMessage"></div>
+        <div id="loginMessage" style="display:none; color:#ef4444; background:#fee2e2;"></div>
       </div>
       
       <div id="loginStep2" style="display: none; text-align: center;">
@@ -202,7 +202,7 @@
         
         <button class="action-btn" style="border-color:#10b981; color:#10b981;" id="saveNewPinBtn" onclick="submitNewPin()">Save New PIN & Login</button>
         <button class="back-btn" style="margin-top:15px; width:100%; text-align:center;" onclick="cancelPinSetup()">Cancel</button>
-        <div id="setupPinMessage"></div>
+        <div id="setupPinMessage" style="display:none; color:#ef4444; background:#fee2e2;"></div>
       </div>
     </div>
 
@@ -214,7 +214,7 @@
       <label style="font-weight:bold; color:#475569; display:block; margin-bottom:5px;">Admin PIN</label>
       <input type="password" id="adminPinInput" placeholder="Enter Admin PIN">
       <button class="action-btn" style="border-color:#dc2626; color:#dc2626;" id="adminAuthBtn" onclick="verifyAdmin()">Enter Console</button>
-      <div id="adminAuthMessage"></div>
+      <div id="adminAuthMessage" style="display:none; color:#ef4444; background:#fee2e2;"></div>
     </div>
 
     <!-- PAGE ADMIN DASHBOARD -->
@@ -237,7 +237,7 @@
       
       <button class="action-btn" id="setPinBtn" onclick="setTeacherPin()">Save Custom PIN</button>
       <button class="nav-btn" style="width: 100%; border-color:#f59e0b; color:#d97706; margin-top:15px;" onclick="resetToDefaultPin()">Reset to Default (1234)</button>
-      <div id="adminDashMessage"></div>
+      <div id="adminDashMessage" style="display:none; color:#ef4444; background:#fee2e2;"></div>
 
       <hr class="divider">
       <div class="list-grid" style="margin-top:15px;">
@@ -310,6 +310,7 @@
       </div>
       
       <div id="bookingLoading" style="display:none; text-align:center; color:#8b5cf6; font-weight:bold; margin: 20px 0;">Syncing with Server... ⏳</div>
+      <div id="bookingMsg" style="display:none; text-align:center; color:#ef4444; font-weight:bold; margin: 10px 0;"></div>
       <div id="slotsContainer" style="margin-top: 20px;"></div>
       
       <hr class="divider">
@@ -338,6 +339,7 @@
           </div>
           
           <button id="btnGenClass" class="action-btn" style="border-color:#8b5cf6; color:#8b5cf6; margin-top:5px;" onclick="fetchAndGenerateTimetable('classwise')">Generate Classwise</button>
+          <div id="ttClassMsg" style="text-align:center; color:#ef4444; font-weight:bold; margin-top: 10px; display:none;"></div>
       </div>
       
       <div style="background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 8px; padding: 15px;">
@@ -350,6 +352,7 @@
           </div>
           
           <button id="btnGenDiv" class="action-btn" style="border-color:#8b5cf6; color:#8b5cf6; margin-top:5px;" onclick="fetchAndGenerateTimetable('divisionwise')">Generate Divisionwise</button>
+          <div id="ttDivMsg" style="text-align:center; color:#ef4444; font-weight:bold; margin-top: 10px; display:none;"></div>
       </div>
 
       <div class="developer-credit">Designed & Developed by GRR</div>
@@ -471,7 +474,7 @@
       <div id="studentListContainer"></div>
       <button id="saveBtn" class="action-btn" onclick="saveMarks()">Save All Marks</button>
       <button id="editBtn" class="edit-btn" onclick="enableEditing()">✏️ Edit Marks</button>
-      <div id="message"></div>
+      <div id="message" style="display:none; margin-top:10px;"></div>
       <div class="developer-credit">Designed & Developed by GRR</div>
     </div>
 
@@ -745,23 +748,16 @@
       }
       const sortedTeachers = Array.from(teacherSet).sort();
       
-      const selectLogin = document.getElementById('teacherSelect');
-      const selectAdmin = document.getElementById('adminTeacherSelect');
+      let teacherOptions = [];
+      let adminOptions = [{value: "Admin", text: "Admin (Change my PIN)"}];
       
-      selectLogin.innerHTML = '<option value="" disabled selected hidden>Select Your Name</option>';
-      selectAdmin.innerHTML = '<option value="" disabled selected hidden>Select Teacher</option>';
-      
-      let adminOpt = document.createElement('option'); 
-      adminOpt.value = "Admin"; 
-      adminOpt.textContent = "Admin (Change my PIN)";
-      selectAdmin.appendChild(adminOpt);
-
       sortedTeachers.forEach(t => {
-          let opt1 = document.createElement('option'); opt1.value = t; opt1.textContent = t;
-          let opt2 = document.createElement('option'); opt2.value = t; opt2.textContent = t;
-          selectLogin.appendChild(opt1);
-          selectAdmin.appendChild(opt2);
+          teacherOptions.push({value: t, text: t});
+          adminOptions.push({value: t, text: t});
       });
+      
+      updateCustomSelectOptions('teacherSelect', teacherOptions, 'Select Your Name', '');
+      updateCustomSelectOptions('adminTeacherSelect', adminOptions, 'Select Teacher', '');
 
       const savedTeacher = localStorage.getItem('loggedTeacher');
       if (savedTeacher) {
@@ -952,7 +948,6 @@
         document.getElementById('newTeacherPinSetup').value = ""; 
         document.getElementById('loginStep1').style.display = "block";
         document.getElementById('loginStep2').style.display = "none";
-        document.getElementById('teacherSelect').value = "";
         
         document.getElementById('logoutBtnDash').style.display = "block";
         showPage('pageDashboard'); 
@@ -986,7 +981,7 @@
             btn.textContent = "Enter Console"; btn.disabled = false;
             if (data.status === "success" && data.role === "admin") {
                 adminToken = pin; 
-                loggedInUser = "Admin";
+                loggedInUser = "Admin"; 
                 document.getElementById('adminPinInput').value = "";
                 showPage('pageAdminDash');
             } else {
@@ -1033,7 +1028,6 @@
             if (data.status === "success") {
                 msg.style.display="block"; msg.style.color = "#10b981"; msg.style.backgroundColor = "#d1fae5"; msg.textContent = data.message;
                 document.getElementById('newTeacherPin').value = ""; 
-                document.getElementById('adminTeacherSelect').value = "";
                 if (targetTeacher === "Admin") { adminToken = newPin; }
             } else {
                 msg.style.display="block"; msg.style.color = "#ef4444"; msg.style.backgroundColor = "#fee2e2"; msg.textContent = data.message;
@@ -1051,6 +1045,7 @@
         showPage('pageHome');
     }
 
+    // --- NAVIGATION HELPERS ---
     function setModeAndGo(mode) {
         appMode = mode;
         showPage('pageClassSelect');
@@ -1083,10 +1078,14 @@
         divideReturnPage = fromPage || 'pageHome';
         showPage('pageDivideMenu');
         
-        document.getElementById('emDivideSelect').value = "";
-        document.getElementById('mmDivideSelect').value = "";
         document.getElementById('divEmMsg').style.display = 'none';
         document.getElementById('divMmMsg').style.display = 'none';
+
+        let emOptions = [ {value: "2", text: "2 Divisions"}, {value: "3", text: "3 Divisions"}, {value: "4", text: "4 Divisions"} ];
+        updateCustomSelectOptions('emDivideSelect', emOptions, 'Select number of classes', '');
+        
+        let mmOptions = [ {value: "4", text: "4 Divisions"}, {value: "5", text: "5 Divisions"}, {value: "6", text: "6 Divisions"}, {value: "7", text: "7 Divisions"} ];
+        updateCustomSelectOptions('mmDivideSelect', mmOptions, 'Select number of classes', '');
     }
 
     function goBackFromDivideMenu() {
@@ -1171,6 +1170,7 @@
                             let grade = getGrade(mark, maxMark, row.className);
                             studentStats[key].grades[ex][row.subject] = grade;
                             studentStats[key].gradeCounts[grade]++;
+                            
                             if (grade === 'D' || grade === 'E') {
                                 studentStats[key].hasDorE = true;
                             }
@@ -1208,6 +1208,8 @@
                 batches[i] = topStudents.slice(currentIndex, currentIndex + chunk);
                 currentIndex += chunk;
             }
+        } else {
+            batches[0] = sortedStudents;
         }
 
         renderDividedClasses(batches, medium, numClasses);
@@ -1308,10 +1310,6 @@
         document.getElementById('myBookingsSection').style.display = 'none';
         document.getElementById('bookingMsg').style.display = 'none';
         
-        let classInput = document.getElementById('bookClass');
-        classInput.innerHTML = '<option value="" disabled selected hidden>Select Class</option>';
-        classInput.value = "";
-        
         let allowedDivs = [];
         ['10','9','8'].forEach(std => {
             ['A','B','C','D','E','F','G','H'].forEach(div => {
@@ -1325,9 +1323,11 @@
             });
         });
         
+        let bookClassOptions = [];
         allowedDivs.forEach(cls => {
-            classInput.innerHTML += `<option value="${cls}">Class ${cls}</option>`;
+            bookClassOptions.push({value: cls, text: 'Class ' + cls});
         });
+        updateCustomSelectOptions('bookClass', bookClassOptions, 'Select Class', 'renderBookings');
 
         bookingCalMonth = new Date().getMonth();
         bookingCalYear = new Date().getFullYear();
@@ -1440,12 +1440,15 @@
     function renderBookings() {
         let date = document.getElementById('bookDate').value;
         let cls = document.getElementById('bookClass').value;
+        let bMsg = document.getElementById('bookingMsg');
+        bMsg.style.display = 'none';
+
         if(!date || !cls) {
             document.getElementById('slotsContainer').innerHTML = "<div style='text-align:center; color:#64748b;'>Please select both a date and a class to view/book slots.</div>";
             return;
         }
         
-        let slots = ["9:30 AM to 11:00 AM", "11:15 AM to 12:45 PM", "2:00 PM to 3:30 PM"];
+        let slots = ["9:30 AM to 11:00 AM", "11:15 AM to 12:45 PM", "2:00 PM - 3:30 PM"];
         let html = '';
         
         let availableSubs = [];
@@ -1469,10 +1472,15 @@
                 if(loggedInUser !== 'Viewer' && loggedInUser !== 'Admin') {
                     if (availableSubs.length > 0) {
                         html += `<div style="margin-top: 10px;">
-                            <select id="bookSub_${index}" style="width: 58%; display: inline-block; margin-bottom: 0; padding:10px;">
-                            <option value="" disabled selected hidden>Select Subject</option>`;
-                        availableSubs.forEach(s => html += `<option value="${s}">${s}</option>`);
-                        html += `</select>
+                            <div class="custom-select-container" style="width: 58%; display: inline-block; margin-bottom: 0; vertical-align: top;">
+                                <div class="custom-select-display" id="display_bookSub_${index}" onclick="toggleCustomSelect('bookSub_${index}')" style="padding: 10px; font-size:14px;">Select Subject</div>
+                                <div class="custom-select-options" id="options_bookSub_${index}">`;
+                        
+                        availableSubs.forEach(s => {
+                            html += `<div class="custom-select-option" onclick="selectCustomOption('bookSub_${index}', '${s}', '${s}', '')">${s}</div>`;
+                        });
+                        
+                        html += `</div><input type="hidden" id="bookSub_${index}"></div>
                             <button class="nav-btn" style="padding: 10px; font-size: 14px; width: 38%; display: inline-block; border-color: #10b981; color: #10b981; margin-left: 2%; vertical-align: top;" onclick="bookSlot('${date}', '${cls}', ${index}, event)">Book Slot</button>
                             <div id="slotMsg_${index}" style="color: #ef4444; font-size: 13px; margin-top: 5px; font-weight:bold; display:none; width: 100%;"></div>
                         </div>`;
@@ -1597,16 +1605,20 @@
         
         renderCustomCalendar('ttCalendar', ttCalYear, ttCalMonth, window.ttSelectedDate, 'selectTTDate', 'tt');
         
-        document.getElementById('ttClassSelect').value = "";
+        let ttClassOptions = [
+            {value: "10", text: "Class 10 (All Divisions)"},
+            {value: "9", text: "Class 9 (All Divisions)"},
+            {value: "8", text: "Class 8 (All Divisions)"}
+        ];
+        updateCustomSelectOptions('ttClassSelect', ttClassOptions, 'Select Class', '');
         
-        let divSelect = document.getElementById('ttDivSelect');
-        divSelect.innerHTML = '<option value="" disabled selected hidden>Select Division</option>';
+        let ttDivOptions = [];
         ['10','9','8'].forEach(std => {
             ['A','B','C','D','E','F','G','H'].forEach(div => {
-                divSelect.innerHTML += `<option value="${std}${div}">Class ${std}${div}</option>`;
+                ttDivOptions.push({value: std+div, text: 'Class ' + std + div});
             });
         });
-        divSelect.value = "";
+        updateCustomSelectOptions('ttDivSelect', ttDivOptions, 'Select Division', '');
     }
     
     function goBackFromTimetableMenu() {
@@ -1761,8 +1773,13 @@
     function showStatusPage(fromPage) {
         statusReturnPage = fromPage;
         showPage('pageStatus');
-        document.getElementById('statusExamSelect').value = "First Term Exam";
-        fetchStatus();
+        
+        let examOptions = [
+            {value: "First Term Exam", text: "First Term Exam"},
+            {value: "First Mid Term Exam", text: "First Mid Term Exam (Class 10)"}
+        ];
+        updateCustomSelectOptions('statusExamSelect', examOptions, 'Select Exam', 'fetchStatus');
+        document.getElementById('statusListContainer').innerHTML = "<div style='text-align:center; color:#64748b;'>Please select an exam to check status.</div>";
     }
     
     function goBackFromStatus() { showPage(statusReturnPage); }
