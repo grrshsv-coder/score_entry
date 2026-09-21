@@ -137,7 +137,7 @@
     .marks-table tr { page-break-inside: avoid; } 
     
     /* Divided Batch Specific Styles */
-    .batch-header { background-color: #1e3a8a; color: white; padding: 10px; font-weight: bold; text-align: center; font-size: 16px; border: 1px solid #000; border-bottom:none; }
+    .batch-header { color: #000; padding: 10px 0; font-weight: bold; text-align: center; font-size: 18px; margin-bottom: 5px; text-transform: uppercase; }
 
     #loadingIndicator { text-align: center; color: #3b82f6; font-weight: bold; margin: 30px 0; font-size: 18px; }
     .developer-credit { text-align: center; margin-top: 20px; font-size: 13px; color: #94a3b8; font-weight: 500; letter-spacing: 0.3px; }
@@ -949,6 +949,11 @@
         document.getElementById('loginStep1').style.display = "block";
         document.getElementById('loginStep2').style.display = "none";
         document.getElementById('teacherSelect').value = "";
+        let displayEl = document.getElementById('display_teacherSelect');
+        if(displayEl) {
+            displayEl.textContent = "Select Your Name";
+            displayEl.classList.remove('has-value');
+        }
         
         document.getElementById('logoutBtnDash').style.display = "block";
         showPage('pageDashboard'); 
@@ -1030,6 +1035,11 @@
                 msg.style.display="block"; msg.style.color = "#10b981"; msg.style.backgroundColor = "#d1fae5"; msg.textContent = data.message;
                 document.getElementById('newTeacherPin').value = ""; 
                 document.getElementById('adminTeacherSelect').value = "";
+                let displayEl = document.getElementById('display_adminTeacherSelect');
+                if(displayEl) {
+                    displayEl.textContent = "Select Teacher";
+                    displayEl.classList.remove('has-value');
+                }
                 if (targetTeacher === "Admin") { adminToken = newPin; }
             } else {
                 msg.style.display="block"; msg.style.color = "#ef4444"; msg.style.backgroundColor = "#fee2e2"; msg.textContent = data.message;
@@ -1206,9 +1216,14 @@
         showPage('pageDividedView');
         let medStr = medium === 'EM' ? "English Medium" : "Malayalam Medium";
         
-        let html = `<div style="padding: 10px; background: white; max-width: 190mm; margin: 0 auto; box-sizing: border-box;"><h2 style="font-weight: normal; color: black; text-align: center; margin-bottom: 20px;">SANSKRIT HS VATTOLI - Class 10 (${medStr})<br><span style="font-size:16px;">Divided into ${numClasses} Batches</span></h2>`;
+        let html = `<div style="padding: 10px; background: white; max-width: 190mm; margin: 0 auto; box-sizing: border-box;">`;
 
         batches.forEach((batch, idx) => {
+            let pageBreakStyle = idx > 0 ? "page-break-before: always; padding-top: 10px;" : "padding-top: 10px;";
+            html += `<div style="${pageBreakStyle}">`;
+            
+            html += `<h2 style="font-weight: normal; color: black; text-align: center; margin-top: 0; margin-bottom: 10px;">SANSKRIT HS VATTOLI - Class 10 (${medStr})<br><span style="font-size:16px;">Divided into ${numClasses} Batches</span></h2>`;
+            
             html += `<div class="batch-header">Batch ${idx + 1}</div>`;
             html += `<table class="marks-table" style="width: 100%; border-collapse: collapse; border: 2px solid #000; color: black; margin-bottom:20px; table-layout: fixed; word-wrap: break-word;">
             <thead>
@@ -1238,6 +1253,7 @@
                 html += `</tr>`;
             });
             html += `</tbody></table>`;
+            html += `</div>`;
         });
         
         html += `</div>`;
@@ -1260,7 +1276,8 @@
             filename:     `Divided_Classes_${window.currentDivideMedium}.pdf`,
             image:        { type: 'jpeg', quality: 0.98 },
             html2canvas:  { scale: 2, useCORS: true },
-            jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
+            jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' },
+            pagebreak:    { mode: 'css', avoid: 'tr' }
         };
 
         html2pdf().set(opt).from(element).save().then(() => {
@@ -1491,6 +1508,23 @@
             msgDiv.textContent = "Please select a subject before booking.";
             msgDiv.style.display = 'block';
             return;
+        }
+
+        if (sub === 'IT') {
+            let itCount = 0;
+            if (specialBookings[date]) {
+                for (let c in specialBookings[date]) {
+                    if (specialBookings[date][c][index] && specialBookings[date][c][index].subject === 'IT') {
+                        itCount++;
+                    }
+                }
+            }
+            if (itCount >= 2) {
+                msgDiv.style.color = '#ef4444';
+                msgDiv.textContent = "No IT slot available for this time.";
+                msgDiv.style.display = 'block';
+                return;
+            }
         }
 
         let teacherName = loggedInUser === 'Admin' ? 'Admin' : loggedInUser;
