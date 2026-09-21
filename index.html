@@ -949,6 +949,11 @@
         document.getElementById('loginStep1').style.display = "block";
         document.getElementById('loginStep2').style.display = "none";
         document.getElementById('teacherSelect').value = "";
+        let displayEl = document.getElementById('display_teacherSelect');
+        if(displayEl) {
+            displayEl.textContent = "Select Your Name";
+            displayEl.classList.remove('has-value');
+        }
         
         document.getElementById('logoutBtnDash').style.display = "block";
         showPage('pageDashboard'); 
@@ -1030,6 +1035,11 @@
                 msg.style.display="block"; msg.style.color = "#10b981"; msg.style.backgroundColor = "#d1fae5"; msg.textContent = data.message;
                 document.getElementById('newTeacherPin').value = ""; 
                 document.getElementById('adminTeacherSelect').value = "";
+                let displayEl = document.getElementById('display_adminTeacherSelect');
+                if(displayEl) {
+                    displayEl.textContent = "Select Teacher";
+                    displayEl.classList.remove('has-value');
+                }
                 if (targetTeacher === "Admin") { adminToken = newPin; }
             } else {
                 msg.style.display="block"; msg.style.color = "#ef4444"; msg.style.backgroundColor = "#fee2e2"; msg.textContent = data.message;
@@ -1079,10 +1089,14 @@
         divideReturnPage = fromPage || 'pageHome';
         showPage('pageDivideMenu');
         
-        document.getElementById('emDivideSelect').value = "";
-        document.getElementById('mmDivideSelect').value = "";
         document.getElementById('divEmMsg').style.display = 'none';
         document.getElementById('divMmMsg').style.display = 'none';
+
+        let emOptions = [ {value: "2", text: "2 Divisions"}, {value: "3", text: "3 Divisions"}, {value: "4", text: "4 Divisions"} ];
+        updateCustomSelectOptions('emDivideSelect', emOptions, 'Select number of classes', '');
+        
+        let mmOptions = [ {value: "4", text: "4 Divisions"}, {value: "5", text: "5 Divisions"}, {value: "6", text: "6 Divisions"}, {value: "7", text: "7 Divisions"} ];
+        updateCustomSelectOptions('mmDivideSelect', mmOptions, 'Select number of classes', '');
     }
 
     function goBackFromDivideMenu() {
@@ -1145,9 +1159,7 @@
                         name: student,
                         origClass: cls,
                         grades: { "First Term Exam": {} },
-                        gradeCounts: { 'A+':0, 'A':0, 'B+':0, 'B':0, 'C+':0, 'C':0, 'D+':0, 'D':0, 'E':0 },
-                        hasDorE: false,
-                        hasBelowBPlus: false
+                        gradeCounts: { 'A+':0, 'A':0, 'B+':0, 'B':0, 'C+':0, 'C':0, 'D+':0, 'D':0, 'E':0 }
                     };
                 });
             }
@@ -1158,7 +1170,6 @@
                 let ex = row.exam || "First Mid Term Exam";
                 if (ex === "SSLC Mid Term Examination") ex = "First Mid Term Exam";
 
-                // Strictly evaluate First Term Exam only
                 if (ex === "First Term Exam") {
                     let key = row.className + "_" + row.student;
                     if (studentStats[key] && row.mark !== "") {
@@ -1169,13 +1180,6 @@
                             let grade = getGrade(mark, maxMark, row.className);
                             studentStats[key].grades[ex][row.subject] = grade;
                             studentStats[key].gradeCounts[grade]++;
-                            
-                            if (grade === 'D' || grade === 'E') {
-                                studentStats[key].hasDorE = true;
-                            }
-                            if (['B', 'C+', 'C', 'D+', 'D', 'E'].includes(grade)) {
-                                studentStats[key].hasBelowBPlus = true;
-                            }
                         }
                     }
                 }
@@ -1191,35 +1195,17 @@
             return s1.name.localeCompare(s2.name);
         });
 
-        let firstBatchStudents = sortedStudents.filter(s => !s.hasBelowBPlus);
-        let lastBatchStudents = sortedStudents.filter(s => s.hasDorE);
-        let middleStudents = sortedStudents.filter(s => s.hasBelowBPlus && !s.hasDorE);
-
         let batches = [];
         for (let i = 0; i < numClasses; i++) batches.push([]);
 
-        batches[numClasses - 1] = lastBatchStudents;
+        let baseSize = Math.floor(sortedStudents.length / numClasses);
+        let remainder = sortedStudents.length % numClasses;
 
-        let topNumBatches = numClasses - 1;
-        if (topNumBatches > 0) {
-            let baseSize = Math.floor(firstBatchStudents.length / 1); 
-            batches[0] = firstBatchStudents;
-            
-            let midNumBatches = topNumBatches - 1;
-            if(midNumBatches > 0) {
-                let mBase = Math.floor(middleStudents.length / midNumBatches);
-                let mRem = middleStudents.length % midNumBatches;
-                let cIdx = 0;
-                for(let i=0; i<midNumBatches; i++){
-                    let chnk = mBase + (i < mRem ? 1 : 0);
-                    batches[i+1] = middleStudents.slice(cIdx, cIdx + chnk);
-                    cIdx += chnk;
-                }
-            } else {
-                batches[0] = firstBatchStudents.concat(middleStudents);
-            }
-        } else {
-            batches[0] = sortedStudents;
+        let currentIndex = 0;
+        for (let i = 0; i < numClasses; i++) {
+            let chunk = baseSize + (i < remainder ? 1 : 0);
+            batches[i] = sortedStudents.slice(currentIndex, currentIndex + chunk);
+            currentIndex += chunk;
         }
 
         renderDividedClasses(batches, medium, numClasses);
@@ -1239,7 +1225,7 @@
                     <th rowspan="2" style="border: 1px solid #000; padding: 6px;">No.</th>
                     <th rowspan="2" style="border: 1px solid #000; padding: 6px; width:150px;">Student Name</th>
                     <th rowspan="2" style="border: 1px solid #000; padding: 6px;">Div</th>
-                    <th colspan="9" style="border: 1px solid #000; padding: 6px;">Grades (First Term)</th>
+                    <th colspan="9" style="border: 1px solid #000; padding: 6px;">Grades (First Term Exam)</th>
                 </tr>
                 <tr>
                     <th style="border: 1px solid #000;">L1</th><th style="border: 1px solid #000;">L2</th><th style="border: 1px solid #000;">EN</th>
@@ -1514,23 +1500,6 @@
             msgDiv.textContent = "Please select a subject before booking.";
             msgDiv.style.display = 'block';
             return;
-        }
-
-        if (sub === 'IT') {
-            let itCount = 0;
-            if (specialBookings[date]) {
-                for (let c in specialBookings[date]) {
-                    if (specialBookings[date][c][index] && specialBookings[date][c][index].subject === 'IT') {
-                        itCount++;
-                    }
-                }
-            }
-            if (itCount >= 2) {
-                msgDiv.style.color = '#ef4444';
-                msgDiv.textContent = "No IT slot available for this time.";
-                msgDiv.style.display = 'block';
-                return;
-            }
         }
 
         let teacherName = loggedInUser === 'Admin' ? 'Admin' : loggedInUser;
