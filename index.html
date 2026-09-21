@@ -190,7 +190,7 @@
         <input type="password" id="teacherPin" placeholder="Enter PIN (Default: 1234)" pattern="[0-9]*" inputmode="numeric">
         
         <button class="action-btn" id="loginBtn" onclick="attemptLogin()">Login</button>
-        <div id="loginMessage"></div>
+        <div id="loginMessage" style="display:none; color:#ef4444; background:#fee2e2;"></div>
       </div>
       
       <div id="loginStep2" style="display: none; text-align: center;">
@@ -202,7 +202,7 @@
         
         <button class="action-btn" style="border-color:#10b981; color:#10b981;" id="saveNewPinBtn" onclick="submitNewPin()">Save New PIN & Login</button>
         <button class="back-btn" style="margin-top:15px; width:100%; text-align:center;" onclick="cancelPinSetup()">Cancel</button>
-        <div id="setupPinMessage"></div>
+        <div id="setupPinMessage" style="display:none; color:#ef4444; background:#fee2e2;"></div>
       </div>
     </div>
 
@@ -214,7 +214,7 @@
       <label style="font-weight:bold; color:#475569; display:block; margin-bottom:5px;">Admin PIN</label>
       <input type="password" id="adminPinInput" placeholder="Enter Admin PIN">
       <button class="action-btn" style="border-color:#dc2626; color:#dc2626;" id="adminAuthBtn" onclick="verifyAdmin()">Enter Console</button>
-      <div id="adminAuthMessage"></div>
+      <div id="adminAuthMessage" style="display:none; color:#ef4444; background:#fee2e2;"></div>
     </div>
 
     <!-- PAGE ADMIN DASHBOARD -->
@@ -237,7 +237,7 @@
       
       <button class="action-btn" id="setPinBtn" onclick="setTeacherPin()">Save Custom PIN</button>
       <button class="nav-btn" style="width: 100%; border-color:#f59e0b; color:#d97706; margin-top:15px;" onclick="resetToDefaultPin()">Reset to Default (1234)</button>
-      <div id="adminDashMessage"></div>
+      <div id="adminDashMessage" style="display:none; color:#ef4444; background:#fee2e2;"></div>
 
       <hr class="divider">
       <div class="list-grid" style="margin-top:15px;">
@@ -474,7 +474,7 @@
       <div id="studentListContainer"></div>
       <button id="saveBtn" class="action-btn" onclick="saveMarks()">Save All Marks</button>
       <button id="editBtn" class="edit-btn" onclick="enableEditing()">✏️ Edit Marks</button>
-      <div id="message"></div>
+      <div id="message" style="display:none; margin-top:10px;"></div>
       <div class="developer-credit">Designed & Developed by GRR</div>
     </div>
 
