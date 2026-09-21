@@ -45,10 +45,10 @@
     .list-grid { display: grid; grid-template-columns: 1fr; gap: 12px; margin-top: 15px; }
     
     /* Inputs */
-    input[type="password"], input[type="text"], input[type="number"] {
+    select, input[type="password"], input[type="text"], input[type="number"], input[type="date"] {
         width: 100%; padding: 14px; margin-bottom: 15px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 16px; box-sizing: border-box; background-color: #f8fafc;
     }
-    input:focus { outline: none; border-color: #3b82f6; background-color: #ffffff; }
+    select:focus, input:focus { outline: none; border-color: #3b82f6; background-color: #ffffff; }
 
     /* CUSTOM IN-APP DROPDOWN SYSTEM */
     .custom-select-container { position: relative; width: 100%; margin-bottom: 15px; }
@@ -367,11 +367,12 @@
       <div style="background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 8px; padding: 15px; margin-bottom: 15px;">
           <h4 style="margin-top: 0; margin-bottom: 10px; color:#334155; text-align:center;">English Medium (Div A - C)</h4>
           
-          <div class="custom-select-container" style="margin-bottom: 10px;">
-              <div class="custom-select-display" id="display_emDivideSelect" onclick="toggleCustomSelect('emDivideSelect')">Select number of classes</div>
-              <div class="custom-select-options" id="options_emDivideSelect"></div>
-              <input type="hidden" id="emDivideSelect">
-          </div>
+          <select id="emDivideSelect" style="margin-bottom: 10px;">
+              <option value="" disabled selected hidden>Select number of classes</option>
+              <option value="2">2 Divisions</option>
+              <option value="3">3 Divisions</option>
+              <option value="4">4 Divisions</option>
+          </select>
           
           <button id="btnDivEM" class="action-btn" style="border-color:#ec4899; color:#ec4899; margin-top:5px;" onclick="generateDivisionSplit('EM')">Divide English Medium</button>
           <div id="divEmMsg" style="text-align:center; color:#ef4444; font-weight:bold; margin-top: 10px; display:none;"></div>
@@ -380,11 +381,13 @@
       <div style="background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 8px; padding: 15px;">
           <h4 style="margin-top: 0; margin-bottom: 10px; color:#334155; text-align:center;">Malayalam Medium (Div D - H)</h4>
           
-          <div class="custom-select-container" style="margin-bottom: 10px;">
-              <div class="custom-select-display" id="display_mmDivideSelect" onclick="toggleCustomSelect('mmDivideSelect')">Select number of classes</div>
-              <div class="custom-select-options" id="options_mmDivideSelect"></div>
-              <input type="hidden" id="mmDivideSelect">
-          </div>
+          <select id="mmDivideSelect" style="margin-bottom: 10px;">
+              <option value="" disabled selected hidden>Select number of classes</option>
+              <option value="4">4 Divisions</option>
+              <option value="5">5 Divisions</option>
+              <option value="6">6 Divisions</option>
+              <option value="7">7 Divisions</option>
+          </select>
           
           <button id="btnDivMM" class="action-btn" style="border-color:#ec4899; color:#ec4899; margin-top:5px;" onclick="generateDivisionSplit('MM')">Divide Malayalam Medium</button>
           <div id="divMmMsg" style="text-align:center; color:#ef4444; font-weight:bold; margin-top: 10px; display:none;"></div>
@@ -748,16 +751,23 @@
       }
       const sortedTeachers = Array.from(teacherSet).sort();
       
-      let teacherOptions = [];
-      let adminOptions = [{value: "Admin", text: "Admin (Change my PIN)"}];
+      const selectLogin = document.getElementById('teacherSelect');
+      const selectAdmin = document.getElementById('adminTeacherSelect');
       
+      selectLogin.innerHTML = '<option value="" disabled selected hidden>Select Your Name</option>';
+      selectAdmin.innerHTML = '<option value="" disabled selected hidden>Select Teacher</option>';
+      
+      let adminOpt = document.createElement('option'); 
+      adminOpt.value = "Admin"; 
+      adminOpt.textContent = "Admin (Change my PIN)";
+      selectAdmin.appendChild(adminOpt);
+
       sortedTeachers.forEach(t => {
-          teacherOptions.push({value: t, text: t});
-          adminOptions.push({value: t, text: t});
+          let opt1 = document.createElement('option'); opt1.value = t; opt1.textContent = t;
+          let opt2 = document.createElement('option'); opt2.value = t; opt2.textContent = t;
+          selectLogin.appendChild(opt1);
+          selectAdmin.appendChild(opt2);
       });
-      
-      updateCustomSelectOptions('teacherSelect', teacherOptions, 'Select Your Name', '');
-      updateCustomSelectOptions('adminTeacherSelect', adminOptions, 'Select Teacher', '');
 
       const savedTeacher = localStorage.getItem('loggedTeacher');
       if (savedTeacher) {
@@ -793,73 +803,6 @@
       msgs.forEach(m => {
           if(document.getElementById(m)) { document.getElementById(m).textContent = ""; document.getElementById(m).style.backgroundColor = "transparent"; }
       });
-    }
-
-    function renderCustomCalendar(containerId, year, month, selectedDateStr, onSelectFuncStr, prefix) {
-        let firstDay = new Date(year, month, 1).getDay();
-        let daysInMonth = new Date(year, month + 1, 0).getDate();
-        let today = new Date();
-        today.setHours(0,0,0,0);
-        const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
-        
-        let html = `<div class="calendar-header">
-            <button type="button" class="back-btn" style="margin:0; font-size:22px; padding:0 10px;" onclick="changeMonth('${prefix}', -1)">&lt;</button>
-            <span>${monthNames[month]} ${year}</span>
-            <button type="button" class="back-btn" style="margin:0; font-size:22px; padding:0 10px;" onclick="changeMonth('${prefix}', 1)">&gt;</button>
-        </div>
-        <div class="calendar-grid">
-            <div class="calendar-day-name">Sun</div><div class="calendar-day-name">Mon</div><div class="calendar-day-name">Tue</div><div class="calendar-day-name">Wed</div><div class="calendar-day-name">Thu</div><div class="calendar-day-name">Fri</div><div class="calendar-day-name">Sat</div>`;
-        
-        for(let i=0; i<firstDay; i++) html += `<div class="calendar-day empty"></div>`;
-        
-        for(let d=1; d<=daysInMonth; d++) {
-            let curDate = new Date(year, month, d);
-            let dateStr = `${year}-${String(month+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
-            let dayOfWeek = curDate.getDay();
-            
-            let classes = ['calendar-day'];
-            if (dayOfWeek === 0 || dayOfWeek === 6) classes.push('weekend');
-            if (dateStr === selectedDateStr) classes.push('selected');
-            if (curDate < today) classes.push('disabled');
-            
-            if (curDate < today) {
-                html += `<div class="${classes.join(' ')}">${d}</div>`;
-            } else {
-                html += `<div class="${classes.join(' ')}" onclick="${onSelectFuncStr}('${dateStr}')">${d}</div>`;
-            }
-        }
-        html += `</div>`;
-        document.getElementById(containerId).innerHTML = html;
-    }
-
-    function changeMonth(prefix, offset) {
-        if (prefix === 'booking') {
-            bookingCalMonth += offset;
-            if (bookingCalMonth < 0) { bookingCalMonth = 11; bookingCalYear--; }
-            else if (bookingCalMonth > 11) { bookingCalMonth = 0; bookingCalYear++; }
-            renderCustomCalendar('bookingCalendar', bookingCalYear, bookingCalMonth, window.bookingSelectedDate, 'selectBookingDate', 'booking');
-        } else {
-            ttCalMonth += offset;
-            if (ttCalMonth < 0) { ttCalMonth = 11; ttCalYear--; }
-            else if (ttCalMonth > 11) { ttCalMonth = 0; ttCalYear++; }
-            renderCustomCalendar('ttCalendar', ttCalYear, ttCalMonth, window.ttSelectedDate, 'selectTTDate', 'tt');
-        }
-    }
-
-    function selectBookingDate(dateStr) {
-        window.bookingSelectedDate = dateStr;
-        document.getElementById('bookDate').value = dateStr;
-        document.getElementById('bookingDateDisplay').textContent = "Selected Date: " + dateStr;
-        document.getElementById('bookingDateDisplay').classList.add('active');
-        renderCustomCalendar('bookingCalendar', bookingCalYear, bookingCalMonth, dateStr, 'selectBookingDate', 'booking');
-        renderBookings();
-    }
-
-    function selectTTDate(dateStr) {
-        window.ttSelectedDate = dateStr;
-        document.getElementById('ttDateDisplay').textContent = "Selected Date: " + dateStr;
-        document.getElementById('ttDateDisplay').classList.add('active');
-        renderCustomCalendar('ttCalendar', ttCalYear, ttCalMonth, dateStr, 'selectTTDate', 'tt');
     }
 
     function attemptLogin() {
@@ -1322,6 +1265,10 @@
         document.getElementById('myBookingsSection').style.display = 'none';
         document.getElementById('bookingMsg').style.display = 'none';
         
+        let classInput = document.getElementById('bookClass');
+        classInput.innerHTML = '<option value="" disabled selected hidden>Select Class</option>';
+        classInput.value = "";
+        
         let allowedDivs = [];
         ['10','9','8'].forEach(std => {
             ['A','B','C','D','E','F','G','H'].forEach(div => {
@@ -1335,11 +1282,9 @@
             });
         });
         
-        let bookClassOptions = [];
         allowedDivs.forEach(cls => {
-            bookClassOptions.push({value: cls, text: 'Class ' + cls});
+            classInput.innerHTML += `<option value="${cls}">Class ${cls}</option>`;
         });
-        updateCustomSelectOptions('bookClass', bookClassOptions, 'Select Class', 'renderBookings');
 
         bookingCalMonth = new Date().getMonth();
         bookingCalYear = new Date().getFullYear();
@@ -1481,15 +1426,10 @@
                 if(loggedInUser !== 'Viewer' && loggedInUser !== 'Admin') {
                     if (availableSubs.length > 0) {
                         html += `<div style="margin-top: 10px;">
-                            <div class="custom-select-container" style="width: 58%; display: inline-block; margin-bottom: 0; vertical-align: top;">
-                                <div class="custom-select-display" id="display_bookSub_${index}" onclick="toggleCustomSelect('bookSub_${index}')" style="padding: 10px; font-size:14px;">Select Subject</div>
-                                <div class="custom-select-options" id="options_bookSub_${index}">`;
-                        
-                        availableSubs.forEach(s => {
-                            html += `<div class="custom-select-option" onclick="selectCustomOption('bookSub_${index}', '${s}', '${s}', '')">${s}</div>`;
-                        });
-                        
-                        html += `</div><input type="hidden" id="bookSub_${index}"></div>
+                            <select id="bookSub_${index}" style="width: 58%; display: inline-block; margin-bottom: 0; padding:10px;">
+                            <option value="" disabled selected hidden>Select Subject</option>`;
+                        availableSubs.forEach(s => html += `<option value="${s}">${s}</option>`);
+                        html += `</select>
                             <button class="nav-btn" style="padding: 10px; font-size: 14px; width: 38%; display: inline-block; border-color: #10b981; color: #10b981; margin-left: 2%; vertical-align: top;" onclick="bookSlot('${date}', '${cls}', ${index}, event)">Book Slot</button>
                             <div id="slotMsg_${index}" style="color: #ef4444; font-size: 13px; margin-top: 5px; font-weight:bold; display:none; width: 100%;"></div>
                         </div>`;
@@ -1514,6 +1454,23 @@
             msgDiv.textContent = "Please select a subject before booking.";
             msgDiv.style.display = 'block';
             return;
+        }
+
+        if (sub === 'IT') {
+            let itCount = 0;
+            if (specialBookings[date]) {
+                for (let c in specialBookings[date]) {
+                    if (specialBookings[date][c][index] && specialBookings[date][c][index].subject === 'IT') {
+                        itCount++;
+                    }
+                }
+            }
+            if (itCount >= 2) {
+                msgDiv.style.color = '#ef4444';
+                msgDiv.textContent = "No IT slot available for this time.";
+                msgDiv.style.display = 'block';
+                return;
+            }
         }
 
         let teacherName = loggedInUser === 'Admin' ? 'Admin' : loggedInUser;
@@ -1614,20 +1571,16 @@
         
         renderCustomCalendar('ttCalendar', ttCalYear, ttCalMonth, window.ttSelectedDate, 'selectTTDate', 'tt');
         
-        let ttClassOptions = [
-            {value: "10", text: "Class 10 (All Divisions)"},
-            {value: "9", text: "Class 9 (All Divisions)"},
-            {value: "8", text: "Class 8 (All Divisions)"}
-        ];
-        updateCustomSelectOptions('ttClassSelect', ttClassOptions, 'Select Class', '');
+        document.getElementById('ttClassSelect').value = "";
         
-        let ttDivOptions = [];
+        let divSelect = document.getElementById('ttDivSelect');
+        divSelect.innerHTML = '<option value="" disabled selected hidden>Select Division</option>';
         ['10','9','8'].forEach(std => {
             ['A','B','C','D','E','F','G','H'].forEach(div => {
-                ttDivOptions.push({value: std+div, text: 'Class ' + std + div});
+                divSelect.innerHTML += `<option value="${std}${div}">Class ${std}${div}</option>`;
             });
         });
-        updateCustomSelectOptions('ttDivSelect', ttDivOptions, 'Select Division', '');
+        divSelect.value = "";
     }
     
     function goBackFromTimetableMenu() {
@@ -1782,13 +1735,8 @@
     function showStatusPage(fromPage) {
         statusReturnPage = fromPage;
         showPage('pageStatus');
-        
-        let examOptions = [
-            {value: "First Term Exam", text: "First Term Exam"},
-            {value: "First Mid Term Exam", text: "First Mid Term Exam (Class 10)"}
-        ];
-        updateCustomSelectOptions('statusExamSelect', examOptions, 'Select Exam', 'fetchStatus');
-        document.getElementById('statusListContainer').innerHTML = "<div style='text-align:center; color:#64748b;'>Please select an exam to check status.</div>";
+        document.getElementById('statusExamSelect').value = "First Term Exam";
+        fetchStatus();
     }
     
     function goBackFromStatus() { showPage(statusReturnPage); }
