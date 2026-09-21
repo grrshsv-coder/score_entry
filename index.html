@@ -44,11 +44,11 @@
     .button-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 15px; }
     .list-grid { display: grid; grid-template-columns: 1fr; gap: 12px; margin-top: 15px; }
     
-    /* Input Elements */
-    select, input[type="password"], input[type="text"], input[type="number"] {
+    /* Inputs */
+    input[type="password"], input[type="text"], input[type="number"] {
         width: 100%; padding: 14px; margin-bottom: 15px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 16px; box-sizing: border-box; background-color: #f8fafc;
     }
-    select:focus, input:focus { outline: none; border-color: #3b82f6; background-color: #ffffff; }
+    input:focus { outline: none; border-color: #3b82f6; background-color: #ffffff; }
 
     /* CUSTOM IN-APP DROPDOWN SYSTEM */
     .custom-select-container { position: relative; width: 100%; margin-bottom: 15px; }
@@ -190,7 +190,7 @@
         <input type="password" id="teacherPin" placeholder="Enter PIN (Default: 1234)" pattern="[0-9]*" inputmode="numeric">
         
         <button class="action-btn" id="loginBtn" onclick="attemptLogin()">Login</button>
-        <div id="loginMessage" style="display:none; color:#ef4444; background:#fee2e2;"></div>
+        <div id="loginMessage"></div>
       </div>
       
       <div id="loginStep2" style="display: none; text-align: center;">
@@ -202,7 +202,7 @@
         
         <button class="action-btn" style="border-color:#10b981; color:#10b981;" id="saveNewPinBtn" onclick="submitNewPin()">Save New PIN & Login</button>
         <button class="back-btn" style="margin-top:15px; width:100%; text-align:center;" onclick="cancelPinSetup()">Cancel</button>
-        <div id="setupPinMessage" style="display:none; color:#ef4444; background:#fee2e2;"></div>
+        <div id="setupPinMessage"></div>
       </div>
     </div>
 
@@ -214,7 +214,7 @@
       <label style="font-weight:bold; color:#475569; display:block; margin-bottom:5px;">Admin PIN</label>
       <input type="password" id="adminPinInput" placeholder="Enter Admin PIN">
       <button class="action-btn" style="border-color:#dc2626; color:#dc2626;" id="adminAuthBtn" onclick="verifyAdmin()">Enter Console</button>
-      <div id="adminAuthMessage" style="display:none; color:#ef4444; background:#fee2e2;"></div>
+      <div id="adminAuthMessage"></div>
     </div>
 
     <!-- PAGE ADMIN DASHBOARD -->
@@ -237,7 +237,7 @@
       
       <button class="action-btn" id="setPinBtn" onclick="setTeacherPin()">Save Custom PIN</button>
       <button class="nav-btn" style="width: 100%; border-color:#f59e0b; color:#d97706; margin-top:15px;" onclick="resetToDefaultPin()">Reset to Default (1234)</button>
-      <div id="adminDashMessage" style="display:none; color:#ef4444; background:#fee2e2;"></div>
+      <div id="adminDashMessage"></div>
 
       <hr class="divider">
       <div class="list-grid" style="margin-top:15px;">
@@ -291,7 +291,7 @@
       <h1 class="school-name">Special Classes</h1>
       <h3 id="bookingSubtitle" style="color:#8b5cf6; margin-top: -5px; margin-bottom: 20px;">Book Your Slots</h3>
       
-      <!-- MY BOOKINGS SECTION -->
+      <!-- MY BOOKINGS SECTION (At a glance) -->
       <div id="myBookingsSection" style="display:none; background:#f8fafc; border:1px solid #cbd5e1; border-radius:8px; padding:15px; margin-bottom:20px;">
          <h4 id="myBookingsTitle" style="margin-top:0; margin-bottom:15px; color:#3b82f6; text-align:center;">📋 My Bookings</h4>
          <div id="myBookingsList"></div>
@@ -300,6 +300,7 @@
       <!-- Custom Booking Calendar -->
       <div id="bookingDateDisplay" class="date-display-box">Select Date</div>
       <div id="bookingCalendar" class="calendar"></div>
+      
       <input type="hidden" id="bookDate">
       
       <!-- Custom Booking Class Select -->
@@ -310,7 +311,6 @@
       </div>
       
       <div id="bookingLoading" style="display:none; text-align:center; color:#8b5cf6; font-weight:bold; margin: 20px 0;">Syncing with Server... ⏳</div>
-      <div id="bookingMsg" style="display:none; text-align:center; color:#ef4444; font-weight:bold; margin: 10px 0;"></div>
       <div id="slotsContainer" style="margin-top: 20px;"></div>
       
       <hr class="divider">
@@ -339,7 +339,6 @@
           </div>
           
           <button id="btnGenClass" class="action-btn" style="border-color:#8b5cf6; color:#8b5cf6; margin-top:5px;" onclick="fetchAndGenerateTimetable('classwise')">Generate Classwise</button>
-          <div id="ttClassMsg" style="text-align:center; color:#ef4444; font-weight:bold; margin-top: 10px; display:none;"></div>
       </div>
       
       <div style="background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 8px; padding: 15px;">
@@ -352,8 +351,10 @@
           </div>
           
           <button id="btnGenDiv" class="action-btn" style="border-color:#8b5cf6; color:#8b5cf6; margin-top:5px;" onclick="fetchAndGenerateTimetable('divisionwise')">Generate Divisionwise</button>
-          <div id="ttDivMsg" style="text-align:center; color:#ef4444; font-weight:bold; margin-top: 10px; display:none;"></div>
       </div>
+      
+      <!-- IN APP ERROR MESSAGE -->
+      <div id="ttMessage" style="text-align:center; color:#ef4444; font-weight:bold; margin-top: 15px; min-height: 24px;"></div>
 
       <div class="developer-credit">Designed & Developed by GRR</div>
     </div>
@@ -400,6 +401,7 @@
       
       <label style="font-weight:bold; color:#475569; display:block; margin-top:15px; margin-bottom:5px;">Select Exam</label>
       
+      <!-- Custom Select for Exam Status -->
       <div class="custom-select-container">
           <div class="custom-select-display" id="display_statusExamSelect" onclick="toggleCustomSelect('statusExamSelect')">Select Exam</div>
           <div class="custom-select-options" id="options_statusExamSelect"></div>
@@ -474,7 +476,7 @@
       <div id="studentListContainer"></div>
       <button id="saveBtn" class="action-btn" onclick="saveMarks()">Save All Marks</button>
       <button id="editBtn" class="edit-btn" onclick="enableEditing()">✏️ Edit Marks</button>
-      <div id="message" style="display:none; margin-top:10px;"></div>
+      <div id="message"></div>
       <div class="developer-credit">Designed & Developed by GRR</div>
     </div>
 
@@ -713,8 +715,375 @@
           "8H": "Smitha KK", "8F": "Smitha KK", "9F": "Smitha KK"
       }
     };
+    
+    // Globals
+    let loggedInUser = null; 
+    let tempLoginUser = "";
+    let tempLoginPin = "";
+    let currentStandard = "";
+    let currentExam = "";
+    let currentDivision = "";
+    let currentSubject = "";
+    let currentReportType = "full"; 
+    let currentReportClass = "";
+    let adminToken = ""; 
+    let statusReturnPage = 'pageHome';
+    let appMode = 'entry'; 
+    let specialBookings = {};
+
+    // Calendars
+    let bookingCalMonth = new Date().getMonth();
+    let bookingCalYear = new Date().getFullYear();
+    let ttCalMonth = new Date().getMonth();
+    let ttCalYear = new Date().getFullYear();
+    window.bookingSelectedDate = null;
+    window.ttSelectedDate = null;
+    window.currentTimetableTarget = null;
+    window.currentTimetableDate = null;
 
     let divideReturnPage = 'pageHome'; // Determines where the back button goes
+
+    window.addEventListener('load', function() {
+      const teacherSet = new Set(languageTeachers); 
+      for (let sub in teacherMapping) {
+        for (let cls in teacherMapping[sub]) {
+          teacherSet.add(teacherMapping[sub][cls]);
+        }
+      }
+      const sortedTeachers = Array.from(teacherSet).sort();
+      
+      const selectLogin = document.getElementById('teacherSelect');
+      const selectAdmin = document.getElementById('adminTeacherSelect');
+      
+      selectLogin.innerHTML = '<option value="" disabled selected hidden>Select Your Name</option>';
+      selectAdmin.innerHTML = '<option value="" disabled selected hidden>Select Teacher</option>';
+      
+      let adminOpt = document.createElement('option'); 
+      adminOpt.value = "Admin"; 
+      adminOpt.textContent = "Admin (Change my PIN)";
+      selectAdmin.appendChild(adminOpt);
+
+      sortedTeachers.forEach(t => {
+          let opt1 = document.createElement('option'); opt1.value = t; opt1.textContent = t;
+          let opt2 = document.createElement('option'); opt2.value = t; opt2.textContent = t;
+          selectLogin.appendChild(opt1);
+          selectAdmin.appendChild(opt2);
+      });
+
+      const savedTeacher = localStorage.getItem('loggedTeacher');
+      if (savedTeacher) {
+          loggedInUser = savedTeacher;
+          document.getElementById('dashboardGreeting').textContent = "Welcome, " + savedTeacher;
+          document.getElementById('logoutBtnDash').style.display = "block";
+          showPage('pageDashboard'); 
+      }
+    });
+
+    window.history.pushState(null, null, window.location.href);
+    window.addEventListener("popstate", function(event) {
+      window.close(); 
+      document.body.innerHTML = "<h2 style='text-align:center; margin-top:50px; color:#334155;'>App closed. You can exit this tab.</h2>";
+      setTimeout(function() { window.location.href = "about:blank"; }, 300);
+    });
+
+    function showPage(pageId) {
+      document.querySelectorAll('.page').forEach(page => page.classList.remove('active'));
+      document.getElementById(pageId).classList.add('active');
+      
+      if (pageId === 'pageHome' || pageId === 'pageDashboard' || pageId === 'pageClassSelect' || pageId === 'page0' || pageId === 'pageLogin' || pageId === 'pageAdminLogin') {
+          document.body.style.backgroundColor = '#eef2f5'; 
+      }
+      
+      if(pageId === 'page5' || pageId === 'pageTimetableView' || pageId === 'pageDividedView') {
+        document.getElementById('mainContainer').style.display = 'none';
+      } else {
+        document.getElementById('mainContainer').style.display = 'block';
+      }
+
+      const msgs = ['message', 'loginMessage', 'setupPinMessage', 'adminAuthMessage', 'adminDashMessage'];
+      msgs.forEach(m => {
+          if(document.getElementById(m)) { document.getElementById(m).textContent = ""; document.getElementById(m).style.backgroundColor = "transparent"; }
+      });
+    }
+
+    function renderCustomCalendar(containerId, year, month, selectedDateStr, onSelectFuncStr, prefix) {
+        let firstDay = new Date(year, month, 1).getDay();
+        let daysInMonth = new Date(year, month + 1, 0).getDate();
+        let today = new Date();
+        today.setHours(0,0,0,0);
+        const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+        
+        let html = `<div class="calendar-header">
+            <button type="button" class="back-btn" style="margin:0; font-size:22px; padding:0 10px;" onclick="changeMonth('${prefix}', -1)">&lt;</button>
+            <span>${monthNames[month]} ${year}</span>
+            <button type="button" class="back-btn" style="margin:0; font-size:22px; padding:0 10px;" onclick="changeMonth('${prefix}', 1)">&gt;</button>
+        </div>
+        <div class="calendar-grid">
+            <div class="calendar-day-name">Sun</div><div class="calendar-day-name">Mon</div><div class="calendar-day-name">Tue</div><div class="calendar-day-name">Wed</div><div class="calendar-day-name">Thu</div><div class="calendar-day-name">Fri</div><div class="calendar-day-name">Sat</div>`;
+        
+        for(let i=0; i<firstDay; i++) html += `<div class="calendar-day empty"></div>`;
+        
+        for(let d=1; d<=daysInMonth; d++) {
+            let curDate = new Date(year, month, d);
+            let dateStr = `${year}-${String(month+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+            let dayOfWeek = curDate.getDay();
+            
+            let classes = ['calendar-day'];
+            if (dayOfWeek === 0 || dayOfWeek === 6) classes.push('weekend');
+            if (dateStr === selectedDateStr) classes.push('selected');
+            if (curDate < today) classes.push('disabled');
+            
+            if (curDate < today) {
+                html += `<div class="${classes.join(' ')}">${d}</div>`;
+            } else {
+                html += `<div class="${classes.join(' ')}" onclick="${onSelectFuncStr}('${dateStr}')">${d}</div>`;
+            }
+        }
+        html += `</div>`;
+        document.getElementById(containerId).innerHTML = html;
+    }
+
+    function changeMonth(prefix, offset) {
+        if (prefix === 'booking') {
+            bookingCalMonth += offset;
+            if (bookingCalMonth < 0) { bookingCalMonth = 11; bookingCalYear--; }
+            else if (bookingCalMonth > 11) { bookingCalMonth = 0; bookingCalYear++; }
+            renderCustomCalendar('bookingCalendar', bookingCalYear, bookingCalMonth, window.bookingSelectedDate, 'selectBookingDate', 'booking');
+        } else {
+            ttCalMonth += offset;
+            if (ttCalMonth < 0) { ttCalMonth = 11; ttCalYear--; }
+            else if (ttCalMonth > 11) { ttCalMonth = 0; ttCalYear++; }
+            renderCustomCalendar('ttCalendar', ttCalYear, ttCalMonth, window.ttSelectedDate, 'selectTTDate', 'tt');
+        }
+    }
+
+    function selectBookingDate(dateStr) {
+        window.bookingSelectedDate = dateStr;
+        document.getElementById('bookDate').value = dateStr;
+        document.getElementById('bookingDateDisplay').textContent = "Selected Date: " + dateStr;
+        document.getElementById('bookingDateDisplay').classList.add('active');
+        renderCustomCalendar('bookingCalendar', bookingCalYear, bookingCalMonth, dateStr, 'selectBookingDate', 'booking');
+        renderBookings();
+    }
+
+    function selectTTDate(dateStr) {
+        window.ttSelectedDate = dateStr;
+        document.getElementById('ttDateDisplay').textContent = "Selected Date: " + dateStr;
+        document.getElementById('ttDateDisplay').classList.add('active');
+        renderCustomCalendar('ttCalendar', ttCalYear, ttCalMonth, dateStr, 'selectTTDate', 'tt');
+    }
+
+    function attemptLogin() {
+        const user = document.getElementById('teacherSelect').value;
+        const pin = document.getElementById('teacherPin').value.trim();
+        const msg = document.getElementById('loginMessage');
+        const btn = document.getElementById('loginBtn');
+        
+        if(!user) { msg.style.display="block"; msg.style.color = "#ef4444"; msg.style.backgroundColor = "#fee2e2"; msg.textContent = "Please select your name."; return; }
+        if(!pin) { msg.style.display="block"; msg.style.color = "#ef4444"; msg.style.backgroundColor = "#fee2e2"; msg.textContent = "Please enter your PIN. Default is 1234."; return; }
+        
+        btn.textContent = "Verifying..."; btn.disabled = true;
+        
+        fetch(scriptURL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+            body: JSON.stringify({ action: "login", user: user, pin: pin })
+        })
+        .then(res => res.json())
+        .then(data => {
+            btn.textContent = "Login"; btn.disabled = false;
+            if (data.status === "success") {
+                if (data.requiresReset) {
+                    tempLoginUser = user;
+                    tempLoginPin = pin;
+                    document.getElementById('loginStep1').style.display = "none";
+                    document.getElementById('loginStep2').style.display = "block";
+                } else {
+                    completeLogin(user);
+                }
+            } else {
+                msg.style.display="block"; msg.style.color = "#ef4444"; msg.style.backgroundColor = "#fee2e2"; msg.textContent = data.message;
+            }
+        })
+        .catch(err => {
+            btn.textContent = "Login"; btn.disabled = false;
+            msg.style.display="block"; msg.style.color = "#ef4444"; msg.style.backgroundColor = "#fee2e2"; msg.textContent = "Network error connecting to server.";
+        });
+    }
+
+    function submitNewPin() {
+        const newPin = document.getElementById('newTeacherPinSetup').value.trim();
+        const msg = document.getElementById('setupPinMessage');
+        const btn = document.getElementById('saveNewPinBtn');
+        
+        if(!newPin || newPin.length < 4 || newPin === "1234") { 
+            msg.style.display="block"; msg.style.color = "#ef4444"; msg.textContent = "PIN must be at least 4 digits and cannot be 1234."; 
+            return; 
+        }
+        
+        btn.textContent = "Saving..."; btn.disabled = true;
+        
+        fetch(scriptURL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+            body: JSON.stringify({ action: "changeMyPin", user: tempLoginUser, oldPin: tempLoginPin, newPin: newPin })
+        })
+        .then(res => res.json())
+        .then(data => {
+            btn.textContent = "Save New PIN & Login"; btn.disabled = false;
+            if(data.status === "success") {
+                completeLogin(tempLoginUser);
+            } else {
+                msg.style.display="block"; msg.style.color = "#ef4444"; msg.textContent = data.message;
+            }
+        })
+        .catch(err => {
+            btn.textContent = "Save New PIN & Login"; btn.disabled = false;
+            msg.style.display="block"; msg.style.color = "#ef4444"; msg.textContent = "Network error.";
+        });
+    }
+
+    function cancelPinSetup() {
+        document.getElementById('loginStep1').style.display = "block";
+        document.getElementById('loginStep2').style.display = "none";
+        document.getElementById('teacherPin').value = "";
+    }
+
+    function completeLogin(user) {
+        loggedInUser = user;
+        localStorage.setItem('loggedTeacher', user); 
+        appMode = 'entry';
+        
+        document.getElementById('dashboardGreeting').textContent = "Welcome, " + user;
+        document.getElementById('teacherPin').value = ""; 
+        document.getElementById('newTeacherPinSetup').value = ""; 
+        document.getElementById('loginStep1').style.display = "block";
+        document.getElementById('loginStep2').style.display = "none";
+        document.getElementById('teacherSelect').value = "";
+        
+        document.getElementById('logoutBtnDash').style.display = "block";
+        showPage('pageDashboard'); 
+    }
+
+    function logoutDevice() {
+        loggedInUser = null;
+        adminToken = "";
+        appMode = 'entry';
+        localStorage.removeItem('loggedTeacher'); 
+        document.getElementById('logoutBtnDash').style.display = "none";
+        showPage('pageHome');
+    }
+
+    function verifyAdmin() {
+        const pin = document.getElementById('adminPinInput').value.trim();
+        const msg = document.getElementById('adminAuthMessage');
+        const btn = document.getElementById('adminAuthBtn');
+        
+        if(!pin) { msg.style.display="block"; msg.style.color = "#ef4444"; msg.style.backgroundColor = "#fee2e2"; msg.textContent = "Enter Admin PIN."; return; }
+        
+        btn.textContent = "Checking..."; btn.disabled = true;
+        
+        fetch(scriptURL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+            body: JSON.stringify({ action: "login", user: "Admin", pin: pin })
+        })
+        .then(res => res.json())
+        .then(data => {
+            btn.textContent = "Enter Console"; btn.disabled = false;
+            if (data.status === "success" && data.role === "admin") {
+                adminToken = pin; 
+                loggedInUser = "Admin";
+                document.getElementById('adminPinInput').value = "";
+                showPage('pageAdminDash');
+            } else {
+                msg.style.display="block"; msg.style.color = "#ef4444"; msg.style.backgroundColor = "#fee2e2"; msg.textContent = "Incorrect Admin PIN.";
+            }
+        })
+        .catch(err => {
+            btn.textContent = "Enter Console"; btn.disabled = false;
+            msg.style.display="block"; msg.style.color = "#ef4444"; msg.style.backgroundColor = "#fee2e2"; msg.textContent = "Network error.";
+        });
+    }
+
+    function resetToDefaultPin() {
+        const targetTeacher = document.getElementById('adminTeacherSelect').value;
+        const msg = document.getElementById('adminDashMessage');
+        if (targetTeacher === "Admin" || targetTeacher === "") {
+            msg.style.display="block"; msg.style.color = "#ef4444"; msg.style.backgroundColor = "#fee2e2"; 
+            msg.textContent = "Select a valid teacher.";
+            return;
+        }
+        document.getElementById('newTeacherPin').value = "1234";
+        setTeacherPin();
+    }
+
+    function setTeacherPin() {
+        const targetTeacher = document.getElementById('adminTeacherSelect').value;
+        const newPin = document.getElementById('newTeacherPin').value.trim();
+        const msg = document.getElementById('adminDashMessage');
+        const btn = document.getElementById('setPinBtn');
+        
+        if(!targetTeacher) { msg.style.display="block"; msg.style.color = "#ef4444"; msg.textContent = "Please select a teacher."; return; }
+        if(!newPin || newPin.length < 4) { msg.style.display="block"; msg.style.color = "#ef4444"; msg.textContent = "PIN must be at least 4 digits."; return; }
+        
+        btn.textContent = "Saving..."; btn.disabled = true;
+        
+        fetch(scriptURL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+            body: JSON.stringify({ action: "setPin", adminPin: adminToken, teacher: targetTeacher, newPin: newPin })
+        })
+        .then(res => res.json())
+        .then(data => {
+            btn.textContent = "Save Custom PIN"; btn.disabled = false;
+            if (data.status === "success") {
+                msg.style.display="block"; msg.style.color = "#10b981"; msg.style.backgroundColor = "#d1fae5"; msg.textContent = data.message;
+                document.getElementById('newTeacherPin').value = ""; 
+                document.getElementById('adminTeacherSelect').value = "";
+                if (targetTeacher === "Admin") { adminToken = newPin; }
+            } else {
+                msg.style.display="block"; msg.style.color = "#ef4444"; msg.style.backgroundColor = "#fee2e2"; msg.textContent = data.message;
+            }
+        }).catch(err => {
+            btn.textContent = "Save Custom PIN"; btn.disabled = false;
+            msg.style.display="block"; msg.style.color = "#ef4444"; msg.style.backgroundColor = "#fee2e2"; msg.textContent = "Network error.";
+        });
+    }
+
+    function logoutAdmin() {
+        adminToken = "";
+        loggedInUser = null;
+        appMode = 'entry';
+        showPage('pageHome');
+    }
+
+    function setModeAndGo(mode) {
+        appMode = mode;
+        showPage('pageClassSelect');
+    }
+
+    function setAdminModeAndGo(mode) {
+        loggedInUser = "Admin";
+        appMode = mode;
+        showPage('pageClassSelect');
+    }
+
+    function goBackFromClassSelect() {
+        if (loggedInUser === "Viewer") {
+            showPage('pageHome');
+        } else if (loggedInUser === "Admin") {
+            showPage('pageAdminDash');
+        } else {
+            showPage('pageDashboard');
+        }
+    }
+
+    function goToGuestReports() {
+        loggedInUser = "Viewer"; 
+        appMode = 'report';
+        showPage('pageClassSelect');
+    }
 
     // --- DIVIDE CLASSES SYSTEM ---
     function goToDividePage(fromPage) {
@@ -724,11 +1093,8 @@
         document.getElementById('divEmMsg').style.display = 'none';
         document.getElementById('divMmMsg').style.display = 'none';
 
-        let emOptions = [ {value: "2", text: "2 Divisions"}, {value: "3", text: "3 Divisions"}, {value: "4", text: "4 Divisions"} ];
-        updateCustomSelectOptions('emDivideSelect', emOptions, 'Select number of classes', '');
-        
-        let mmOptions = [ {value: "4", text: "4 Divisions"}, {value: "5", text: "5 Divisions"}, {value: "6", text: "6 Divisions"}, {value: "7", text: "7 Divisions"} ];
-        updateCustomSelectOptions('mmDivideSelect', mmOptions, 'Select number of classes', '');
+        document.getElementById('emDivideSelect').value = "";
+        document.getElementById('mmDivideSelect').value = "";
     }
 
     function goBackFromDivideMenu() {
@@ -838,10 +1204,8 @@
         let batches = [];
         for (let i = 0; i < numClasses; i++) batches.push([]);
 
-        // Requirement: "any student who has scored D or E grade should go to the last batch"
         batches[numClasses - 1] = bottomStudents;
 
-        // Requirement: "Any student who has scored D+ and above for all subjects should not be there in the last batch."
         let topNumBatches = numClasses - 1;
         if (topNumBatches > 0) {
             let baseSize = Math.floor(topStudents.length / topNumBatches);
@@ -853,6 +1217,8 @@
                 batches[i] = topStudents.slice(currentIndex, currentIndex + chunk);
                 currentIndex += chunk;
             }
+        } else {
+            batches[0] = sortedStudents;
         }
 
         renderDividedClasses(batches, medium, numClasses);
@@ -931,6 +1297,1299 @@
         });
     }
 
-</script>
+    // --- SPECIAL BOOKING SYSTEM ---
+    let bookingReturnPage = 'pageDashboard';
+
+    function showBookingPage(fromPage) {
+        bookingReturnPage = fromPage;
+        showPage('pageBooking');
+        
+        let subtitle = document.getElementById('bookingSubtitle');
+        if (loggedInUser === 'Admin') {
+            subtitle.textContent = "Check the slots";
+        } else {
+            subtitle.textContent = "Book Your Slots";
+        }
+        
+        document.getElementById('bookDate').value = "";
+        window.bookingSelectedDate = null;
+        document.getElementById('bookingDateDisplay').textContent = "Select Date";
+        document.getElementById('bookingDateDisplay').classList.remove('active');
+        document.getElementById('slotsContainer').innerHTML = "";
+        document.getElementById('myBookingsSection').style.display = 'none';
+        document.getElementById('bookingMsg').style.display = 'none';
+        
+        let classInput = document.getElementById('bookClass');
+        classInput.innerHTML = '<option value="" disabled selected hidden>Select Class</option>';
+        classInput.value = "";
+        
+        let allowedDivs = [];
+        ['10','9','8'].forEach(std => {
+            ['A','B','C','D','E','F','G','H'].forEach(div => {
+                let cls = std + div;
+                if (loggedInUser === 'Admin' || loggedInUser === 'Viewer' || languageTeachers.includes(loggedInUser)) {
+                    allowedDivs.push(cls);
+                } else {
+                    let subs = getTeacherSubjectsForClass(loggedInUser, cls);
+                    if (subs.length > 0) allowedDivs.push(cls);
+                }
+            });
+        });
+        
+        allowedDivs.forEach(cls => {
+            classInput.innerHTML += `<option value="${cls}">Class ${cls}</option>`;
+        });
+
+        bookingCalMonth = new Date().getMonth();
+        bookingCalYear = new Date().getFullYear();
+        renderCustomCalendar('bookingCalendar', bookingCalYear, bookingCalMonth, null, 'selectBookingDate', 'booking');
+        
+        fetchBookings();
+    }
+
+    function goBackFromBooking() { showPage(bookingReturnPage); }
+    
+    function fetchBookings() {
+        document.getElementById('bookingLoading').style.display = "block";
+        document.getElementById('bookingMsg').style.display = "none";
+        
+        fetch(scriptURL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+            body: JSON.stringify({ action: "getBookings" })
+        })
+        .then(res => res.json())
+        .then(data => {
+            document.getElementById('bookingLoading').style.display = "none";
+            if (data.status === "success") {
+                specialBookings = data.data;
+                renderMyBookings();
+                renderBookings();
+            }
+        }).catch(err => { 
+            document.getElementById('bookingLoading').style.display = "none";
+            document.getElementById('bookingMsg').textContent = "Network error syncing bookings.";
+            document.getElementById('bookingMsg').style.display = "block";
+        });
+    }
+
+    function renderMyBookings() {
+        let container = document.getElementById('myBookingsList');
+        let section = document.getElementById('myBookingsSection');
+        let title = document.getElementById('myBookingsTitle');
+        
+        if (loggedInUser === 'Viewer') { 
+            section.style.display = 'none'; 
+            return; 
+        }
+
+        if (loggedInUser === 'Admin') {
+            title.textContent = "📋 All Bookings";
+        } else {
+            title.textContent = "📋 My Bookings";
+        }
+
+        let myB = [];
+        let today = new Date();
+        today.setHours(0,0,0,0);
+
+        for (let date in specialBookings) {
+            let parts = date.split('-');
+            if(parts.length !== 3) continue;
+            let dObj = new Date(parseInt(parts[0], 10), parseInt(parts[1], 10)-1, parseInt(parts[2], 10));
+            if (dObj < today) continue; 
+            
+            for (let cls in specialBookings[date]) {
+                for (let slot in specialBookings[date][cls]) {
+                    let b = specialBookings[date][cls][slot];
+                    if (b.teacher === loggedInUser || loggedInUser === 'Admin') {
+                        myB.push({ date: date, cls: cls, slotIndex: slot, subject: b.subject, teacher: b.teacher });
+                    }
+                }
+            }
+        }
+
+        if (myB.length === 0) {
+            let msg = loggedInUser === 'Admin' ? "No bookings exist." : "You have no bookings.";
+            container.innerHTML = `<div style="padding: 10px; text-align:center; color:#64748b; font-weight:bold;">${msg}</div>`;
+            section.style.display = 'block';
+            return;
+        }
+
+        myB.sort((a,b) => new Date(a.date) - new Date(b.date));
+
+        let slotsText = ["9:30 AM - 11:00 AM", "11:15 AM - 12:45 PM", "2:00 PM - 3:30 PM"];
+        let html = '';
+        myB.forEach(b => {
+            let titleText = loggedInUser === 'Admin' ? `${b.subject} (${b.teacher})` : b.subject;
+            let cancelBtnHtml = '';
+            if (loggedInUser !== 'Admin') {
+                cancelBtnHtml = `<button class="nav-btn" style="padding: 6px 12px; font-size: 13px; border-color: #ef4444; color: #ef4444; margin: 0; min-width: 75px;" onclick="cancelBooking('${b.date}', '${b.cls}', ${b.slotIndex}, event)">Cancel</button>`;
+            }
+
+            html += `<div style="background: #ffffff; border: 1px solid #cbd5e1; padding: 10px; border-radius: 8px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center;">
+                <div style="line-height:1.4;">
+                    <strong style="color: #3b82f6;">${b.date}</strong> | <span style="font-weight:bold; color:#1e293b;">Class ${b.cls}</span><br>
+                    <span style="font-size: 13px; color: #64748b;">${slotsText[b.slotIndex]} - ${titleText}</span>
+                </div>
+                ${cancelBtnHtml}
+            </div>`;
+        });
+        container.innerHTML = html;
+        section.style.display = 'block';
+    }
+
+    function getTeacherSubjectsForClass(teacher, className) {
+        let subs = [];
+        if (languageTeachers.includes(teacher)) subs.push("Language");
+        for (let sub in teacherMapping) {
+            if (teacherMapping[sub][className] === teacher) subs.push(sub);
+        }
+        return [...new Set(subs)];
+    }
+
+    function renderBookings() {
+        let date = document.getElementById('bookDate').value;
+        let cls = document.getElementById('bookClass').value;
+        if(!date || !cls) {
+            document.getElementById('slotsContainer').innerHTML = "<div style='text-align:center; color:#64748b;'>Please select both a date and a class to view/book slots.</div>";
+            return;
+        }
+        
+        let slots = ["9:30 AM to 11:00 AM", "11:15 AM to 12:45 PM", "2:00 PM to 3:30 PM"];
+        let html = '';
+        
+        let availableSubs = [];
+        if (loggedInUser !== 'Admin' && loggedInUser !== 'Viewer') {
+            availableSubs = getTeacherSubjectsForClass(loggedInUser, cls);
+        } 
+
+        slots.forEach((time, index) => {
+            let b = specialBookings[date] && specialBookings[date][cls] && specialBookings[date][cls][index];
+            html += `<div style="border: 1px solid #cbd5e1; border-radius: 8px; padding: 15px; margin-bottom: 10px; background: ${b ? '#fef2f2' : '#f0fdf4'};">`;
+            html += `<strong style="display:block; margin-bottom: 8px; color: #334155; font-size:16px;">${time}</strong>`;
+            
+            if (b) {
+                html += `<div style="color: #b91c1c; font-weight: bold; font-size:15px;">${b.subject} - ${b.teacher}</div>`;
+                if(b.teacher === loggedInUser) {
+                   html += `<button class="nav-btn" style="padding: 8px; font-size: 13px; margin-top: 10px; border-color: #ef4444; color: #ef4444; min-width: 75px;" onclick="cancelBooking('${date}', '${cls}', ${index}, event)">Cancel</button>`;
+                }
+            } else {
+                html += `<div style="color: #15803d; font-weight: bold; font-size:15px;">Available</div>`;
+                
+                if(loggedInUser !== 'Viewer' && loggedInUser !== 'Admin') {
+                    if (availableSubs.length > 0) {
+                        html += `<div style="margin-top: 10px;">
+                            <select id="bookSub_${index}" style="width: 58%; display: inline-block; margin-bottom: 0; padding:10px;">
+                            <option value="" disabled selected hidden>Select Subject</option>`;
+                        availableSubs.forEach(s => html += `<option value="${s}">${s}</option>`);
+                        html += `</select>
+                            <button class="nav-btn" style="padding: 10px; font-size: 14px; width: 38%; display: inline-block; border-color: #10b981; color: #10b981; margin-left: 2%; vertical-align: top;" onclick="bookSlot('${date}', '${cls}', ${index}, event)">Book Slot</button>
+                            <div id="slotMsg_${index}" style="color: #ef4444; font-size: 13px; margin-top: 5px; font-weight:bold; display:none; width: 100%;"></div>
+                        </div>`;
+                    } else {
+                        html += `<div style="font-size: 13px; color: #64748b; margin-top: 5px;">You do not handle subjects for this class.</div>`;
+                    }
+                }
+            }
+            html += `</div>`;
+        });
+        document.getElementById('slotsContainer').innerHTML = html;
+    }
+
+    function bookSlot(date, cls, index, event) {
+        let subSelect = document.getElementById(`bookSub_${index}`);
+        let sub = subSelect ? subSelect.value : "";
+        let msgDiv = document.getElementById(`slotMsg_${index}`);
+        msgDiv.style.display = 'none';
+
+        if (!sub) {
+            msgDiv.style.color = '#ef4444';
+            msgDiv.textContent = "Please select a subject before booking.";
+            msgDiv.style.display = 'block';
+            return;
+        }
+
+        if (sub === 'IT') {
+            let itCount = 0;
+            if (specialBookings[date]) {
+                for (let c in specialBookings[date]) {
+                    if (specialBookings[date][c][index] && specialBookings[date][c][index].subject === 'IT') {
+                        itCount++;
+                    }
+                }
+            }
+            if (itCount >= 2) {
+                msgDiv.style.color = '#ef4444';
+                msgDiv.textContent = "No IT slot available for this time.";
+                msgDiv.style.display = 'block';
+                return;
+            }
+        }
+
+        let teacherName = loggedInUser === 'Admin' ? 'Admin' : loggedInUser;
+        let btn = event.target;
+        btn.textContent = "Booking...";
+        btn.disabled = true;
+
+        fetch(scriptURL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+            body: JSON.stringify({ action: "saveBooking", date: date, cls: cls, slotIndex: index, teacher: teacherName, subject: sub })
+        })
+        .then(res => res.json())
+        .then(data => { 
+            msgDiv.style.color = '#10b981';
+            msgDiv.textContent = "Successfully booked slot!";
+            msgDiv.style.display = 'block';
+            fetchBookings(); 
+        })
+        .catch(err => {
+            msgDiv.style.color = '#ef4444';
+            msgDiv.textContent = "Failed to save booking. Network error.";
+            msgDiv.style.display = 'block';
+            btn.textContent = "Book Slot";
+            btn.disabled = false;
+        });
+    }
+    
+    function cancelBooking(date, cls, index, event) {
+        let btn = event.target;
+        if (!btn.classList.contains('confirm-mode')) {
+            btn.dataset.ogText = btn.textContent;
+            btn.textContent = "Sure?";
+            btn.style.backgroundColor = "#fee2e2";
+            btn.classList.add('confirm-mode');
+            setTimeout(() => { 
+                if(btn.classList.contains('confirm-mode')) {
+                    btn.textContent = btn.dataset.ogText; 
+                    btn.style.backgroundColor = "transparent";
+                    btn.classList.remove('confirm-mode');
+                }
+            }, 3000);
+            return;
+        }
+
+        btn.textContent = "Canceling...";
+        btn.disabled = true;
+
+        fetch(scriptURL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+            body: JSON.stringify({ action: "cancelBooking", date: date, cls: cls, slotIndex: index })
+        })
+        .then(res => res.json())
+        .then(data => { fetchBookings(); })
+        .catch(err => {
+            let p = btn.parentElement;
+            let errDiv = p.querySelector('.cancel-err');
+            if(!errDiv) {
+                errDiv = document.createElement('div');
+                errDiv.className = 'cancel-err';
+                errDiv.style.color = '#ef4444';
+                errDiv.style.fontSize = '13px';
+                errDiv.style.marginTop = '5px';
+                p.appendChild(errDiv);
+            }
+            errDiv.textContent = "Failed to cancel. Network error.";
+            btn.textContent = btn.dataset.ogText;
+            btn.disabled = false;
+            btn.classList.remove('confirm-mode');
+        });
+    }
+
+    // --- TIMETABLE GENERATION SYSTEM ---
+    let ttReturnPage = 'pageBooking';
+    
+    function goToTimetableMenu(fromPage) {
+        ttReturnPage = fromPage || 'pageBooking';
+        showPage('pageTimetableMenu');
+        
+        document.getElementById('ttClassMsg').style.display = 'none';
+        document.getElementById('ttDivMsg').style.display = 'none';
+        
+        if (window.bookingSelectedDate) {
+            window.ttSelectedDate = window.bookingSelectedDate;
+            let parts = window.ttSelectedDate.split('-');
+            ttCalYear = parseInt(parts[0], 10);
+            ttCalMonth = parseInt(parts[1], 10) - 1;
+            document.getElementById('ttDateDisplay').textContent = "Selected Date: " + window.ttSelectedDate;
+            document.getElementById('ttDateDisplay').classList.add('active');
+        } else {
+            window.ttSelectedDate = null;
+            document.getElementById('ttDateDisplay').textContent = "Select Date";
+            document.getElementById('ttDateDisplay').classList.remove('active');
+            ttCalMonth = new Date().getMonth();
+            ttCalYear = new Date().getFullYear();
+        }
+        
+        renderCustomCalendar('ttCalendar', ttCalYear, ttCalMonth, window.ttSelectedDate, 'selectTTDate', 'tt');
+        
+        document.getElementById('ttClassSelect').value = "";
+        
+        let divSelect = document.getElementById('ttDivSelect');
+        divSelect.innerHTML = '<option value="" disabled selected hidden>Select Division</option>';
+        ['10','9','8'].forEach(std => {
+            ['A','B','C','D','E','F','G','H'].forEach(div => {
+                divSelect.innerHTML += `<option value="${std}${div}">Class ${std}${div}</option>`;
+            });
+        });
+        divSelect.value = "";
+    }
+    
+    function goBackFromTimetableMenu() {
+        showPage(ttReturnPage);
+    }
+    
+    function fetchAndGenerateTimetable(type) {
+        let msgId = type === 'classwise' ? 'ttClassMsg' : 'ttDivMsg';
+        let msg = document.getElementById(msgId);
+        msg.style.display = 'none';
+        
+        let date = window.ttSelectedDate;
+        if (!date) {
+            msg.textContent = "Please select a date on the calendar.";
+            msg.style.display = 'block';
+            return;
+        }
+        
+        let targetValue = type === 'classwise' ? document.getElementById('ttClassSelect').value : document.getElementById('ttDivSelect').value;
+        if (!targetValue) {
+            msg.textContent = "Please select a Class or Division from the dropdown.";
+            msg.style.display = 'block';
+            return;
+        }
+
+        window.currentTimetableTarget = targetValue;
+        window.currentTimetableDate = date;
+
+        let btnId = type === 'classwise' ? 'btnGenClass' : 'btnGenDiv';
+        let btn = document.getElementById(btnId);
+        let ogText = btn.textContent;
+        btn.textContent = "Loading... ⏳";
+        btn.disabled = true;
+
+        fetch(scriptURL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+            body: JSON.stringify({ action: "getBookings" })
+        })
+        .then(res => res.json())
+        .then(data => {
+            btn.textContent = ogText;
+            btn.disabled = false;
+            if (data.status === "success") {
+                specialBookings = data.data;
+                buildTimetableView(type, targetValue, date);
+            } else { 
+                msg.textContent = "Failed to fetch data.";
+                msg.style.display = 'block';
+            }
+        })
+        .catch(err => {
+            btn.textContent = ogText;
+            btn.disabled = false;
+            msg.textContent = "Network error.";
+            msg.style.display = 'block';
+        });
+    }
+
+    function buildTimetableView(type, targetValue, date) {
+        showPage('pageTimetableView');
+        
+        let html = `<div style="padding: 20px; background: white; color: black; font-family: sans-serif; box-sizing:border-box;">`;
+        
+        if (type === 'classwise') {
+            html += `<h2 style="text-align: center; margin-bottom: 20px;">SANSKRIT HS VATTOLI - Class ${targetValue} Special Timetable<br><span style="font-size:16px;">${date}</span></h2>
+            <table style="width: 100%; border-collapse: collapse; border: 2px solid #000; font-size: 14px;">
+            <thead>
+                <tr>
+                    <th style="border: 1px solid #000; padding: 10px;">Division</th>
+                    <th style="border: 1px solid #000; padding: 10px;">9:30 AM - 11:00 AM</th>
+                    <th style="border: 1px solid #000; padding: 10px;">11:15 AM - 12:45 PM</th>
+                    <th style="border: 1px solid #000; padding: 10px;">2:00 PM - 3:30 PM</th>
+                </tr>
+            </thead><tbody>`;
+            
+            ['A','B','C','D','E','F','G','H'].forEach(div => {
+                let cls = targetValue + div;
+                let b0 = specialBookings[date] && specialBookings[date][cls] && specialBookings[date][cls][0] ? `${specialBookings[date][cls][0].subject}<br>(${specialBookings[date][cls][0].teacher})` : "";
+                let b1 = specialBookings[date] && specialBookings[date][cls] && specialBookings[date][cls][1] ? `${specialBookings[date][cls][1].subject}<br>(${specialBookings[date][cls][1].teacher})` : "";
+                let b2 = specialBookings[date] && specialBookings[date][cls] && specialBookings[date][cls][2] ? `${specialBookings[date][cls][2].subject}<br>(${specialBookings[date][cls][2].teacher})` : "";
+                
+                html += `<tr>
+                    <td style="border: 1px solid #000; padding: 10px; font-weight: bold; text-align: center;">${cls}</td>
+                    <td style="border: 1px solid #000; padding: 10px; text-align: center;">${b0}</td>
+                    <td style="border: 1px solid #000; padding: 10px; text-align: center;">${b1}</td>
+                    <td style="border: 1px solid #000; padding: 10px; text-align: center;">${b2}</td>
+                </tr>`;
+            });
+            html += `</tbody></table></div>`;
+        } else {
+            // Divisionwise
+            html += `<h2 style="text-align: center; margin-bottom: 20px;">SANSKRIT HS VATTOLI - Class ${targetValue} Special Timetable<br><span style="font-size:16px;">${date}</span></h2>
+            <table style="width: 100%; border-collapse: collapse; border: 2px solid #000; font-size: 16px;">
+            <thead>
+                <tr>
+                    <th style="border: 1px solid #000; padding: 12px; width:40%;">Time</th>
+                    <th style="border: 1px solid #000; padding: 12px;">Subject & Teacher</th>
+                </tr>
+            </thead><tbody>`;
+            
+            let cls = targetValue;
+            let slots = ["9:30 AM - 11:00 AM", "11:15 AM - 12:45 PM", "2:00 PM - 3:30 PM"];
+            slots.forEach((time, idx) => {
+                let b = specialBookings[date] && specialBookings[date][cls] && specialBookings[date][cls][idx];
+                let text = b ? `<strong>${b.subject}</strong><br>${b.teacher}` : "";
+                html += `<tr>
+                    <td style="border: 1px solid #000; padding: 12px; text-align: center; font-weight: bold;">${time}</td>
+                    <td style="border: 1px solid #000; padding: 12px; text-align: center;">${text}</td>
+                </tr>`;
+            });
+            html += `</tbody></table></div>`;
+        }
+        
+        document.getElementById('ttViewContainer').innerHTML = html;
+        document.getElementById('ttViewMessage').style.display = 'none';
+    }
+
+    function downloadTimetablePDF() {
+        let btn = document.getElementById('downloadTtBtn');
+        let msg = document.getElementById('ttViewMessage');
+        msg.style.display = 'none';
+        
+        let ogText = btn.textContent;
+        btn.textContent = "Generating PDF... ⏳";
+        btn.disabled = true;
+
+        let target = window.currentTimetableTarget || 'Class';
+        let dateStr = window.currentTimetableDate || '';
+
+        let element = document.getElementById('ttViewContainer');
+        let opt = {
+            margin:       10,
+            filename:     `Timetable_${target}_${dateStr}.pdf`,
+            image:        { type: 'jpeg', quality: 0.98 },
+            html2canvas:  { scale: 2, useCORS: true },
+            jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
+        };
+
+        html2pdf().set(opt).from(element).save().then(() => {
+            btn.textContent = ogText;
+            btn.disabled = false;
+        }).catch(e => {
+            btn.textContent = ogText;
+            btn.disabled = false;
+            msg.textContent = "Error downloading PDF.";
+            msg.style.display = 'block';
+        });
+    }
+
+    // --- STATUS CHECK SYSTEM ---
+    function showStatusPage(fromPage) {
+        statusReturnPage = fromPage;
+        showPage('pageStatus');
+        document.getElementById('statusExamSelect').value = "First Term Exam";
+        fetchStatus();
+    }
+    
+    function goBackFromStatus() { showPage(statusReturnPage); }
+
+    function fetchStatus() {
+        let examName = document.getElementById('statusExamSelect').value;
+        if (!examName) return;
+
+        document.getElementById('statusLoading').style.display = "block";
+        document.getElementById('statusListContainer').innerHTML = "";
+        
+        fetch(scriptURL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+            body: JSON.stringify({ action: "getAllMarks" })
+        })
+        .then(res => res.json())
+        .then(data => {
+            document.getElementById('statusLoading').style.display = "none";
+            if (data.status === "success") {
+                renderStatus(data.data, examName);
+            } else {
+                document.getElementById('statusListContainer').innerHTML = "<div style='color:red;'>Error fetching data.</div>";
+            }
+        })
+        .catch(e => {
+            document.getElementById('statusLoading').style.display = "none";
+            document.getElementById('statusListContainer').innerHTML = "<div style='color:red;'>Network error fetching status.</div>";
+        });
+    }
+
+    function renderStatus(marksData, examName) {
+        let counts = {};
+        
+        marksData.forEach(row => {
+            let ex = row.exam || "First Mid Term Exam";
+            if (ex === "SSLC Mid Term Examination") ex = "First Mid Term Exam";
+            if (ex !== examName) return;
+            
+            if (!counts[row.className]) counts[row.className] = {};
+            if (!counts[row.className][row.subject]) counts[row.className][row.subject] = 0;
+            counts[row.className][row.subject]++;
+        });
+        
+        let pendingGroups = {};
+        
+        for (let subject in teacherMapping) {
+            if (subject === 'Language 1' || subject === 'Language 2' || subject === 'IT') continue;
+            
+            for (let cls in teacherMapping[subject]) {
+                if (examName === "First Mid Term Exam" && !cls.startsWith("10")) continue;
+
+                let teacher = teacherMapping[subject][cls];
+                let totalStudents = studentsData[cls] ? studentsData[cls].length : 0;
+                let entered = (counts[cls] && counts[cls][subject]) ? counts[cls][subject] : 0;
+                
+                let percent = totalStudents > 0 ? (entered / totalStudents) * 100 : 100;
+                
+                if (percent < 60) {
+                    if (!pendingGroups[teacher]) pendingGroups[teacher] = {};
+                    if (!pendingGroups[teacher][subject]) pendingGroups[teacher][subject] = [];
+                    pendingGroups[teacher][subject].push(cls);
+                }
+            }
+        }
+        
+        let html = "<ul style='text-align:left; line-height:1.6; padding-left: 20px; color:#334155; margin:0;'>";
+        let sortedTeachers = Object.keys(pendingGroups).sort();
+        
+        if(sortedTeachers.length === 0) {
+            html = "<p style='color:#10b981; font-weight:bold; text-align:center;'>All assigned teachers have completed entry!</p>";
+        } else {
+            sortedTeachers.forEach(teacher => {
+                let subjects = pendingGroups[teacher];
+                for (let subj in subjects) {
+                    let divs = subjects[subj].join(", ");
+                    html += `<li style="margin-bottom: 8px;">${teacher}, ${subj} (<span style="color:#ef4444;">${divs}</span>) <strong style="color:#ef4444;">Pending</strong></li>`;
+                }
+            });
+        }
+        html += "</ul>";
+        document.getElementById('statusListContainer').innerHTML = html;
+    }
+
+    // --- LOGIC FOR EXAM & ENTRY FLOW ---
+    function selectStandard(std) {
+        currentStandard = std;
+        
+        document.getElementById('divisionTitle').textContent = "Select Class " + std + " Division";
+        document.getElementById('reportDivisionTitle').textContent = "Select Class " + std + " Division";
+        
+        if (std === '10') {
+            document.body.style.backgroundColor = '#eef2f5';
+            showPage('page0'); 
+        } else {
+            currentExam = "First Term Exam";
+            document.querySelectorAll('.test-name').forEach(el => el.textContent = currentExam);
+            document.body.style.backgroundColor = '#e0f2fe';
+            
+            if (appMode === 'report') {
+                showPage('page4');
+            } else {
+                filterDivisionsForTeacher();
+                showPage('page1');
+            }
+        }
+    }
+
+    function selectExam(exam) {
+      currentExam = exam;
+      document.querySelectorAll('.test-name').forEach(el => el.textContent = currentExam);
+      
+      if (exam === 'First Term Exam') { document.body.style.backgroundColor = '#e0f2fe'; } 
+      else if (exam === 'First Mid Term Exam') { document.body.style.backgroundColor = '#fef3c7'; }
+      
+      if (appMode === 'report') {
+          showPage('page4');
+      } else {
+          filterDivisionsForTeacher();
+          showPage('page1');
+      }
+    }
+
+    function goBackFromDivisions() {
+        if (currentStandard === '10') {
+            showPage('page0');
+        } else {
+            showPage('pageClassSelect');
+        }
+    }
+
+    function filterDivisionsForTeacher() {
+        if (loggedInUser === "Admin" || loggedInUser === "Viewer") {
+            ['A','B','C','D','E','F','G','H'].forEach(d => {
+                let btn = document.getElementById('btn-div-'+d);
+                btn.classList.remove('disabled-btn'); btn.disabled = false;
+            });
+            return;
+        }
+
+        if (languageTeachers.includes(loggedInUser)) {
+            ['A','B','C','D','E','F','G','H'].forEach(d => {
+                let btn = document.getElementById('btn-div-'+d);
+                btn.classList.remove('disabled-btn'); btn.disabled = false;
+            });
+            return;
+        }
+
+        let allowedDivs = [];
+        for (let sub in teacherMapping) {
+            for (let cls in teacherMapping[sub]) {
+                if (teacherMapping[sub][cls] === loggedInUser && cls.startsWith(currentStandard)) {
+                    allowedDivs.push(cls.replace(currentStandard, '')); 
+                }
+            }
+        }
+        
+        ['A','B','C','D','E','F','G','H'].forEach(d => {
+            let btn = document.getElementById('btn-div-'+d);
+            if (allowedDivs.includes(d)) {
+                btn.classList.remove('disabled-btn'); btn.disabled = false;
+            } else {
+                btn.classList.add('disabled-btn'); btn.disabled = true;
+            }
+        });
+    }
+
+    function selectDivision(div) {
+      currentDivision = div;
+      const fullClassName = currentStandard + currentDivision;
+      document.getElementById('subjectTitleClass').textContent = "Class " + fullClassName;
+      
+      filterSubjectsForTeacher(fullClassName);
+      showPage('page2');
+    }
+
+    function filterSubjectsForTeacher(className) {
+        subjectsList.forEach(sub => {
+            let btnId = 'btn-sub-' + sub.replace(/\s+/g, '');
+            let btn = document.getElementById(btnId);
+            
+            if (loggedInUser === "Admin" || loggedInUser === "Viewer") {
+                btn.classList.add('disabled-btn'); btn.disabled = true;
+                return;
+            }
+
+            if (languageTeachers.includes(loggedInUser)) {
+                if (sub === 'Language 1' || sub === 'Language 2') {
+                    btn.classList.remove('disabled-btn'); btn.disabled = false;
+                } else {
+                    btn.classList.add('disabled-btn'); btn.disabled = true;
+                }
+                return;
+            }
+            
+            let assignedTeacher = teacherMapping[sub] && teacherMapping[sub][className] ? teacherMapping[sub][className] : null;
+            if (assignedTeacher === loggedInUser) {
+                btn.classList.remove('disabled-btn'); btn.disabled = false;
+            } else {
+                btn.classList.add('disabled-btn'); btn.disabled = true;
+            }
+        });
+    }
+
+    function selectSubject(sub) {
+      currentSubject = sub;
+      const fullClassName = currentStandard + currentDivision;
+      document.getElementById('marksTitle').textContent = "Class " + fullClassName;
+      document.getElementById('marksSubtitle').textContent = sub;
+      
+      showPage('page3');
+
+      let isEntryOpen = (currentExam === "First Term Exam") ? IS_FIRST_TERM_ENTRY_OPEN : IS_MID_TERM_ENTRY_OPEN;
+      
+      if (!isEntryOpen) {
+        document.getElementById('studentListContainer').innerHTML = "<div style='text-align:center; padding:40px 20px; font-size:22px; color:#ef4444; font-weight:bold; background:#fee2e2; border-radius:8px; margin-top:20px;'>Data entry is over for this exam.</div>";
+        document.getElementById('studentListContainer').style.display = "block";
+        document.getElementById('saveBtn').style.display = "none";
+        document.getElementById('editBtn').style.display = "none";
+        return; 
+      }
+      
+      document.getElementById('studentListContainer').style.display = "none";
+      document.getElementById('saveBtn').style.display = "none";
+      document.getElementById('editBtn').style.display = "none";
+      
+      const msg = document.getElementById('message');
+      msg.style.display="block"; msg.style.color = "#3b82f6"; msg.textContent = "Loading, Please Wait........";
+      
+      fetch(scriptURL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        body: JSON.stringify({ action: "getMarks", className: fullClassName })
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.status === "success") {
+           let subjectMarks = {};
+           data.data.forEach(row => {
+             let rowExam = row.exam || "First Mid Term Exam";
+             if (rowExam === "SSLC Mid Term Examination") rowExam = "First Mid Term Exam"; 
+             
+             if (rowExam === currentExam && row.subject === currentSubject) {
+               subjectMarks[row.student] = row.mark;
+             }
+           });
+           renderStudentListWithMarks(fullClassName, subjectMarks);
+        } else {
+           msg.style.display="block"; msg.textContent = "Failed to load marks. Starting fresh."; msg.style.color = "#b91c1c";
+           renderStudentListWithMarks(fullClassName, {});
+        }
+      })
+      .catch(error => {
+        msg.style.display="block"; msg.textContent = "Network error. Starting fresh."; msg.style.color = "#b91c1c";
+        renderStudentListWithMarks(fullClassName, {});
+      });
+    }
+
+    function renderStudentListWithMarks(className, existingMarks) {
+      const container = document.getElementById('studentListContainer');
+      container.innerHTML = ""; 
+      const students = studentsData[className];
+      let hasExistingMarks = Object.keys(existingMarks).length > 0;
+
+      students.forEach((student, index) => {
+        const row = document.createElement('div');
+        row.className = 'student-row';
+        let markVal = existingMarks[student] !== undefined ? existingMarks[student] : "";
+        let disabledAttr = hasExistingMarks ? "disabled" : "";
+        
+        row.innerHTML = `<div class="student-name">${index + 1}. ${student}</div>
+                         <input type="number" class="mark-input" placeholder="0" data-student-name="${student}" value="${markVal}" ${disabledAttr}>`;
+        container.appendChild(row);
+      });
+      
+      container.style.display = "block";
+      document.getElementById('message').style.display = "none";
+      
+      if (hasExistingMarks) {
+        document.getElementById('saveBtn').style.display = "none";
+        document.getElementById('editBtn').style.display = "block";
+      } else {
+        document.getElementById('saveBtn').style.display = "block";
+        document.getElementById('saveBtn').disabled = false;
+        document.getElementById('saveBtn').textContent = "Save All Marks";
+        document.getElementById('editBtn').style.display = "none";
+      }
+    }
+
+    function saveMarks() {
+      const msg = document.getElementById('message');
+      const btn = document.getElementById('saveBtn');
+      const fullClassName = currentStandard + currentDivision;
+      const inputs = document.querySelectorAll('.mark-input');
+      const marksToSave = [];
+      
+      const maxMarkAllowed = getMaxMark(currentExam, currentSubject, fullClassName);
+      let validationError = "";
+
+      for(let i=0; i<inputs.length; i++) {
+        let input = inputs[i];
+        input.style.borderColor = "#cbd5e1"; input.style.backgroundColor = "#f8fafc";
+        
+        const markValue = input.value.trim();
+        if (markValue !== "") {
+          let numValue = parseFloat(markValue);
+          if (numValue > maxMarkAllowed || numValue < 0) {
+            validationError = `Entry rejected: Mark cannot exceed ${maxMarkAllowed} for ${currentSubject}.`;
+            input.style.borderColor = "#ef4444"; input.style.backgroundColor = "#fee2e2";
+          } else {
+            marksToSave.push({ exam: currentExam, className: fullClassName, subject: currentSubject, student: input.dataset.studentName, mark: markValue });
+          }
+        }
+      }
+
+      if (validationError !== "") {
+        msg.style.display="block"; msg.style.color = "#b91c1c"; msg.style.backgroundColor = "#fee2e2"; msg.textContent = validationError;
+        return; 
+      }
+
+      if (marksToSave.length === 0) {
+        msg.style.display="block"; msg.style.color = "#b91c1c"; msg.style.backgroundColor = "#fee2e2"; msg.textContent = "No marks entered. Nothing to save.";
+        return;
+      }
+
+      btn.disabled = true; btn.textContent = "Saving...";
+      msg.textContent = ""; msg.style.backgroundColor = "transparent";
+
+      fetch(scriptURL, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify(marksToSave) })
+      .then(response => response.json())
+      .then(data => {
+        if (data.status === "error") {
+          msg.style.display="block"; msg.style.color = "#b91c1c"; msg.style.backgroundColor = "#fee2e2"; msg.textContent = data.message;
+          btn.disabled = false; btn.textContent = "Save All Marks";
+        } else {
+          msg.style.display="block"; msg.style.color = "#15803d"; msg.style.backgroundColor = "#dcfce3"; msg.textContent = data.message;
+          inputs.forEach(input => input.disabled = true);
+          btn.style.display = "none";
+          document.getElementById('editBtn').style.display = "block";
+        }
+      })
+      .catch(error => {
+        msg.style.display="block"; msg.style.color = "#b91c1c"; msg.style.backgroundColor = "#fee2e2"; msg.textContent = "Network Error.";
+        btn.disabled = false; btn.textContent = "Save All Marks";
+      });
+    }
+
+    function enableEditing() {
+      const inputs = document.querySelectorAll('.mark-input');
+      inputs.forEach(input => { input.disabled = false; input.style.borderColor = "#cbd5e1"; input.style.backgroundColor = "#ffffff"; });
+      document.getElementById('editBtn').style.display = "none";
+      const saveBtn = document.getElementById('saveBtn');
+      saveBtn.style.display = "block"; saveBtn.disabled = false; saveBtn.textContent = "Save All Marks";
+      document.getElementById('message').style.display = "none"; 
+    }
+
+    function getMaxMark(exam, subject, className) {
+        if (className.startsWith('8')) {
+            if (subject === 'Physics' || subject === 'Chemistry' || subject === 'Biology') return 20;
+            return 40;
+        }
+
+        if (exam === "First Term Exam") {
+            if (subject === 'English' || subject === 'Social Science' || subject === 'Mathematics') return 80;
+            return 40;
+        } else {
+            if (subject === 'Social Science' || subject === 'Mathematics') return 40;
+            if (subject === 'English') {
+                if (className.includes('A') || className.includes('F')) return 40; 
+                if (className.includes('B') || className.includes('H')) return 31; 
+                return 40;
+            }
+            return 25;
+        }
+    }
+
+    function getGrade(mark, maxMark, className) {
+        let percentage = Math.round((parseFloat(mark) / maxMark) * 100);
+        
+        if (className && className.startsWith('8')) {
+            if (percentage >= 80) return 'A';
+            if (percentage >= 60) return 'B';
+            if (percentage >= 40) return 'C';
+            if (percentage >= 30) return 'D';
+            return 'E';
+        } else {
+            if (percentage >= 90) return 'A+';
+            if (percentage >= 80) return 'A';
+            if (percentage >= 70) return 'B+';
+            if (percentage >= 60) return 'B';
+            if (percentage >= 50) return 'C+';
+            if (percentage >= 40) return 'C';
+            if (percentage >= 30) return 'D+';
+            if (percentage >= 20) return 'D';
+            return 'E';
+        }
+    }
+
+    function getStudentReportHtml(student, className, pivot) {
+        let html = `
+           <div style="font-weight: normal; text-align: center; color: #000000; margin: 0 0 5px 0; font-size: 18px;">SANSKRIT HS VATTOLI</div>
+           <div style="text-align: center; font-size: 14px; color: #000000; margin-bottom: 10px; text-transform: uppercase;">
+             Academic Year 2026-27<br><br><span style="font-weight: normal; font-size: 16px;">Progress Report</span>
+           </div>
+           <div style="font-weight: normal; font-size: 14px; margin-bottom: 10px; color: #000000; padding-bottom: 5px; display: flex; justify-content: space-between;">
+             <span style="flex:1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Name: <span style="color: #000000;">${student}</span></span>
+             <span style="white-space: nowrap; margin-left: 10px;">Class: <span style="color: #000000;">${className}</span></span>
+           </div>
+           
+           <div style="flex-grow: 1; display: flex; flex-direction: column;">
+             <table style="width: 100%; height: 100%; border-collapse: collapse; border: 2px solid #000000; margin-bottom: 10px;">
+               <thead>`;
+               
+          if (currentStandard === '10') {
+              html += `<tr><th rowspan="2" style="border-bottom: 2px solid #000000; padding: 6px; font-size: 13px; border: 1px solid #000000; text-align: left; padding-left: 8px; width: 38%; font-weight: normal; color:#000000;">Subject</th><th colspan="2" style="border-bottom: 1px solid #000000; padding: 6px; font-size: 13px; border: 1px solid #000000; font-weight: normal; color:#000000;">Mid Term</th><th colspan="2" style="border-bottom: 1px solid #000000; padding: 6px; font-size: 13px; border: 1px solid #000000; font-weight: normal; color:#000000;">First Term</th></tr>
+               <tr><th style="padding: 6px; font-size: 13px; border: 1px solid #000000; border-bottom: 2px solid #000000; font-weight: normal; color:#000000;">Score</th><th style="padding: 6px; font-size: 13px; border: 1px solid #000000; border-bottom: 2px solid #000000; font-weight: normal; color:#000000;">Grade</th><th style="padding: 6px; font-size: 13px; border: 1px solid #000000; border-bottom: 2px solid #000000; font-weight: normal; color:#000000;">Score</th><th style="padding: 6px; font-size: 13px; border: 1px solid #000000; border-bottom: 2px solid #000000; font-weight: normal; color:#000000;">Grade</th></tr></thead><tbody>`;
+          } else {
+              html += `<tr><th rowspan="2" style="border-bottom: 2px solid #000000; padding: 6px; font-size: 13px; border: 1px solid #000000; text-align: left; padding-left: 8px; width: 38%; font-weight: normal; color:#000000;">Subject</th><th colspan="2" style="border-bottom: 1px solid #000000; padding: 6px; font-size: 13px; border: 1px solid #000000; font-weight: normal; color:#000000;">First Term</th></tr>
+               <tr><th style="padding: 6px; font-size: 13px; border: 1px solid #000000; border-bottom: 2px solid #000000; font-weight: normal; color:#000000;">Score</th><th style="padding: 6px; font-size: 13px; border: 1px solid #000000; border-bottom: 2px solid #000000; font-weight: normal; color:#000000;">Grade</th></tr></thead><tbody>`;
+          }
+
+          subjectsList.forEach(sub => {
+             let ftMark = pivot[student].marks["First Term Exam"][sub] !== undefined ? pivot[student].marks["First Term Exam"][sub] : '-';
+             let ftGrade = ftMark !== '-' ? getGrade(ftMark, getMaxMark("First Term Exam", sub, className), className) : '-';
+             
+             if (currentStandard === '10') {
+                 let mtMark = pivot[student].marks["First Mid Term Exam"][sub] !== undefined ? pivot[student].marks["First Mid Term Exam"][sub] : '-';
+                 let mtGrade = mtMark !== '-' ? getGrade(mtMark, getMaxMark("First Mid Term Exam", sub, className), className) : '-';
+                 html += `<tr><td style="padding: 6px; font-size: 14px; border: 1px solid #000000; text-align:left; padding-left:8px; font-weight: normal; color:#000000;">${sub}</td><td style="padding: 6px; font-size: 14px; border: 1px solid #000000; text-align: center; font-weight: normal; color:#000000;">${mtMark}</td><td style="padding: 6px; font-size: 14px; border: 1px solid #000000; font-weight: normal; text-align: center; color:#000000;">${mtGrade}</td><td style="padding: 6px; font-size: 14px; border: 1px solid #000000; text-align: center; font-weight: normal; color:#000000;">${ftMark}</td><td style="padding: 6px; font-size: 14px; border: 1px solid #000000; font-weight: normal; text-align: center; color:#000000;">${ftGrade}</td></tr>`;
+             } else {
+                 html += `<tr><td style="padding: 6px; font-size: 14px; border: 1px solid #000000; text-align:left; padding-left:8px; font-weight: normal; color:#000000;">${sub}</td><td style="padding: 6px; font-size: 14px; border: 1px solid #000000; text-align: center; font-weight: normal; color:#000000;">${ftMark}</td><td style="padding: 6px; font-size: 14px; border: 1px solid #000000; font-weight: normal; text-align: center; color:#000000;">${ftGrade}</td></tr>`;
+             }
+          });
+          
+          html += `</tbody></table>
+           </div>
+           <div style="margin-top: auto; text-align: right; margin-bottom: 5px;">
+             <div style="display: inline-block; text-align: center;">
+               <div style="font-size: 14px; font-weight: normal; color: #000000; margin-top: 15px;">Signature of Class Teacher</div>
+             </div>
+           </div>`;
+             
+          return html;
+    }
+
+    // --- LOGIC FOR VIEWING/PRINTING REPORTS ---
+    function selectReportType(type) {
+      currentReportType = type;
+      showPage('page4a');
+    }
+
+    function goBackFromReports() {
+        if (currentStandard === '10') {
+            showPage('page0');
+        } else {
+            showPage('pageClassSelect');
+        }
+    }
+
+    function goBackFromReportsView() {
+        if (currentReportType === 'schoolTop10' || currentReportType === 'specialCare') {
+            showPage('page4');
+        } else {
+            showPage('page4a');
+        }
+    }
+
+    function showSpecialCareSubjectSelect() {
+        showPage('page4b');
+    }
+
+    function fetchStandardMarksAndGenerate(mode, subject = null) {
+        currentReportType = mode;
+        currentReportClass = currentStandard + (mode === 'schoolTop10' ? '_SchoolTop10' : '_' + subject.replace(/\s+/g, '') + '_SpecialCare');
+        
+        let titleText = mode === 'schoolTop10' ? `Class ${currentStandard} - School Top 10` : `Class ${currentStandard} - Special Care (${subject})`;
+        document.getElementById('reportTitle').textContent = titleText;
+        
+        showPage('page5');
+        document.getElementById('loadingIndicator').style.display = 'block';
+        document.getElementById('tableWrapper').style.display = 'none';
+        document.getElementById('downloadPdfBtn').style.display = 'none';
+        document.getElementById('downloadExcelBtn').style.display = 'none';
+
+        fetch(scriptURL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+            body: JSON.stringify({ action: "getAllMarks" })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === "success") { 
+                processStandardData(data.data, mode, subject); 
+            } else { 
+                document.getElementById('loadingIndicator').textContent = "Error loading data."; 
+            }
+        })
+        .catch(error => { document.getElementById('loadingIndicator').textContent = "Network error."; });
+    }
+
+    function processStandardData(fetchedData, mode, subject) {
+        let standardStudents = [];
+        ['A','B','C','D','E','F','G','H'].forEach(div => {
+            let cls = currentStandard + div;
+            if(studentsData[cls]) {
+                studentsData[cls].forEach(stu => {
+                    standardStudents.push({ name: stu, cls: cls, marks: {}, total: 0 });
+                });
+            }
+        });
+
+        let validData = fetchedData.filter(row => {
+            let ex = row.exam || "First Mid Term Exam";
+            if (ex === "SSLC Mid Term Examination") ex = "First Mid Term Exam";
+            return ex === currentExam && row.className.startsWith(currentStandard);
+        });
+
+        validData.forEach(row => {
+            let s = standardStudents.find(x => x.name === row.student && x.cls === row.className);
+            if(s) {
+                let parsedMark = parseFloat(row.mark);
+                let mark = isNaN(parsedMark) ? 0 : Math.round(parsedMark);
+                s.marks[row.subject] = mark;
+                s.total += mark;
+            }
+        });
+
+        let displayStudents = [];
+
+        if (mode === 'schoolTop10') {
+            displayStudents = standardStudents.filter(s => {
+                if (s.total === 0) return false;
+                for (let i = 0; i < subjectsList.length; i++) {
+                    let sub = subjectsList[i];
+                    let mark = s.marks[sub];
+                    if (mark === undefined || mark === '' || mark === null) return false; 
+                    let maxMark = getMaxMark(currentExam, sub, s.cls);
+                    if (Math.round((parseFloat(mark) / maxMark) * 100) < 30) return false; 
+                }
+                return true;
+            }).sort((a, b) => b.total - a.total).slice(0, 10);
+        } else if (mode === 'specialCare') {
+            displayStudents = standardStudents.filter(s => {
+                let mark = s.marks[subject];
+                if (mark === undefined || mark === '' || mark === null) return false; 
+                let maxMark = getMaxMark(currentExam, subject, s.cls);
+                let pct = Math.round((parseFloat(mark) / maxMark) * 100);
+                return pct < 30;
+            }).sort((a, b) => a.cls.localeCompare(b.cls) || a.name.localeCompare(b.name));
+        }
+
+        buildStandardTable(displayStudents, mode, subject);
+    }
+
+    function buildStandardTable(displayStudents, mode, subject) {
+        let titleSuffix = mode === 'schoolTop10' ? " - School Top 10" : ` - Special Care (${subject})`;
+        let html = '<div style="padding: 10px; background: white;"><h2 style="font-weight: normal; color: black; text-align: center; margin-bottom: 20px;">SANSKRIT HS VATTOLI - Class ' + currentStandard + titleSuffix + '</h2>';
+        html += '<table class="marks-table" style="width: 100%; border-collapse: collapse; border: 2px solid #000; color: black;"><thead><tr>';
+        html += '<th style="font-weight: normal; color: black; border: 1px solid #000; padding: 6px;">No.</th>';
+        html += '<th style="font-weight: normal; color: black; border: 1px solid #000; padding: 6px;">Student Name</th>';
+        html += '<th style="font-weight: normal; color: black; border: 1px solid #000; padding: 6px;">Class</th>';
+        
+        subjectsList.forEach(sub => html += `<th style="font-weight: normal; color: black; border: 1px solid #000; padding: 6px;">${sub}</th>`);
+        html += '<th style="font-weight: normal; color: black; border: 1px solid #000; padding: 6px; background-color: #f8fafc;">Total</th></tr></thead><tbody>';
+
+        if(displayStudents.length === 0) {
+            html += `<tr><td colspan="${subjectsList.length + 4}" style="border: 1px solid #000; padding: 10px; color: black; text-align: center;">No students found matching this criteria.</td></tr>`;
+        } else {
+            displayStudents.forEach((student, index) => {
+              html += `<tr>`;
+              html += `<td style="border: 1px solid #000; padding: 6px; color: black; text-align: center;">${index + 1}</td>`;
+              html += `<td style="border: 1px solid #000; padding: 6px; color: black; text-align: left; padding-left: 8px;">${student.name}</td>`;
+              html += `<td style="border: 1px solid #000; padding: 6px; color: black; text-align: center;">${student.cls}</td>`;
+              
+              subjectsList.forEach(sub => {
+                let mark = student.marks[sub] !== undefined ? student.marks[sub] : '-'; 
+                let bg = (mode === 'specialCare' && sub === subject) ? '#fee2e2' : 'transparent';
+                html += `<td style="border: 1px solid #000; padding: 6px; color: black; background-color: ${bg};">${mark}</td>`;
+              });
+              html += `<td style="border: 1px solid #000; padding: 6px; color: black; font-weight: normal; background-color: #f8fafc;">${student.total}</td></tr>`;
+            });
+        }
+        html += '</tbody></table></div>';
+
+        document.getElementById('tableWrapper').innerHTML = html;
+        document.getElementById('loadingIndicator').style.display = 'none';
+        document.getElementById('tableWrapper').style.display = 'block';
+        document.getElementById('downloadPdfBtn').style.display = 'inline-block';
+        document.getElementById('downloadExcelBtn').style.display = 'inline-block';
+    }
+
+    function fetchAndShowReport(divLetter) {
+      let className = currentStandard + divLetter;
+      currentReportClass = className;
+      
+      let titleSuffix = currentReportType === 'top10' ? " (Top 10 Students)" : "";
+      if (currentReportType === 'progress') titleSuffix = " Progress Reports";
+      
+      document.getElementById('reportTitle').textContent = "Class " + className + titleSuffix;
+      showPage('page5');
+      document.getElementById('loadingIndicator').style.display = 'block';
+      document.getElementById('tableWrapper').style.display = 'none';
+      document.getElementById('downloadPdfBtn').style.display = 'none';
+      document.getElementById('downloadExcelBtn').style.display = 'none';
+      
+      fetch(scriptURL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        body: JSON.stringify({ action: "getMarks", className: className })
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.status === "success") { buildTable(className, data.data); } 
+        else { document.getElementById('loadingIndicator').textContent = "Error loading data."; }
+      })
+      .catch(error => { document.getElementById('loadingIndicator').textContent = "Network error."; });
+    }
+
+    function buildTable(className, fetchedData) {
+      let students = studentsData[className];
+      let pivot = {};
+      students.forEach(s => { 
+        pivot[s] = { total: 0, marks: { "First Term Exam": {}, "First Mid Term Exam": {} } }; 
+      }); 
+      
+      fetchedData.forEach(row => {
+        if(pivot[row.student]) {
+          let ex = row.exam || "First Mid Term Exam"; 
+          if (ex === "SSLC Mid Term Examination") ex = "First Mid Term Exam"; 
+
+          let parsedMark = parseFloat(row.mark);
+          let mark = isNaN(parsedMark) ? 0 : Math.round(parsedMark);
+          
+          if(pivot[row.student].marks[ex]) {
+             pivot[row.student].marks[ex][row.subject] = mark;
+             if (ex === currentExam) pivot[row.student].total += mark;
+          }
+        }
+      });
+
+      let displayStudents = [];
+      if (currentReportType === 'top10') {
+        displayStudents = [...students].filter(a => {
+             if (pivot[a].total === 0) return false;
+             for (let i = 0; i < subjectsList.length; i++) {
+                 let sub = subjectsList[i];
+                 let mark = pivot[a].marks[currentExam][sub] !== undefined ? pivot[a].marks[currentExam][sub] : 0;
+                 let maxMark = getMaxMark(currentExam, sub, className);
+                 if (Math.round((parseFloat(mark) / maxMark) * 100) < 30) return false; 
+             }
+             return true;
+          }).sort((a, b) => pivot[b].total - pivot[a].total).slice(0, 10);
+      } else {
+        displayStudents = students;
+      }
+
+      if (currentReportType === 'progress') {
+        let previewHtml = `<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; padding: 10px;">`;
+        let pdfHtml = `<div style="width: 297mm; background: white; color: black; font-family: sans-serif;">`;
+        
+        for (let i = 0; i < displayStudents.length; i += 2) {
+          pdfHtml += `<div style="display: flex; width: 297mm; height: 210mm; page-break-after: always; box-sizing: border-box;">`;
+          
+          for (let j = 0; j < 2; j++) {
+             if (i + j < displayStudents.length) {
+                let student = displayStudents[i + j];
+                let blockHtml = getStudentReportHtml(student, className, pivot);
+                
+                previewHtml += `<div style="border: 1px solid #cbd5e1; padding: 15px; border-radius: 8px; background: #fff; display: flex; flex-direction: column;">
+                                    ${blockHtml}
+                                </div>`;
+                
+                let borderRight = (j === 0) ? 'border-right: 1px dashed #ccc;' : '';
+                pdfHtml += `<div style="width: 148.5mm; height: 210mm; padding: 15mm; box-sizing: border-box; ${borderRight} display: flex; flex-direction: column;">
+                                ${blockHtml}
+                            </div>`;
+             } else {
+                pdfHtml += `<div style="width: 148.5mm; height: 210mm; box-sizing: border-box;"></div>`;
+             }
+          }
+          pdfHtml += `</div>`;
+        }
+        
+        previewHtml += `</div>`;
+        pdfHtml += `</div>`;
+        
+        document.getElementById('tableWrapper').innerHTML = previewHtml;
+        document.getElementById('pdfDownloadArea').innerHTML = pdfHtml;
+
+        document.getElementById('loadingIndicator').style.display = 'none';
+        document.getElementById('tableWrapper').style.display = 'block';
+        document.getElementById('downloadPdfBtn').style.display = 'inline-block';
+        document.getElementById('downloadExcelBtn').style.display = 'none';
+
+      } else {
+        let titleSuffix = currentReportType === 'top10' ? " (Top 10 Students)" : "";
+        let html = '<div style="padding: 10px; background: white;"><h2 style="font-weight: normal; color: black; text-align: center; margin-bottom: 20px;">SANSKRIT HS VATTOLI - Class ' + className + titleSuffix + '</h2>';
+        html += '<table class="marks-table" style="width: 100%; border-collapse: collapse; border: 2px solid #000; color: black;"><thead><tr><th style="font-weight: normal; color: black; border: 1px solid #000; padding: 6px;">Student Name</th>';
+        
+        subjectsList.forEach(sub => html += `<th style="font-weight: normal; color: black; border: 1px solid #000; padding: 6px;">${sub}</th>`);
+        html += '<th style="font-weight: normal; color: black; border: 1px solid #000; padding: 6px; background-color: #f8fafc;">Total</th></tr></thead><tbody>';
+
+        displayStudents.forEach((student, index) => {
+          let rankOrNo = currentReportType === 'top10' ? (index + 1) : (students.indexOf(student) + 1);
+          html += `<tr><td style="border: 1px solid #000; padding: 6px; color: black; text-align: left; padding-left: 8px;">${rankOrNo}. ${student}</td>`;
+          subjectsList.forEach(sub => {
+            let mark = pivot[student].marks[currentExam][sub] !== undefined ? pivot[student].marks[currentExam][sub] : '-'; 
+            html += `<td style="border: 1px solid #000; padding: 6px; color: black;">${mark}</td>`;
+          });
+          html += `<td style="border: 1px solid #000; padding: 6px; color: black; font-weight: normal; background-color: #f8fafc;">${pivot[student].total}</td></tr>`;
+        });
+        html += '</tbody></table></div>';
+
+        document.getElementById('tableWrapper').innerHTML = html;
+        document.getElementById('loadingIndicator').style.display = 'none';
+        document.getElementById('tableWrapper').style.display = 'block';
+
+        if (currentReportType === 'top10') {
+          document.getElementById('downloadPdfBtn').style.display = 'inline-block';
+          document.getElementById('downloadExcelBtn').style.display = 'none';
+        } else {
+          document.getElementById('downloadPdfBtn').style.display = 'inline-block';
+          document.getElementById('downloadExcelBtn').style.display = 'inline-block';
+        }
+      }
+    }
+
+    async function downloadPDF() {
+      let btn = document.getElementById('downloadPdfBtn');
+      let originalText = btn.textContent;
+      btn.disabled = true;
+
+      try {
+          const { jsPDF } = window.jspdf;
+
+          if (currentReportType === 'progress') {
+              let doc = new jsPDF('l', 'mm', 'a4'); 
+              let downloadArea = document.getElementById('pdfDownloadArea');
+              downloadArea.style.left = '0'; 
+              
+              let pages = document.querySelectorAll('#pdfDownloadArea > div > div');
+              
+              for (let i = 0; i < pages.length; i++) {
+                  btn.textContent = `Generating PDF (Page ${i+1} of ${pages.length})... ⏳`;
+                  
+                  let canvas = await html2canvas(pages[i], { 
+                      scale: 1.5, 
+                      useCORS: true,
+                      logging: false
+                  });
+                  
+                  let imgData = canvas.toDataURL('image/jpeg', 0.95);
+                  if (i > 0) doc.addPage();
+                  doc.addImage(imgData, 'JPEG', 0, 0, 297, 210);
+              }
+
+              downloadArea.style.left = '-9999px'; 
+              doc.save('Progress_Report_' + currentReportClass + '.pdf');
+
+          } else {
+              btn.textContent = "Generating PDF... ⏳";
+              
+              let sourceElement = document.getElementById('tableWrapper');
+              let oldBg = sourceElement.style.background;
+              sourceElement.style.background = '#ffffff';
+
+              let opt = {
+                  margin:       10,
+                  filename:     currentReportType + '_' + currentReportClass + '.pdf',
+                  image:        { type: 'jpeg', quality: 0.98 },
+                  html2canvas:  { scale: 2, useCORS: true },
+                  jsPDF:        { unit: 'mm', format: 'a4', orientation: 'landscape' },
+                  pagebreak:    { mode: 'css', avoid: 'tr' }
+              };
+
+              html2pdf().set(opt).from(sourceElement).save().then(() => {
+                  sourceElement.style.background = oldBg;
+                  btn.textContent = originalText;
+                  btn.disabled = false;
+              }).catch(e => {
+                  console.error(e);
+                  btn.textContent = originalText;
+                  btn.disabled = false;
+              });
+              
+              return; 
+          }
+      } catch(e) {
+          console.error(e);
+      }
+
+      btn.textContent = originalText;
+      btn.disabled = false;
+    }
+
+    function downloadExcel() {
+      const workbook = XLSX.utils.table_to_book(document.querySelector('#tableWrapper table'), {sheet: "Class Report"});
+      XLSX.writeFile(workbook, 'Report_' + currentReportClass + '_' + currentExam.replace(/ /g, '_') + '.xlsx');
+    }
+  </script>
 </body>
 </html>
