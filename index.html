@@ -45,11 +45,47 @@
     .list-grid { display: grid; grid-template-columns: 1fr; gap: 12px; margin-top: 15px; }
     
     /* Inputs */
-    select, input[type="password"], input[type="text"], input[type="number"], input[type="date"] {
+    input[type="password"], input[type="text"], input[type="number"] {
         width: 100%; padding: 14px; margin-bottom: 15px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 16px; box-sizing: border-box; background-color: #f8fafc;
     }
-    select:focus, input:focus { outline: none; border-color: #3b82f6; background-color: #ffffff; }
+    input:focus { outline: none; border-color: #3b82f6; background-color: #ffffff; }
 
+    /* CUSTOM IN-APP DROPDOWN SYSTEM */
+    .custom-select-container { position: relative; width: 100%; margin-bottom: 15px; }
+    .custom-select-display {
+        width: 100%; padding: 14px; border: 1px solid #cbd5e1; border-radius: 8px; 
+        font-size: 16px; background-color: #f8fafc; color: #94a3b8; cursor: pointer;
+        box-sizing: border-box; text-align: left; display: flex; justify-content: space-between; align-items: center;
+        transition: 0.2s;
+    }
+    .custom-select-display.has-value { color: #1e293b; background-color: #ffffff; border-color: #3b82f6; }
+    .custom-select-display::after { content: '▼'; font-size: 12px; color: #94a3b8; margin-left: 10px; }
+    .custom-select-options {
+        position: absolute; top: 100%; left: 0; right: 0; background: #ffffff; 
+        border: 1px solid #cbd5e1; border-radius: 8px; margin-top: 4px; z-index: 1000;
+        max-height: 250px; overflow-y: auto; box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        display: none;
+    }
+    .custom-select-options.show { display: block; animation: fadeIn 0.2s; }
+    .custom-select-option { padding: 12px 14px; font-size: 16px; color: #334155; cursor: pointer; border-bottom: 1px solid #f1f5f9; }
+    .custom-select-option:last-child { border-bottom: none; }
+    .custom-select-option:hover { background-color: #f1f5f9; color: #3b82f6; font-weight:bold; }
+
+    /* Custom Calendar Styles */
+    .calendar { border: 1px solid #cbd5e1; border-radius: 8px; background: white; padding: 15px; margin-bottom: 15px; box-shadow: 0 2px 5px rgba(0,0,0,0.02); }
+    .calendar-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; font-weight: bold; font-size: 18px; color: #1e293b; }
+    .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px; text-align: center; }
+    .calendar-day-name { font-size: 13px; color: #64748b; font-weight: bold; padding-bottom: 5px; border-bottom: 1px solid #e2e8f0; margin-bottom: 5px; }
+    .calendar-day { padding: 10px 0; border-radius: 6px; cursor: pointer; font-size: 15px; transition: 0.2s; border: 1px solid transparent; color: #334155; }
+    .calendar-day:hover:not(.empty):not(.disabled) { background-color: #f1f5f9; border-color: #cbd5e1; }
+    .calendar-day.weekend { background-color: #dcfce3; color: #15803d; font-weight: bold; }
+    .calendar-day.selected { background-color: #8b5cf6 !important; color: white !important; font-weight: bold; border-color: #7c3aed !important; box-shadow: 0 2px 4px rgba(139, 92, 246, 0.3); }
+    .calendar-day.empty { cursor: default; }
+    .calendar-day.disabled { color: #cbd5e1; cursor: not-allowed; background-color: #f8fafc; text-decoration: line-through; }
+    
+    .date-display-box { width: 100%; padding: 14px; margin-bottom: 15px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 16px; box-sizing: border-box; background-color: #f8fafc; text-align: center; color: #64748b; font-weight: bold; transition: 0.3s; }
+    .date-display-box.active { color: #8b5cf6; border-color: #8b5cf6; background-color: #f5f3ff; }
+    
     /* Button Styles */
     button { padding: 15px; font-size: 16px; font-weight: 600; cursor: pointer; border: none; border-radius: 8px; transition: all 0.15s ease; position: relative; }
     
@@ -142,15 +178,19 @@
       
       <div id="loginStep1">
         <label style="font-weight:bold; color:#475569; display:block; margin-bottom:5px;">Select Name</label>
-        <select id="teacherSelect">
-            <option value="" disabled selected hidden>Select Your Name</option>
-        </select>
+        
+        <!-- Custom Teacher Dropdown -->
+        <div class="custom-select-container">
+            <div class="custom-select-display" id="display_teacherSelect" onclick="toggleCustomSelect('teacherSelect')">Select Your Name</div>
+            <div class="custom-select-options" id="options_teacherSelect"></div>
+            <input type="hidden" id="teacherSelect">
+        </div>
         
         <label style="font-weight:bold; color:#475569; display:block; margin-bottom:5px;">Enter PIN</label>
         <input type="password" id="teacherPin" placeholder="Enter PIN (Default: 1234)" pattern="[0-9]*" inputmode="numeric">
         
         <button class="action-btn" id="loginBtn" onclick="attemptLogin()">Login</button>
-        <div id="loginMessage"></div>
+        <div id="loginMessage" style="display:none; color:#ef4444; background:#fee2e2;"></div>
       </div>
       
       <div id="loginStep2" style="display: none; text-align: center;">
@@ -162,7 +202,7 @@
         
         <button class="action-btn" style="border-color:#10b981; color:#10b981;" id="saveNewPinBtn" onclick="submitNewPin()">Save New PIN & Login</button>
         <button class="back-btn" style="margin-top:15px; width:100%; text-align:center;" onclick="cancelPinSetup()">Cancel</button>
-        <div id="setupPinMessage"></div>
+        <div id="setupPinMessage" style="display:none; color:#ef4444; background:#fee2e2;"></div>
       </div>
     </div>
 
@@ -174,7 +214,7 @@
       <label style="font-weight:bold; color:#475569; display:block; margin-bottom:5px;">Admin PIN</label>
       <input type="password" id="adminPinInput" placeholder="Enter Admin PIN">
       <button class="action-btn" style="border-color:#dc2626; color:#dc2626;" id="adminAuthBtn" onclick="verifyAdmin()">Enter Console</button>
-      <div id="adminAuthMessage"></div>
+      <div id="adminAuthMessage" style="display:none; color:#ef4444; background:#fee2e2;"></div>
     </div>
 
     <!-- PAGE ADMIN DASHBOARD -->
@@ -185,16 +225,19 @@
       <hr class="divider">
       
       <label style="font-weight:bold; color:#475569; display:block; margin-bottom:5px;">Select Teacher</label>
-      <select id="adminTeacherSelect">
-          <option value="" disabled selected hidden>Select Teacher</option>
-      </select>
+      <!-- Custom Admin Teacher Dropdown -->
+      <div class="custom-select-container">
+          <div class="custom-select-display" id="display_adminTeacherSelect" onclick="toggleCustomSelect('adminTeacherSelect')">Select Teacher</div>
+          <div class="custom-select-options" id="options_adminTeacherSelect"></div>
+          <input type="hidden" id="adminTeacherSelect">
+      </div>
       
       <label style="font-weight:bold; color:#475569; display:block; margin-bottom:5px;">Assign New PIN</label>
       <input type="password" id="newTeacherPin" placeholder="Enter new PIN (e.g. 1234)" pattern="[0-9]*" inputmode="numeric">
       
       <button class="action-btn" id="setPinBtn" onclick="setTeacherPin()">Save Custom PIN</button>
       <button class="nav-btn" style="width: 100%; border-color:#f59e0b; color:#d97706; margin-top:15px;" onclick="resetToDefaultPin()">Reset to Default (1234)</button>
-      <div id="adminDashMessage"></div>
+      <div id="adminDashMessage" style="display:none; color:#ef4444; background:#fee2e2;"></div>
 
       <hr class="divider">
       <div class="list-grid" style="margin-top:15px;">
@@ -254,14 +297,20 @@
          <div id="myBookingsList"></div>
       </div>
       
-      <div class="button-grid" style="grid-template-columns: 1fr;">
-          <input type="date" id="bookDate" onchange="renderBookings()" style="margin-bottom: 0;">
-          <select id="bookClass" onchange="renderBookings()" style="margin-bottom: 0;">
-              <option value="" disabled selected hidden>Select Class</option>
-          </select>
+      <!-- Custom Booking Calendar -->
+      <div id="bookingDateDisplay" class="date-display-box">Select Date</div>
+      <div id="bookingCalendar" class="calendar"></div>
+      <input type="hidden" id="bookDate">
+      
+      <!-- Custom Booking Class Select -->
+      <div class="custom-select-container">
+          <div class="custom-select-display" id="display_bookClass" onclick="toggleCustomSelect('bookClass')">Select Class</div>
+          <div class="custom-select-options" id="options_bookClass"></div>
+          <input type="hidden" id="bookClass">
       </div>
       
       <div id="bookingLoading" style="display:none; text-align:center; color:#8b5cf6; font-weight:bold; margin: 20px 0;">Syncing with Server... ⏳</div>
+      <div id="bookingMsg" style="display:none; text-align:center; color:#ef4444; font-weight:bold; margin: 10px 0;"></div>
       <div id="slotsContainer" style="margin-top: 20px;"></div>
       
       <hr class="divider">
@@ -276,25 +325,32 @@
       <h1 class="school-name">Timetables</h1>
       <h3 style="color:#8b5cf6; margin-top: -5px; margin-bottom: 20px;">Generate PDF Timetable</h3>
       
-      <input type="date" id="ttDate" style="margin-bottom: 15px;">
+      <!-- Custom TT Calendar -->
+      <div id="ttDateDisplay" class="date-display-box">Select Date</div>
+      <div id="ttCalendar" class="calendar"></div>
       
       <div style="background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 8px; padding: 15px; margin-bottom: 15px;">
           <h4 style="margin-top: 0; margin-bottom: 10px; color:#334155; text-align:center;">Classwise Timetable</h4>
-          <select id="ttClassSelect" style="margin-bottom: 10px;">
-              <option value="" disabled selected hidden>Select Class</option>
-              <option value="10">Class 10 (All Divisions)</option>
-              <option value="9">Class 9 (All Divisions)</option>
-              <option value="8">Class 8 (All Divisions)</option>
-          </select>
+          
+          <div class="custom-select-container" style="margin-bottom: 10px;">
+              <div class="custom-select-display" id="display_ttClassSelect" onclick="toggleCustomSelect('ttClassSelect')">Select Class</div>
+              <div class="custom-select-options" id="options_ttClassSelect"></div>
+              <input type="hidden" id="ttClassSelect">
+          </div>
+          
           <button id="btnGenClass" class="action-btn" style="border-color:#8b5cf6; color:#8b5cf6; margin-top:5px;" onclick="fetchAndGenerateTimetable('classwise')">Generate Classwise</button>
           <div id="ttClassMsg" style="text-align:center; color:#ef4444; font-weight:bold; margin-top: 10px; display:none;"></div>
       </div>
       
       <div style="background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 8px; padding: 15px;">
           <h4 style="margin-top: 0; margin-bottom: 10px; color:#334155; text-align:center;">Divisionwise Timetable</h4>
-          <select id="ttDivSelect" style="margin-bottom: 10px;">
-              <option value="" disabled selected hidden>Select Division</option>
-          </select>
+          
+          <div class="custom-select-container" style="margin-bottom: 10px;">
+              <div class="custom-select-display" id="display_ttDivSelect" onclick="toggleCustomSelect('ttDivSelect')">Select Division</div>
+              <div class="custom-select-options" id="options_ttDivSelect"></div>
+              <input type="hidden" id="ttDivSelect">
+          </div>
+          
           <button id="btnGenDiv" class="action-btn" style="border-color:#8b5cf6; color:#8b5cf6; margin-top:5px;" onclick="fetchAndGenerateTimetable('divisionwise')">Generate Divisionwise</button>
           <div id="ttDivMsg" style="text-align:center; color:#ef4444; font-weight:bold; margin-top: 10px; display:none;"></div>
       </div>
@@ -310,25 +366,26 @@
       
       <div style="background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 8px; padding: 15px; margin-bottom: 15px;">
           <h4 style="margin-top: 0; margin-bottom: 10px; color:#334155; text-align:center;">English Medium (Div A - C)</h4>
-          <select id="emDivideSelect" style="margin-bottom: 10px;">
-              <option value="" disabled selected hidden>Select number of classes</option>
-              <option value="2">2 Divisions</option>
-              <option value="3">3 Divisions</option>
-              <option value="4">4 Divisions</option>
-          </select>
+          
+          <div class="custom-select-container" style="margin-bottom: 10px;">
+              <div class="custom-select-display" id="display_emDivideSelect" onclick="toggleCustomSelect('emDivideSelect')">Select number of classes</div>
+              <div class="custom-select-options" id="options_emDivideSelect"></div>
+              <input type="hidden" id="emDivideSelect">
+          </div>
+          
           <button id="btnDivEM" class="action-btn" style="border-color:#ec4899; color:#ec4899; margin-top:5px;" onclick="generateDivisionSplit('EM')">Divide English Medium</button>
           <div id="divEmMsg" style="text-align:center; color:#ef4444; font-weight:bold; margin-top: 10px; display:none;"></div>
       </div>
       
       <div style="background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 8px; padding: 15px;">
           <h4 style="margin-top: 0; margin-bottom: 10px; color:#334155; text-align:center;">Malayalam Medium (Div D - H)</h4>
-          <select id="mmDivideSelect" style="margin-bottom: 10px;">
-              <option value="" disabled selected hidden>Select number of classes</option>
-              <option value="4">4 Divisions</option>
-              <option value="5">5 Divisions</option>
-              <option value="6">6 Divisions</option>
-              <option value="7">7 Divisions</option>
-          </select>
+          
+          <div class="custom-select-container" style="margin-bottom: 10px;">
+              <div class="custom-select-display" id="display_mmDivideSelect" onclick="toggleCustomSelect('mmDivideSelect')">Select number of classes</div>
+              <div class="custom-select-options" id="options_mmDivideSelect"></div>
+              <input type="hidden" id="mmDivideSelect">
+          </div>
+          
           <button id="btnDivMM" class="action-btn" style="border-color:#ec4899; color:#ec4899; margin-top:5px;" onclick="generateDivisionSplit('MM')">Divide Malayalam Medium</button>
           <div id="divMmMsg" style="text-align:center; color:#ef4444; font-weight:bold; margin-top: 10px; display:none;"></div>
       </div>
@@ -342,11 +399,12 @@
       <h1 class="school-name">Entry Status</h1>
       
       <label style="font-weight:bold; color:#475569; display:block; margin-top:15px; margin-bottom:5px;">Select Exam</label>
-      <select id="statusExamSelect" onchange="fetchStatus()">
-          <option value="" disabled selected hidden>Select Exam</option>
-          <option value="First Term Exam">First Term Exam</option>
-          <option value="First Mid Term Exam">First Mid Term Exam (Class 10)</option>
-      </select>
+      
+      <div class="custom-select-container">
+          <div class="custom-select-display" id="display_statusExamSelect" onclick="toggleCustomSelect('statusExamSelect')">Select Exam</div>
+          <div class="custom-select-options" id="options_statusExamSelect"></div>
+          <input type="hidden" id="statusExamSelect">
+      </div>
       
       <div id="statusLoading" style="display:none; text-align:center; color:#3b82f6; font-weight:bold; margin: 20px 0;">Scanning all classes... ⏳</div>
       <div id="statusListContainer" style="background:#fff; border:1px solid #cbd5e1; border-radius:8px; padding:15px; max-height:400px; overflow-y:auto; margin-bottom: 20px; margin-top:10px;">
@@ -416,7 +474,7 @@
       <div id="studentListContainer"></div>
       <button id="saveBtn" class="action-btn" onclick="saveMarks()">Save All Marks</button>
       <button id="editBtn" class="edit-btn" onclick="enableEditing()">✏️ Edit Marks</button>
-      <div id="message"></div>
+      <div id="message" style="display:none; margin-top:10px;"></div>
       <div class="developer-credit">Designed & Developed by GRR</div>
     </div>
 
@@ -517,6 +575,53 @@
   <div id="pdfDownloadArea"></div>
 
   <script>
+    // --- CUSTOM DROPDOWN ENGINE ---
+    function toggleCustomSelect(id) {
+        let opts = document.getElementById('options_' + id);
+        let isShowing = opts.classList.contains('show');
+        closeAllCustomSelects('');
+        if (!isShowing) opts.classList.add('show');
+    }
+
+    function closeAllCustomSelects(exceptId) {
+        document.querySelectorAll('.custom-select-options').forEach(el => {
+            if (el.id !== 'options_' + exceptId) el.classList.remove('show');
+        });
+    }
+
+    document.addEventListener('click', function(e) {
+        if (!e.target.closest('.custom-select-container')) {
+            closeAllCustomSelects('');
+        }
+    });
+
+    function selectCustomOption(selectId, value, text, onChangeHandler) {
+        let hiddenInput = document.getElementById(selectId);
+        hiddenInput.value = value;
+        let display = document.getElementById('display_' + selectId);
+        display.textContent = text;
+        display.classList.add('has-value');
+        closeAllCustomSelects('');
+        if (onChangeHandler && typeof window[onChangeHandler] === 'function') {
+            window[onChangeHandler]();
+        }
+    }
+
+    function updateCustomSelectOptions(selectId, optionsArray, defaultText, onChangeHandler) {
+        let container = document.getElementById('options_' + selectId);
+        let html = '';
+        optionsArray.forEach(opt => {
+            let val = opt.value.replace(/'/g, "\\'");
+            let txt = opt.text.replace(/'/g, "\\'");
+            html += `<div class="custom-select-option" onclick="selectCustomOption('${selectId}', '${val}', '${txt}', '${onChangeHandler}')">${opt.text}</div>`;
+        });
+        container.innerHTML = html;
+        document.getElementById(selectId).value = "";
+        let display = document.getElementById('display_' + selectId);
+        display.textContent = defaultText;
+        display.classList.remove('has-value');
+    }
+
     // --- MANUAL ENTRY MASTER SWITCHES ---
     const IS_FIRST_TERM_ENTRY_OPEN = true;
     const IS_MID_TERM_ENTRY_OPEN = false; 
@@ -643,23 +748,16 @@
       }
       const sortedTeachers = Array.from(teacherSet).sort();
       
-      const selectLogin = document.getElementById('teacherSelect');
-      const selectAdmin = document.getElementById('adminTeacherSelect');
+      let teacherOptions = [];
+      let adminOptions = [{value: "Admin", text: "Admin (Change my PIN)"}];
       
-      selectLogin.innerHTML = '<option value="" disabled selected hidden>Select Your Name</option>';
-      selectAdmin.innerHTML = '<option value="" disabled selected hidden>Select Teacher</option>';
-      
-      let adminOpt = document.createElement('option'); 
-      adminOpt.value = "Admin"; 
-      adminOpt.textContent = "Admin (Change my PIN)";
-      selectAdmin.appendChild(adminOpt);
-
       sortedTeachers.forEach(t => {
-          let opt1 = document.createElement('option'); opt1.value = t; opt1.textContent = t;
-          let opt2 = document.createElement('option'); opt2.value = t; opt2.textContent = t;
-          selectLogin.appendChild(opt1);
-          selectAdmin.appendChild(opt2);
+          teacherOptions.push({value: t, text: t});
+          adminOptions.push({value: t, text: t});
       });
+      
+      updateCustomSelectOptions('teacherSelect', teacherOptions, 'Select Your Name', '');
+      updateCustomSelectOptions('adminTeacherSelect', adminOptions, 'Select Teacher', '');
 
       const savedTeacher = localStorage.getItem('loggedTeacher');
       if (savedTeacher) {
@@ -949,7 +1047,6 @@
         showPage('pageHome');
     }
 
-    // --- NAVIGATION HELPERS ---
     function setModeAndGo(mode) {
         appMode = mode;
         showPage('pageClassSelect');
@@ -1225,10 +1322,6 @@
         document.getElementById('myBookingsSection').style.display = 'none';
         document.getElementById('bookingMsg').style.display = 'none';
         
-        let classInput = document.getElementById('bookClass');
-        classInput.innerHTML = '<option value="" disabled selected hidden>Select Class</option>';
-        classInput.value = "";
-        
         let allowedDivs = [];
         ['10','9','8'].forEach(std => {
             ['A','B','C','D','E','F','G','H'].forEach(div => {
@@ -1242,9 +1335,11 @@
             });
         });
         
+        let bookClassOptions = [];
         allowedDivs.forEach(cls => {
-            classInput.innerHTML += `<option value="${cls}">Class ${cls}</option>`;
+            bookClassOptions.push({value: cls, text: 'Class ' + cls});
         });
+        updateCustomSelectOptions('bookClass', bookClassOptions, 'Select Class', 'renderBookings');
 
         bookingCalMonth = new Date().getMonth();
         bookingCalYear = new Date().getFullYear();
@@ -1386,10 +1481,15 @@
                 if(loggedInUser !== 'Viewer' && loggedInUser !== 'Admin') {
                     if (availableSubs.length > 0) {
                         html += `<div style="margin-top: 10px;">
-                            <select id="bookSub_${index}" style="width: 58%; display: inline-block; margin-bottom: 0; padding:10px;">
-                            <option value="" disabled selected hidden>Select Subject</option>`;
-                        availableSubs.forEach(s => html += `<option value="${s}">${s}</option>`);
-                        html += `</select>
+                            <div class="custom-select-container" style="width: 58%; display: inline-block; margin-bottom: 0; vertical-align: top;">
+                                <div class="custom-select-display" id="display_bookSub_${index}" onclick="toggleCustomSelect('bookSub_${index}')" style="padding: 10px; font-size:14px;">Select Subject</div>
+                                <div class="custom-select-options" id="options_bookSub_${index}">`;
+                        
+                        availableSubs.forEach(s => {
+                            html += `<div class="custom-select-option" onclick="selectCustomOption('bookSub_${index}', '${s}', '${s}', '')">${s}</div>`;
+                        });
+                        
+                        html += `</div><input type="hidden" id="bookSub_${index}"></div>
                             <button class="nav-btn" style="padding: 10px; font-size: 14px; width: 38%; display: inline-block; border-color: #10b981; color: #10b981; margin-left: 2%; vertical-align: top;" onclick="bookSlot('${date}', '${cls}', ${index}, event)">Book Slot</button>
                             <div id="slotMsg_${index}" style="color: #ef4444; font-size: 13px; margin-top: 5px; font-weight:bold; display:none; width: 100%;"></div>
                         </div>`;
@@ -1414,23 +1514,6 @@
             msgDiv.textContent = "Please select a subject before booking.";
             msgDiv.style.display = 'block';
             return;
-        }
-
-        if (sub === 'IT') {
-            let itCount = 0;
-            if (specialBookings[date]) {
-                for (let c in specialBookings[date]) {
-                    if (specialBookings[date][c][index] && specialBookings[date][c][index].subject === 'IT') {
-                        itCount++;
-                    }
-                }
-            }
-            if (itCount >= 2) {
-                msgDiv.style.color = '#ef4444';
-                msgDiv.textContent = "No IT slot available for this time.";
-                msgDiv.style.display = 'block';
-                return;
-            }
         }
 
         let teacherName = loggedInUser === 'Admin' ? 'Admin' : loggedInUser;
@@ -1531,16 +1614,20 @@
         
         renderCustomCalendar('ttCalendar', ttCalYear, ttCalMonth, window.ttSelectedDate, 'selectTTDate', 'tt');
         
-        document.getElementById('ttClassSelect').value = "";
+        let ttClassOptions = [
+            {value: "10", text: "Class 10 (All Divisions)"},
+            {value: "9", text: "Class 9 (All Divisions)"},
+            {value: "8", text: "Class 8 (All Divisions)"}
+        ];
+        updateCustomSelectOptions('ttClassSelect', ttClassOptions, 'Select Class', '');
         
-        let divSelect = document.getElementById('ttDivSelect');
-        divSelect.innerHTML = '<option value="" disabled selected hidden>Select Division</option>';
+        let ttDivOptions = [];
         ['10','9','8'].forEach(std => {
             ['A','B','C','D','E','F','G','H'].forEach(div => {
-                divSelect.innerHTML += `<option value="${std}${div}">Class ${std}${div}</option>`;
+                ttDivOptions.push({value: std+div, text: 'Class ' + std + div});
             });
         });
-        divSelect.value = "";
+        updateCustomSelectOptions('ttDivSelect', ttDivOptions, 'Select Division', '');
     }
     
     function goBackFromTimetableMenu() {
@@ -1695,8 +1782,13 @@
     function showStatusPage(fromPage) {
         statusReturnPage = fromPage;
         showPage('pageStatus');
-        document.getElementById('statusExamSelect').value = "First Term Exam";
-        fetchStatus();
+        
+        let examOptions = [
+            {value: "First Term Exam", text: "First Term Exam"},
+            {value: "First Mid Term Exam", text: "First Mid Term Exam (Class 10)"}
+        ];
+        updateCustomSelectOptions('statusExamSelect', examOptions, 'Select Exam', 'fetchStatus');
+        document.getElementById('statusListContainer').innerHTML = "<div style='text-align:center; color:#64748b;'>Please select an exam to check status.</div>";
     }
     
     function goBackFromStatus() { showPage(statusReturnPage); }
