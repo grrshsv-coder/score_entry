@@ -291,7 +291,7 @@
       <h1 class="school-name">Special Classes</h1>
       <h3 id="bookingSubtitle" style="color:#8b5cf6; margin-top: -5px; margin-bottom: 20px;">Book Your Slots</h3>
       
-      <!-- MY BOOKINGS SECTION (At a glance) -->
+      <!-- MY BOOKINGS SECTION -->
       <div id="myBookingsSection" style="display:none; background:#f8fafc; border:1px solid #cbd5e1; border-radius:8px; padding:15px; margin-bottom:20px;">
          <h4 id="myBookingsTitle" style="margin-top:0; margin-bottom:15px; color:#3b82f6; text-align:center;">📋 My Bookings</h4>
          <div id="myBookingsList"></div>
@@ -300,7 +300,6 @@
       <!-- Custom Booking Calendar -->
       <div id="bookingDateDisplay" class="date-display-box">Select Date</div>
       <div id="bookingCalendar" class="calendar"></div>
-      
       <input type="hidden" id="bookDate">
       
       <!-- Custom Booking Class Select -->
@@ -352,9 +351,6 @@
           
           <button id="btnGenDiv" class="action-btn" style="border-color:#8b5cf6; color:#8b5cf6; margin-top:5px;" onclick="fetchAndGenerateTimetable('divisionwise')">Generate Divisionwise</button>
       </div>
-      
-      <!-- IN APP ERROR MESSAGE -->
-      <div id="ttMessage" style="text-align:center; color:#ef4444; font-weight:bold; margin-top: 15px; min-height: 24px;"></div>
 
       <div class="developer-credit">Designed & Developed by GRR</div>
     </div>
@@ -401,7 +397,6 @@
       
       <label style="font-weight:bold; color:#475569; display:block; margin-top:15px; margin-bottom:5px;">Select Exam</label>
       
-      <!-- Custom Select for Exam Status -->
       <div class="custom-select-container">
           <div class="custom-select-display" id="display_statusExamSelect" onclick="toggleCustomSelect('statusExamSelect')">Select Exam</div>
           <div class="custom-select-options" id="options_statusExamSelect"></div>
@@ -715,8 +710,7 @@
           "8H": "Smitha KK", "8F": "Smitha KK", "9F": "Smitha KK"
       }
     };
-    
-    // Globals
+
     let loggedInUser = null; 
     let tempLoginUser = "";
     let tempLoginPin = "";
@@ -731,7 +725,6 @@
     let appMode = 'entry'; 
     let specialBookings = {};
 
-    // Calendars
     let bookingCalMonth = new Date().getMonth();
     let bookingCalYear = new Date().getFullYear();
     let ttCalMonth = new Date().getMonth();
@@ -741,7 +734,7 @@
     window.currentTimetableTarget = null;
     window.currentTimetableDate = null;
 
-    let divideReturnPage = 'pageHome'; // Determines where the back button goes
+    let divideReturnPage = 'pageHome';
 
     window.addEventListener('load', function() {
       const teacherSet = new Set(languageTeachers); 
@@ -1090,11 +1083,10 @@
         divideReturnPage = fromPage || 'pageHome';
         showPage('pageDivideMenu');
         
-        document.getElementById('divEmMsg').style.display = 'none';
-        document.getElementById('divMmMsg').style.display = 'none';
-
         document.getElementById('emDivideSelect').value = "";
         document.getElementById('mmDivideSelect').value = "";
+        document.getElementById('divEmMsg').style.display = 'none';
+        document.getElementById('divMmMsg').style.display = 'none';
     }
 
     function goBackFromDivideMenu() {
@@ -1179,7 +1171,6 @@
                             let grade = getGrade(mark, maxMark, row.className);
                             studentStats[key].grades[ex][row.subject] = grade;
                             studentStats[key].gradeCounts[grade]++;
-                            
                             if (grade === 'D' || grade === 'E') {
                                 studentStats[key].hasDorE = true;
                             }
@@ -1217,8 +1208,6 @@
                 batches[i] = topStudents.slice(currentIndex, currentIndex + chunk);
                 currentIndex += chunk;
             }
-        } else {
-            batches[0] = sortedStudents;
         }
 
         renderDividedClasses(batches, medium, numClasses);
@@ -1508,23 +1497,6 @@
             msgDiv.textContent = "Please select a subject before booking.";
             msgDiv.style.display = 'block';
             return;
-        }
-
-        if (sub === 'IT') {
-            let itCount = 0;
-            if (specialBookings[date]) {
-                for (let c in specialBookings[date]) {
-                    if (specialBookings[date][c][index] && specialBookings[date][c][index].subject === 'IT') {
-                        itCount++;
-                    }
-                }
-            }
-            if (itCount >= 2) {
-                msgDiv.style.color = '#ef4444';
-                msgDiv.textContent = "No IT slot available for this time.";
-                msgDiv.style.display = 'block';
-                return;
-            }
         }
 
         let teacherName = loggedInUser === 'Admin' ? 'Admin' : loggedInUser;
