@@ -151,9 +151,6 @@
   <!-- MAIN APP CONTAINER -->
   <div class="container" id="mainContainer">
 
-    <!-- GLOBAL IN-APP MESSAGES (TOP) -->
-    <div id="topGlobalMessage" style="display: none; padding: 10px; margin-bottom: 15px; border-radius: 8px; text-align: center; font-weight: bold;"></div>
-
     <!-- PAGE HOME: Landing Page -->
     <div id="pageHome" class="page active">
       <h1 class="school-name">SANSKRIT HS VATTOLI</h1>
@@ -740,31 +737,6 @@
     window.ttSelectedDate = null;
     window.currentTimetableTarget = null;
     window.currentTimetableDate = null;
-
-    // --- GLOBAL MESSAGING SYSTEM ---
-    function showGlobalMessage(msg, isError = true) {
-        const topMsg = document.getElementById('topGlobalMessage');
-        const botMsg = document.getElementById('botGlobalMessage');
-        const color = isError ? '#ef4444' : '#10b981';
-        const bg = isError ? '#fee2e2' : '#dcfce3';
-        
-        if (msg) {
-            topMsg.style.color = color; topMsg.style.backgroundColor = bg; topMsg.style.borderColor = color;
-            botMsg.style.color = color; botMsg.style.backgroundColor = bg; botMsg.style.borderColor = color;
-            topMsg.style.border = `1px solid ${color}`; botMsg.style.border = `1px solid ${color}`;
-            
-            topMsg.innerHTML = msg; botMsg.innerHTML = msg;
-            topMsg.style.display = 'block'; botMsg.style.display = 'block';
-            
-            setTimeout(() => { 
-                topMsg.style.display = 'none'; 
-                botMsg.style.display = 'none'; 
-            }, 4000);
-        } else {
-            topMsg.style.display = 'none'; 
-            botMsg.style.display = 'none';
-        }
-    }
 
     // --- DIVIDE CLASSES SYSTEM ---
     function goToDividePage(fromPage) {
