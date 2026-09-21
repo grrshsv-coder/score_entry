@@ -44,103 +44,84 @@
     .button-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 15px; }
     .list-grid { display: grid; grid-template-columns: 1fr; gap: 12px; margin-top: 15px; }
     
-    /* Input Elements for Login/Admin */
-    select, input[type="password"], input[type="text"], input[type="number"], input[type="date"] {
+    /* Inputs */
+    input[type="password"], input[type="text"], input[type="number"] {
         width: 100%; padding: 14px; margin-bottom: 15px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 16px; box-sizing: border-box; background-color: #f8fafc;
     }
-    select:focus, input:focus { outline: none; border-color: #3b82f6; background-color: #ffffff; }
-    
-    /* ------------------------------------- */
-    /* UNIFORM WHITE BUTTON STYLES           */
-    /* ------------------------------------- */
-    button { 
-      padding: 15px; font-size: 16px; font-weight: 600; cursor: pointer; border: none; border-radius: 8px; 
-      transition: all 0.15s ease; position: relative;
-    }
-    
-    .nav-btn, .page1-div, .full-div, .top10-div, .progress-div, .sub-1, .sub-2, .sub-3, .sub-4, .sub-5, .sub-6, .sub-7, .sub-8, .sub-9 { 
-      background-color: #ffffff !important; color: #334155; border: 1px solid #cbd5e1; 
-      box-shadow: 0 4px 0 #94a3b8, 0 5px 10px rgba(0,0,0,0.05); 
-    }
-    .nav-btn:hover:not(.disabled-btn) { 
-      transform: translateY(-2px); box-shadow: 0 6px 0 #94a3b8, 0 8px 15px rgba(0,0,0,0.1); 
-    }
-    .nav-btn:active:not(.disabled-btn) { 
-      transform: translateY(4px); box-shadow: 0 0 0 transparent !important; 
-    }
+    input:focus { outline: none; border-color: #3b82f6; background-color: #ffffff; }
 
-    /* Disabled Button State */
-    .disabled-btn {
-      background-color: #f1f5f9 !important;
-      color: #94a3b8 !important;
-      border-color: #e2e8f0 !important;
-      box-shadow: none !important;
-      cursor: not-allowed !important;
-      transform: none !important;
+    /* CUSTOM IN-APP DROPDOWN SYSTEM */
+    .custom-select-container { position: relative; width: 100%; margin-bottom: 15px; }
+    .custom-select-display {
+        width: 100%; padding: 14px; border: 1px solid #cbd5e1; border-radius: 8px; 
+        font-size: 16px; background-color: #f8fafc; color: #94a3b8; cursor: pointer;
+        box-sizing: border-box; text-align: left; display: flex; justify-content: space-between; align-items: center;
+        transition: 0.2s;
     }
+    .custom-select-display.has-value { color: #1e293b; background-color: #ffffff; border-color: #3b82f6; }
+    .custom-select-display::after { content: '▼'; font-size: 12px; color: #94a3b8; margin-left: 10px; }
+    .custom-select-options {
+        position: absolute; top: 100%; left: 0; right: 0; background: #ffffff; 
+        border: 1px solid #cbd5e1; border-radius: 8px; margin-top: 4px; z-index: 1000;
+        max-height: 250px; overflow-y: auto; box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        display: none;
+    }
+    .custom-select-options.show { display: block; animation: fadeIn 0.2s; }
+    .custom-select-option { padding: 12px 14px; font-size: 16px; color: #334155; cursor: pointer; border-bottom: 1px solid #f1f5f9; }
+    .custom-select-option:last-child { border-bottom: none; }
+    .custom-select-option:hover { background-color: #f1f5f9; color: #3b82f6; font-weight:bold; }
+
+    /* Custom Calendar Styles */
+    .calendar { border: 1px solid #cbd5e1; border-radius: 8px; background: white; padding: 15px; margin-bottom: 15px; box-shadow: 0 2px 5px rgba(0,0,0,0.02); }
+    .calendar-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; font-weight: bold; font-size: 18px; color: #1e293b; }
+    .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px; text-align: center; }
+    .calendar-day-name { font-size: 13px; color: #64748b; font-weight: bold; padding-bottom: 5px; border-bottom: 1px solid #e2e8f0; margin-bottom: 5px; }
+    .calendar-day { padding: 10px 0; border-radius: 6px; cursor: pointer; font-size: 15px; transition: 0.2s; border: 1px solid transparent; color: #334155; }
+    .calendar-day:hover:not(.empty):not(.disabled) { background-color: #f1f5f9; border-color: #cbd5e1; }
+    .calendar-day.weekend { background-color: #dcfce3; color: #15803d; font-weight: bold; }
+    .calendar-day.selected { background-color: #8b5cf6 !important; color: white !important; font-weight: bold; border-color: #7c3aed !important; box-shadow: 0 2px 4px rgba(139, 92, 246, 0.3); }
+    .calendar-day.empty { cursor: default; }
+    .calendar-day.disabled { color: #cbd5e1; cursor: not-allowed; background-color: #f8fafc; text-decoration: line-through; }
     
-    /* Action Button (Save/Login) */
-    .action-btn { 
-      background-color: #ffffff; color: #3b82f6; width: 100%; margin-top: 15px; font-size: 18px; border: 2px solid #3b82f6;
-      box-shadow: 0 4px 0 #2563eb, 0 5px 15px rgba(59, 130, 246, 0.2); 
-    }
+    .date-display-box { width: 100%; padding: 14px; margin-bottom: 15px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 16px; box-sizing: border-box; background-color: #f8fafc; text-align: center; color: #64748b; font-weight: bold; transition: 0.3s; }
+    .date-display-box.active { color: #8b5cf6; border-color: #8b5cf6; background-color: #f5f3ff; }
+    
+    /* Button Styles */
+    button { padding: 15px; font-size: 16px; font-weight: 600; cursor: pointer; border: none; border-radius: 8px; transition: all 0.15s ease; position: relative; }
+    
+    .nav-btn, .page1-div, .full-div, .top10-div, .progress-div, .sub-1, .sub-2, .sub-3, .sub-4, .sub-5, .sub-6, .sub-7, .sub-8, .sub-9 { background-color: #ffffff !important; color: #334155; border: 1px solid #cbd5e1; box-shadow: 0 4px 0 #94a3b8, 0 5px 10px rgba(0,0,0,0.05); }
+    .nav-btn:hover:not(.disabled-btn) { transform: translateY(-2px); box-shadow: 0 6px 0 #94a3b8, 0 8px 15px rgba(0,0,0,0.1); }
+    .nav-btn:active:not(.disabled-btn) { transform: translateY(4px); box-shadow: 0 0 0 transparent !important; }
+
+    .disabled-btn { background-color: #f1f5f9 !important; color: #94a3b8 !important; border-color: #e2e8f0 !important; box-shadow: none !important; cursor: not-allowed !important; transform: none !important; }
+    
+    .action-btn { background-color: #ffffff; color: #3b82f6; width: 100%; margin-top: 15px; font-size: 18px; border: 2px solid #3b82f6; box-shadow: 0 4px 0 #2563eb, 0 5px 15px rgba(59, 130, 246, 0.2); }
     .action-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 0 #2563eb, 0 8px 20px rgba(59, 130, 246, 0.3); }
     .action-btn:active { transform: translateY(4px); box-shadow: 0 0 0 transparent; }
     
-    /* Admin/Utility Button */
-    .admin-btn { 
-      background-color: #ffffff; color: #64748b; border: 2px solid #94a3b8; width: 100%; font-size: 16px; margin-top: 15px;
-      box-shadow: 0 4px 0 #cbd5e1, 0 5px 10px rgba(0,0,0,0.05); 
-    }
+    .admin-btn { background-color: #ffffff; color: #64748b; border: 2px solid #94a3b8; width: 100%; font-size: 16px; margin-top: 15px; box-shadow: 0 4px 0 #cbd5e1, 0 5px 10px rgba(0,0,0,0.05); }
     .admin-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 0 #cbd5e1, 0 8px 15px rgba(0,0,0,0.1); }
     .admin-btn:active { transform: translateY(4px); box-shadow: 0 0 0 transparent; }
 
-    /* Yellow Edit Button */
-    .edit-btn { 
-      background-color: #ffffff; color: #f59e0b; width: 100%; margin-top: 25px; font-size: 18px; display: none; border: 2px solid #f59e0b;
-      box-shadow: 0 4px 0 #d97706, 0 5px 15px rgba(245, 158, 11, 0.2); 
-    }
+    .edit-btn { background-color: #ffffff; color: #f59e0b; width: 100%; margin-top: 25px; font-size: 18px; display: none; border: 2px solid #f59e0b; box-shadow: 0 4px 0 #d97706, 0 5px 15px rgba(245, 158, 11, 0.2); }
     .edit-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 0 #d97706, 0 8px 20px rgba(245, 158, 11, 0.3); }
     .edit-btn:active { transform: translateY(4px); box-shadow: 0 0 0 transparent; }
     
-    /* Report Button */
-    .report-btn { 
-      background-color: #ffffff; color: #92400e; border: 2px solid #fcd34d; width: 100%; font-size: 16px; 
-      box-shadow: 0 4px 0 #fcd34d, 0 5px 10px rgba(0,0,0,0.05); 
-    }
+    .report-btn { background-color: #ffffff; color: #92400e; border: 2px solid #fcd34d; width: 100%; font-size: 16px; box-shadow: 0 4px 0 #fcd34d, 0 5px 10px rgba(0,0,0,0.05); }
     .report-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 0 #fcd34d, 0 8px 15px rgba(0,0,0,0.1); }
     .report-btn:active { transform: translateY(4px); box-shadow: 0 0 0 transparent; }
     
-    /* Back Button */
-    .back-btn { 
-      background-color: transparent; color: #3b82f6; padding: 0; margin-bottom: 10px; font-size: 15px; 
-      width: auto; font-weight: bold; box-shadow: none !important; transform: none !important; border: none;
-    }
+    .back-btn { background-color: transparent; color: #3b82f6; padding: 0; margin-bottom: 10px; font-size: 15px; width: auto; font-weight: bold; box-shadow: none !important; transform: none !important; border: none; }
     .back-btn:hover { color: #2563eb; transform: translateX(-3px) !important; box-shadow: none !important; }
     .back-btn:active { transform: translateX(0) !important; }
 
-    /* Text-Only Logout Button Styling */
-    .logout-text-btn { 
-        display: block; width: 100%; text-align: right; color: #ef4444; font-size: 14px; font-weight: bold; 
-        background: transparent; border: none; box-shadow: none; padding: 0; margin-bottom: 15px; cursor: pointer; 
-    }
+    .logout-text-btn { display: block; width: 100%; text-align: right; color: #ef4444; font-size: 14px; font-weight: bold; background: transparent; border: none; box-shadow: none; padding: 0; margin-bottom: 15px; cursor: pointer; }
     .logout-text-btn:hover { text-decoration: underline; color: #dc2626; transform: none; box-shadow: none; }
 
-    /* ------------------------------------- */
     /* Student List Form */
-    /* ------------------------------------- */
     .student-row { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid #f1f5f9; }
-    .student-name { 
-        font-size: 15px; font-weight: 500; color: #475569; flex: 1; padding-right: 15px; 
-        text-align: left; line-height: 1.3; word-break: break-word; 
-    }
-    .mark-input { 
-        width: 45px !important; 
-        padding: 8px 4px !important; 
-        margin: 0 !important; 
-        font-size: 16px; 
-        border: 1px solid #cbd5e1; border-radius: 6px; text-align: center; color: #1e293b; font-weight: bold; background-color: #f8fafc; transition: border-color 0.2s; 
-    }
+    .student-name { font-size: 15px; font-weight: 500; color: #475569; flex: 1; padding-right: 15px; text-align: left; line-height: 1.3; word-break: break-word; }
+    .mark-input { width: 45px !important; padding: 8px 4px !important; margin: 0 !important; font-size: 16px; border: 1px solid #cbd5e1; border-radius: 6px; text-align: center; color: #1e293b; font-weight: bold; background-color: #f8fafc; transition: border-color 0.2s; }
     .mark-input:focus { outline: none; border-color: #3b82f6 !important; background-color: #ffffff !important; }
     .mark-input:disabled { background-color: #e2e8f0 !important; color: #64748b !important; border-color: #e2e8f0 !important; cursor: not-allowed; }
     
@@ -149,29 +130,22 @@
     /* Data Table Styles */
     .table-responsive { width: 100%; overflow-x: auto; margin-top: 15px; border-radius: 8px; border: 1px solid #e2e8f0; }
     .marks-table { width: 100%; border-collapse: collapse; font-size: 13px; }
-    .marks-table th, .marks-table td { padding: 8px 4px; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; text-align: center; }
-    .marks-table th { background-color: #f8fafc; color: #334155; font-weight: 700; white-space: normal; line-height: 1.2; font-size: 12px; }
+    .marks-table th, .marks-table td { padding: 8px 4px; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; text-align: center; color: black; }
+    .marks-table th { background-color: #f8fafc; font-weight: normal; white-space: normal; line-height: 1.2; font-size: 12px; border: 1px solid #000; }
+    .marks-table td { border: 1px solid #000; }
     .marks-table td:first-child, .marks-table th:first-child { text-align: left; white-space: nowrap; padding-left: 8px; }
-    .marks-table tbody tr:nth-child(odd) { background-color: #ffffff; }
-    .marks-table tbody tr:nth-child(even) { background-color: #f1f5f9; }
     .marks-table tr { page-break-inside: avoid; } 
 
     #loadingIndicator { text-align: center; color: #3b82f6; font-weight: bold; margin: 30px 0; font-size: 18px; }
     .developer-credit { text-align: center; margin-top: 20px; font-size: 13px; color: #94a3b8; font-weight: 500; letter-spacing: 0.3px; }
 
     /* Container for Offscreen PDF generation */
-    #pdfDownloadArea {
-        position: absolute;
-        top: -9999px;
-        left: -9999px;
-        width: 297mm;
-        background: #ffffff;
-        z-index: -1;
-    }
+    #pdfDownloadArea { position: absolute; top: -9999px; left: -9999px; width: 297mm; background: #ffffff; z-index: -1; }
   </style>
 </head>
 <body>
 
+  <!-- MAIN APP CONTAINER -->
   <div class="container" id="mainContainer">
 
     <!-- PAGE HOME: Landing Page -->
@@ -185,7 +159,8 @@
         <button class="nav-btn" style="border-color:#3b82f6; color:#3b82f6;" onclick="showPage('pageLogin')">👨‍🏫 Teacher Login</button>
         <button class="admin-btn" onclick="showPage('pageAdminLogin')">⚙️ Admin Console</button>
         <button class="nav-btn" style="border-color:#f59e0b; color:#d97706; margin-top:10px;" onclick="showStatusPage('pageHome')">📋 Entry Status</button>
-        <button class="report-btn" style="margin-top:10px;" onclick="goToGuestReports()">📊 View Reports</button>
+        <button class="nav-btn" style="border-color:#10b981; color:#10b981; margin-top:10px;" onclick="goToGuestReports()">📊 View Reports</button>
+        <button class="nav-btn" style="border-color:#8b5cf6; color:#8b5cf6; margin-top:10px;" onclick="goToTimetableMenu('pageHome')">📅 View Timetables</button>
       </div>
 
       <div class="developer-credit">Designed & Developed by GRR</div>
@@ -197,12 +172,15 @@
       <h1 class="school-name">Teacher Login</h1>
       <hr class="divider">
       
-      <!-- Step 1: Initial Auth -->
       <div id="loginStep1">
         <label style="font-weight:bold; color:#475569; display:block; margin-bottom:5px;">Select Name</label>
-        <select id="teacherSelect">
-            <option value="" disabled selected hidden>Select Your Name</option>
-        </select>
+        
+        <!-- Custom Teacher Dropdown -->
+        <div class="custom-select-container">
+            <div class="custom-select-display" id="display_teacherSelect" onclick="toggleCustomSelect('teacherSelect')">Select Your Name</div>
+            <div class="custom-select-options" id="options_teacherSelect"></div>
+            <input type="hidden" id="teacherSelect">
+        </div>
         
         <label style="font-weight:bold; color:#475569; display:block; margin-bottom:5px;">Enter PIN</label>
         <input type="password" id="teacherPin" placeholder="Enter PIN (Default: 1234)" pattern="[0-9]*" inputmode="numeric">
@@ -211,7 +189,6 @@
         <div id="loginMessage"></div>
       </div>
       
-      <!-- Step 2: Force PIN Reset on First Login -->
       <div id="loginStep2" style="display: none; text-align: center;">
         <h3 style="color:#ef4444; margin-top: 10px;">Security Action Required</h3>
         <p style="font-size: 14px; margin-bottom: 20px; color:#475569;">Because you are using the default PIN, you must create a new personal PIN to securely remember this device.</p>
@@ -230,15 +207,13 @@
       <button class="back-btn" onclick="showPage('pageHome')">← Back to Home</button>
       <h1 class="school-name" style="color:#dc2626;">Admin Access</h1>
       <hr class="divider">
-      
       <label style="font-weight:bold; color:#475569; display:block; margin-bottom:5px;">Admin PIN</label>
       <input type="password" id="adminPinInput" placeholder="Enter Admin PIN">
-      
       <button class="action-btn" style="border-color:#dc2626; color:#dc2626;" id="adminAuthBtn" onclick="verifyAdmin()">Enter Console</button>
       <div id="adminAuthMessage"></div>
     </div>
 
-    <!-- PAGE ADMIN DASHBOARD: Set/Reset PINs -->
+    <!-- PAGE ADMIN DASHBOARD -->
     <div id="pageAdminDash" class="page">
       <button class="back-btn" onclick="logoutAdmin()">← Exit Admin</button>
       <h1 class="school-name">Admin Console</h1>
@@ -246,42 +221,61 @@
       <hr class="divider">
       
       <label style="font-weight:bold; color:#475569; display:block; margin-bottom:5px;">Select Teacher</label>
-      <select id="adminTeacherSelect"></select>
+      <!-- Custom Admin Teacher Dropdown -->
+      <div class="custom-select-container">
+          <div class="custom-select-display" id="display_adminTeacherSelect" onclick="toggleCustomSelect('adminTeacherSelect')">Select Teacher</div>
+          <div class="custom-select-options" id="options_adminTeacherSelect"></div>
+          <input type="hidden" id="adminTeacherSelect">
+      </div>
       
       <label style="font-weight:bold; color:#475569; display:block; margin-bottom:5px;">Assign New PIN</label>
       <input type="password" id="newTeacherPin" placeholder="Enter new PIN (e.g. 1234)" pattern="[0-9]*" inputmode="numeric">
       
       <button class="action-btn" id="setPinBtn" onclick="setTeacherPin()">Save Custom PIN</button>
       <button class="nav-btn" style="width: 100%; border-color:#f59e0b; color:#d97706; margin-top:15px;" onclick="resetToDefaultPin()">Reset to Default (1234)</button>
-      
       <div id="adminDashMessage"></div>
 
       <hr class="divider">
-      <button class="action-btn" style="border-color:#10b981; color:#10b981; background: #ffffff;" onclick="goToAdminEntry()">➔ Access Data Entry & Reports</button>
-      <button class="nav-btn" style="border-color:#f59e0b; color:#d97706; margin-top:15px; width:100%;" onclick="showStatusPage('pageAdminDash')">📋 View Entry Status</button>
-      <button class="nav-btn" style="border-color:#8b5cf6; color:#8b5cf6; margin-top:15px; width:100%;" onclick="showBookingPage('pageAdminDash')">📅 Special Class Booking</button>
+      <div class="list-grid" style="margin-top:15px;">
+        <button class="action-btn" style="border-color:#3b82f6; color:#3b82f6; background: #ffffff; margin-top:0;" onclick="setAdminModeAndGo('entry')">📝 Score Entry</button>
+        <button class="nav-btn" style="border-color:#10b981; color:#10b981;" onclick="setAdminModeAndGo('report')">📊 View All Reports</button>
+        <button class="nav-btn" style="border-color:#8b5cf6; color:#8b5cf6;" onclick="showBookingPage('pageAdminDash')">📅 Special Class Booking</button>
+        <button class="nav-btn" style="border-color:#f59e0b; color:#d97706;" onclick="showStatusPage('pageAdminDash')">📋 View Entry Status</button>
+      </div>
+      <div class="developer-credit">Designed & Developed by GRR</div>
     </div>
 
-    <!-- PAGE CLASS SELECT: Select standard (10, 9, 8) -->
-    <div id="pageClassSelect" class="page">
-      <button class="logout-text-btn" id="logoutBtn" onclick="logoutDevice()" style="display:none;">Logout Device</button>
+    <!-- PAGE DASHBOARD: Teacher Main Menu -->
+    <div id="pageDashboard" class="page">
+      <button class="logout-text-btn" id="logoutBtnDash" onclick="logoutDevice()" style="display:none;">Logout Device</button>
       <h1 class="school-name" style="margin-top: 0;">SANSKRIT HS VATTOLI</h1>
       <h2 class="event-name">Vijayotsavam 2026-27</h2>
       <hr class="divider">
       
-      <h3 id="teacherGreeting" style="color:#3b82f6; font-weight:bold; margin-bottom:25px;"></h3>
+      <h3 id="dashboardGreeting" style="color:#3b82f6; font-weight:bold; margin-bottom:25px; text-align:center;"></h3>
       
+      <h2>Main Menu</h2>
+      <div class="list-grid" style="margin-top: 25px;">
+        <button class="nav-btn" style="border-color:#3b82f6; color:#3b82f6; padding: 20px; font-size: 18px;" onclick="setModeAndGo('entry')">📝 Score Entry</button>
+        <button class="nav-btn" style="border-color:#10b981; color:#10b981; padding: 20px; font-size: 18px;" onclick="setModeAndGo('report')">📊 View All Reports</button>
+        <button class="nav-btn" style="border-color:#8b5cf6; color:#8b5cf6; padding: 20px; font-size: 18px;" onclick="showBookingPage('pageDashboard')">📅 Special Class Booking</button>
+        <button class="nav-btn" style="border-color:#f59e0b; color:#d97706; padding: 20px; font-size: 18px;" onclick="showStatusPage('pageDashboard')">📋 Entry Status</button>
+      </div>
+      <div class="developer-credit">Designed & Developed by GRR</div>
+    </div>
+
+    <!-- PAGE CLASS SELECT -->
+    <div id="pageClassSelect" class="page">
+      <button class="back-btn" onclick="goBackFromClassSelect()">← Back</button>
+      <h1 class="school-name" style="margin-top: 0;">SANSKRIT HS VATTOLI</h1>
+      <h2 class="event-name">Vijayotsavam 2026-27</h2>
+      <hr class="divider">
       <h2>Select Class</h2>
       <div class="list-grid" style="margin-top: 25px;">
         <button class="nav-btn sub-4" onclick="selectStandard('10')" style="padding: 20px; font-size: 18px;">📘 Class 10</button>
         <button class="nav-btn sub-5" onclick="selectStandard('9')" style="padding: 20px; font-size: 18px;">📗 Class 9</button>
         <button class="nav-btn sub-6" onclick="selectStandard('8')" style="padding: 20px; font-size: 18px;">📙 Class 8</button>
       </div>
-
-      <hr class="divider">
-      <button class="nav-btn" style="border-color:#f59e0b; color:#d97706; width:100%;" onclick="showStatusPage('pageClassSelect')">📋 Check Entry Status</button>
-      <button class="nav-btn" style="border-color:#8b5cf6; color:#8b5cf6; width:100%; margin-top: 12px;" onclick="showBookingPage('pageClassSelect')">📅 Special Class Booking</button>
-
       <div class="developer-credit">Designed & Developed by GRR</div>
     </div>
 
@@ -289,53 +283,102 @@
     <div id="pageBooking" class="page">
       <button class="back-btn" onclick="goBackFromBooking()">← Back</button>
       <h1 class="school-name">Special Classes</h1>
-      <h3 style="color:#8b5cf6; margin-top: -5px; margin-bottom: 20px;">Book Your Slots</h3>
+      <h3 id="bookingSubtitle" style="color:#8b5cf6; margin-top: -5px; margin-bottom: 20px;">Book Your Slots</h3>
       
-      <div class="button-grid" style="grid-template-columns: 1fr;">
-          <input type="date" id="bookDate" onchange="renderBookings()" style="margin-bottom: 0;">
-          <select id="bookClass" onchange="renderBookings()" style="margin-bottom: 0;">
-              <!-- Options populated by JS -->
-          </select>
+      <!-- MY BOOKINGS SECTION (At a glance) -->
+      <div id="myBookingsSection" style="display:none; background:#f8fafc; border:1px solid #cbd5e1; border-radius:8px; padding:15px; margin-bottom:20px;">
+         <h4 id="myBookingsTitle" style="margin-top:0; margin-bottom:15px; color:#3b82f6; text-align:center;">📋 My Bookings</h4>
+         <div id="myBookingsList"></div>
+      </div>
+      
+      <!-- Custom Booking Calendar -->
+      <div id="bookingDateDisplay" class="date-display-box">Select Date</div>
+      <div id="bookingCalendar" class="calendar"></div>
+      
+      <input type="hidden" id="bookDate">
+      
+      <!-- Custom Booking Class Select -->
+      <div class="custom-select-container">
+          <div class="custom-select-display" id="display_bookClass" onclick="toggleCustomSelect('bookClass')">Select Class</div>
+          <div class="custom-select-options" id="options_bookClass"></div>
+          <input type="hidden" id="bookClass">
       </div>
       
       <div id="bookingLoading" style="display:none; text-align:center; color:#8b5cf6; font-weight:bold; margin: 20px 0;">Syncing with Server... ⏳</div>
-      
-      <div id="slotsContainer" style="margin-top: 20px;">
-          <!-- Slots rendered dynamically -->
-      </div>
+      <div id="slotsContainer" style="margin-top: 20px;"></div>
       
       <hr class="divider">
-      <button class="action-btn" style="border-color:#8b5cf6; color:#8b5cf6; margin-top: 5px;" onclick="downloadTimetable()">📥 Download Timetable (PDF)</button>
+      <button class="nav-btn" style="border-color:#8b5cf6; color:#8b5cf6; width:100%; margin-top: 5px;" onclick="goToTimetableMenu('pageBooking')">📅 View Timetables</button>
       
       <div class="developer-credit">Designed & Developed by GRR</div>
     </div>
 
-    <!-- PAGE STATUS: Shows incomplete mark entry -->
+    <!-- PAGE TIMETABLE MENU -->
+    <div id="pageTimetableMenu" class="page">
+      <button class="back-btn" onclick="goBackFromTimetableMenu()">← Back</button>
+      <h1 class="school-name">Timetables</h1>
+      <h3 style="color:#8b5cf6; margin-top: -5px; margin-bottom: 20px;">Generate PDF Timetable</h3>
+      
+      <!-- Custom TT Calendar -->
+      <div id="ttDateDisplay" class="date-display-box">Select Date</div>
+      <div id="ttCalendar" class="calendar"></div>
+      
+      <div style="background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 8px; padding: 15px; margin-bottom: 15px;">
+          <h4 style="margin-top: 0; margin-bottom: 10px; color:#334155; text-align:center;">Classwise Timetable</h4>
+          
+          <div class="custom-select-container" style="margin-bottom: 10px;">
+              <div class="custom-select-display" id="display_ttClassSelect" onclick="toggleCustomSelect('ttClassSelect')">Select Class</div>
+              <div class="custom-select-options" id="options_ttClassSelect"></div>
+              <input type="hidden" id="ttClassSelect">
+          </div>
+          
+          <button id="btnGenClass" class="action-btn" style="border-color:#8b5cf6; color:#8b5cf6; margin-top:5px;" onclick="fetchAndGenerateTimetable('classwise')">Generate Classwise</button>
+      </div>
+      
+      <div style="background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 8px; padding: 15px;">
+          <h4 style="margin-top: 0; margin-bottom: 10px; color:#334155; text-align:center;">Divisionwise Timetable</h4>
+          
+          <div class="custom-select-container" style="margin-bottom: 10px;">
+              <div class="custom-select-display" id="display_ttDivSelect" onclick="toggleCustomSelect('ttDivSelect')">Select Division</div>
+              <div class="custom-select-options" id="options_ttDivSelect"></div>
+              <input type="hidden" id="ttDivSelect">
+          </div>
+          
+          <button id="btnGenDiv" class="action-btn" style="border-color:#8b5cf6; color:#8b5cf6; margin-top:5px;" onclick="fetchAndGenerateTimetable('divisionwise')">Generate Divisionwise</button>
+      </div>
+      
+      <!-- IN APP ERROR MESSAGE -->
+      <div id="ttMessage" style="text-align:center; color:#ef4444; font-weight:bold; margin-top: 15px; min-height: 24px;"></div>
+
+      <div class="developer-credit">Designed & Developed by GRR</div>
+    </div>
+
+    <!-- PAGE STATUS -->
     <div id="pageStatus" class="page">
       <button class="back-btn" onclick="goBackFromStatus()">← Back</button>
       <h1 class="school-name">Entry Status</h1>
       
       <label style="font-weight:bold; color:#475569; display:block; margin-top:15px; margin-bottom:5px;">Select Exam</label>
-      <select id="statusExamSelect" onchange="fetchStatus()">
-          <option value="First Term Exam" selected>First Term Exam</option>
-          <option value="First Mid Term Exam">First Mid Term Exam (Class 10)</option>
-      </select>
       
-      <div id="statusLoading" style="display:none; text-align:center; color:#3b82f6; font-weight:bold; margin: 20px 0;">Scanning all classes... ⏳</div>
-      
-      <div id="statusListContainer" style="background:#fff; border:1px solid #cbd5e1; border-radius:8px; padding:15px; max-height:400px; overflow-y:auto; margin-bottom: 20px; margin-top:10px;">
-          <!-- List injected here -->
+      <!-- Custom Select for Exam Status -->
+      <div class="custom-select-container">
+          <div class="custom-select-display" id="display_statusExamSelect" onclick="toggleCustomSelect('statusExamSelect')">Select Exam</div>
+          <div class="custom-select-options" id="options_statusExamSelect"></div>
+          <input type="hidden" id="statusExamSelect">
       </div>
       
+      <div id="statusLoading" style="display:none; text-align:center; color:#3b82f6; font-weight:bold; margin: 20px 0;">Scanning all classes... ⏳</div>
+      <div id="statusListContainer" style="background:#fff; border:1px solid #cbd5e1; border-radius:8px; padding:15px; max-height:400px; overflow-y:auto; margin-bottom: 20px; margin-top:10px;">
+          <div style='text-align:center; color:#64748b;'>Please select an exam to check status.</div>
+      </div>
       <div class="developer-credit">Designed & Developed by GRR</div>
     </div>
 
-    <!-- PAGE 0: Select Examination (Only for Class 10) -->
+    <!-- PAGE 0: Select Examination -->
     <div id="page0" class="page">
       <button class="back-btn" onclick="showPage('pageClassSelect')">← Back to Classes</button>
       <h1 class="school-name">Class 10</h1>
       <hr class="divider">
-      
       <h2>Select Examination</h2>
       <div class="list-grid" style="margin-top: 25px;">
         <button class="nav-btn sub-6" onclick="selectExam('First Term Exam')" style="padding: 20px; font-size: 18px;">📄 First Term Exam</button>
@@ -350,7 +393,6 @@
       <h1 class="school-name">SANSKRIT HS VATTOLI</h1>
       <h3 class="test-name"></h3>
       <hr class="divider">
-      
       <h2>Enter Marks</h2>
       <h3 id="divisionTitle">Select Class Division</h3>
       <div class="button-grid" id="divisionGrid">
@@ -363,9 +405,6 @@
         <button class="nav-btn page1-div" id="btn-div-G" onclick="selectDivision('G')">G</button>
         <button class="nav-btn page1-div" id="btn-div-H" onclick="selectDivision('H')">H</button>
       </div>
-
-      <hr class="divider">
-      <button class="report-btn" onclick="showPage('page4')">View Class Reports</button>
       <div class="developer-credit">Designed & Developed by GRR</div>
     </div>
 
@@ -394,10 +433,8 @@
       <h2 id="marksTitle">Enter Marks</h2>
       <h3 id="marksSubtitle"></h3>
       <div id="studentListContainer"></div>
-      
       <button id="saveBtn" class="action-btn" onclick="saveMarks()">Save All Marks</button>
       <button id="editBtn" class="edit-btn" onclick="enableEditing()">✏️ Edit Marks</button>
-      
       <div id="message"></div>
       <div class="developer-credit">Designed & Developed by GRR</div>
     </div>
@@ -436,7 +473,7 @@
       <div class="developer-credit">Designed & Developed by GRR</div>
     </div>
     
-    <!-- PAGE 4b: Select Subject for Special Care -->
+    <!-- PAGE 4b: Special Care Subject Select -->
     <div id="page4b" class="page">
       <button class="back-btn" onclick="showPage('page4')">← Back to Reports</button>
       <h2 class="test-name"></h2>
@@ -455,6 +492,21 @@
       <div class="developer-credit">Designed & Developed by GRR</div>
     </div>
 
+  </div> <!-- CLOSE MAIN CONTAINER -->
+
+  <!-- ALL FULL-WIDTH PDF / VIEW CONTAINERS GO HERE SO THEY ARE NOT HIDDEN -->
+  
+  <!-- PAGE TIMETABLE VIEW -->
+  <div id="pageTimetableView" class="table-container-wrapper page">
+    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px;">
+      <button class="back-btn" onclick="showPage('pageTimetableMenu')" style="margin-bottom: 0;">← Back</button>
+      <button id="downloadTtBtn" class="nav-btn" style="border-color: #8b5cf6; color: #8b5cf6; padding: 10px 15px; font-size: 14px;" onclick="downloadTimetablePDF()">📥 Download PDF</button>
+    </div>
+    
+    <div id="ttViewMessage" style="text-align:center; color:#ef4444; font-weight:bold; margin-bottom: 10px; display:none;"></div>
+    
+    <div id="ttViewContainer" style="background:white; border-radius:8px; border:1px solid #cbd5e1; padding: 10px; overflow-x: auto;"></div>
+    <div class="developer-credit">Designed & Developed by GRR</div>
   </div>
 
   <!-- VIEW REPORT CONTAINER (Page 5) -->
@@ -468,17 +520,60 @@
     </div>
     <h2 id="reportTitle" style="margin-top: -10px;">Class Report</h2>
     <div id="loadingIndicator" style="display: none;">Generating... ⏳</div>
-    
-    <!-- Area for UI Preview -->
     <div class="table-responsive" id="tableWrapper" style="display: none; background: #eef2f5;"></div>
-    
     <div class="developer-credit">Designed & Developed by GRR</div>
   </div>
 
-  <!-- HIDDEN CONTAINER FOR PERFECT PDF GENERATION -->
   <div id="pdfDownloadArea"></div>
 
   <script>
+    // --- CUSTOM DROPDOWN ENGINE ---
+    function toggleCustomSelect(id) {
+        let opts = document.getElementById('options_' + id);
+        let isShowing = opts.classList.contains('show');
+        closeAllCustomSelects('');
+        if (!isShowing) opts.classList.add('show');
+    }
+
+    function closeAllCustomSelects(exceptId) {
+        document.querySelectorAll('.custom-select-options').forEach(el => {
+            if (el.id !== 'options_' + exceptId) el.classList.remove('show');
+        });
+    }
+
+    document.addEventListener('click', function(e) {
+        if (!e.target.closest('.custom-select-container')) {
+            closeAllCustomSelects('');
+        }
+    });
+
+    function selectCustomOption(selectId, value, text, onChangeHandler) {
+        let hiddenInput = document.getElementById(selectId);
+        hiddenInput.value = value;
+        let display = document.getElementById('display_' + selectId);
+        display.textContent = text;
+        display.classList.add('has-value');
+        closeAllCustomSelects('');
+        if (onChangeHandler && typeof window[onChangeHandler] === 'function') {
+            window[onChangeHandler]();
+        }
+    }
+
+    function updateCustomSelectOptions(selectId, optionsArray, defaultText, onChangeHandler) {
+        let container = document.getElementById('options_' + selectId);
+        let html = '';
+        optionsArray.forEach(opt => {
+            let val = opt.value.replace(/'/g, "\\'");
+            let txt = opt.text.replace(/'/g, "\\'");
+            html += `<div class="custom-select-option" onclick="selectCustomOption('${selectId}', '${val}', '${txt}', '${onChangeHandler}')">${opt.text}</div>`;
+        });
+        container.innerHTML = html;
+        document.getElementById(selectId).value = "";
+        let display = document.getElementById('display_' + selectId);
+        display.textContent = defaultText;
+        display.classList.remove('has-value');
+    }
+
     // --- MANUAL ENTRY MASTER SWITCHES ---
     const IS_FIRST_TERM_ENTRY_OPEN = true;
     const IS_MID_TERM_ENTRY_OPEN = false; 
@@ -518,7 +613,6 @@
       "8H": ["AADIDEV P P", "AKSHIKA M", "ANMIYA", "ARSHIK DEV P", "ARUNDHATHI K", "ASWIN DEV K K", "AVANI VIJEESH", "DARSITH V R", "DEVALAKSHMI.V.C", "DEVAMGANA P B", "GOUTHAM KRISHNA A", "ISHIKA A", "KEDARNADH B.S", "NAINIKA C P", "NAYAN THEJ K C", "NIHAL S", "NIVEDYA ANIL KUMAR", "RITHUKRISHNA C P", "SAMARTH S CHANDRAN", "SARON A K", "SHANVIN PRAJITH C P", "SHIVA LAKSHMI SANAL", "SHYAMDEV S NATH", "SIVADA P M", "SIVADA SASI", "SURYA DEV V.K", "THEJA KALLYANI", "THRINAD SHAH", "VEDAJ", "VISHWADHAR P P"]
     };
     
-    // Note: IT is intentionally excluded from the Mark Entry Subject List
     const subjectsList = ['Language 1', 'Language 2', 'English', 'Hindi', 'Social Science', 'Physics', 'Chemistry', 'Biology', 'Mathematics'];
     
     const languageTeachers = ["Aneesh A", "AP Najee Ahammed", "CK Leela", "KV Sheeba", "Shyna R", "Smitha KK", "T Sayad"];
@@ -582,6 +676,84 @@
     let appMode = 'entry'; 
     let specialBookings = {};
 
+    // Calendars
+    let bookingCalMonth = new Date().getMonth();
+    let bookingCalYear = new Date().getFullYear();
+    let ttCalMonth = new Date().getMonth();
+    let ttCalYear = new Date().getFullYear();
+    window.bookingSelectedDate = null;
+    window.ttSelectedDate = null;
+    window.currentTimetableTarget = null;
+    window.currentTimetableDate = null;
+
+    function renderCustomCalendar(containerId, year, month, selectedDateStr, onSelectFuncStr, prefix) {
+        let firstDay = new Date(year, month, 1).getDay();
+        let daysInMonth = new Date(year, month + 1, 0).getDate();
+        let today = new Date();
+        today.setHours(0,0,0,0);
+        const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+        
+        let html = `<div class="calendar-header">
+            <button type="button" class="back-btn" style="margin:0; font-size:22px; padding:0 10px;" onclick="changeMonth('${prefix}', -1)">&lt;</button>
+            <span>${monthNames[month]} ${year}</span>
+            <button type="button" class="back-btn" style="margin:0; font-size:22px; padding:0 10px;" onclick="changeMonth('${prefix}', 1)">&gt;</button>
+        </div>
+        <div class="calendar-grid">
+            <div class="calendar-day-name">Sun</div><div class="calendar-day-name">Mon</div><div class="calendar-day-name">Tue</div><div class="calendar-day-name">Wed</div><div class="calendar-day-name">Thu</div><div class="calendar-day-name">Fri</div><div class="calendar-day-name">Sat</div>`;
+        
+        for(let i=0; i<firstDay; i++) html += `<div class="calendar-day empty"></div>`;
+        
+        for(let d=1; d<=daysInMonth; d++) {
+            let curDate = new Date(year, month, d);
+            let dateStr = `${year}-${String(month+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+            let dayOfWeek = curDate.getDay();
+            
+            let classes = ['calendar-day'];
+            if (dayOfWeek === 0 || dayOfWeek === 6) classes.push('weekend');
+            if (dateStr === selectedDateStr) classes.push('selected');
+            if (curDate < today) classes.push('disabled');
+            
+            if (curDate < today) {
+                html += `<div class="${classes.join(' ')}">${d}</div>`;
+            } else {
+                html += `<div class="${classes.join(' ')}" onclick="${onSelectFuncStr}('${dateStr}')">${d}</div>`;
+            }
+        }
+        html += `</div>`;
+        document.getElementById(containerId).innerHTML = html;
+    }
+
+    function changeMonth(prefix, offset) {
+        if (prefix === 'booking') {
+            bookingCalMonth += offset;
+            if (bookingCalMonth < 0) { bookingCalMonth = 11; bookingCalYear--; }
+            else if (bookingCalMonth > 11) { bookingCalMonth = 0; bookingCalYear++; }
+            renderCustomCalendar('bookingCalendar', bookingCalYear, bookingCalMonth, window.bookingSelectedDate, 'selectBookingDate', 'booking');
+        } else {
+            ttCalMonth += offset;
+            if (ttCalMonth < 0) { ttCalMonth = 11; ttCalYear--; }
+            else if (ttCalMonth > 11) { ttCalMonth = 0; ttCalYear++; }
+            renderCustomCalendar('ttCalendar', ttCalYear, ttCalMonth, window.ttSelectedDate, 'selectTTDate', 'tt');
+        }
+    }
+
+    function selectBookingDate(dateStr) {
+        window.bookingSelectedDate = dateStr;
+        document.getElementById('bookDate').value = dateStr;
+        document.getElementById('bookingDateDisplay').textContent = "Selected Date: " + dateStr;
+        document.getElementById('bookingDateDisplay').classList.add('active');
+        renderCustomCalendar('bookingCalendar', bookingCalYear, bookingCalMonth, dateStr, 'selectBookingDate', 'booking');
+        renderBookings();
+    }
+
+    function selectTTDate(dateStr) {
+        window.ttSelectedDate = dateStr;
+        document.getElementById('ttDateDisplay').textContent = "Selected Date: " + dateStr;
+        document.getElementById('ttDateDisplay').classList.add('active');
+        renderCustomCalendar('ttCalendar', ttCalYear, ttCalMonth, dateStr, 'selectTTDate', 'tt');
+    }
+
+    // INIT
     window.addEventListener('load', function() {
       const teacherSet = new Set(languageTeachers); 
       for (let sub in teacherMapping) {
@@ -591,29 +763,19 @@
       }
       const sortedTeachers = Array.from(teacherSet).sort();
       
-      const selectLogin = document.getElementById('teacherSelect');
-      const selectAdmin = document.getElementById('adminTeacherSelect');
-      
-      selectLogin.innerHTML = '<option value="" disabled selected hidden>Select Your Name</option>';
-      
-      let adminOpt = document.createElement('option'); 
-      adminOpt.value = "Admin"; 
-      adminOpt.textContent = "Admin (Change my PIN)";
-      selectAdmin.appendChild(adminOpt);
-
-      sortedTeachers.forEach(t => {
-          let opt1 = document.createElement('option'); opt1.value = t; opt1.textContent = t;
-          let opt2 = document.createElement('option'); opt2.value = t; opt2.textContent = t;
-          selectLogin.appendChild(opt1);
-          selectAdmin.appendChild(opt2);
+      let teacherOptions = [];
+      let adminOptions = [{value: "Admin", text: "Admin (Change my PIN)"}];
+      sortedTeachers.forEach(t => { 
+          teacherOptions.push({value: t, text: t}); 
+          adminOptions.push({value: t, text: t});
       });
+      updateCustomSelectOptions('teacherSelect', teacherOptions, 'Select Your Name', '');
+      updateCustomSelectOptions('adminTeacherSelect', adminOptions, 'Select Teacher', '');
 
       const savedTeacher = localStorage.getItem('loggedTeacher');
       if (savedTeacher) {
           loggedInUser = savedTeacher;
-          document.getElementById('teacherGreeting').textContent = "Welcome, " + savedTeacher;
           document.getElementById('dashboardGreeting').textContent = "Welcome, " + savedTeacher;
-          document.getElementById('logoutBtn').style.display = "block";
           document.getElementById('logoutBtnDash').style.display = "block";
           showPage('pageDashboard'); 
       }
@@ -634,7 +796,7 @@
           document.body.style.backgroundColor = '#eef2f5'; 
       }
       
-      if(pageId === 'page5') {
+      if(pageId === 'page5' || pageId === 'pageTimetableView') {
         document.getElementById('mainContainer').style.display = 'none';
       } else {
         document.getElementById('mainContainer').style.display = 'block';
@@ -646,6 +808,7 @@
       });
     }
 
+    // AUTH
     function attemptLogin() {
         const user = document.getElementById('teacherSelect').value;
         const pin = document.getElementById('teacherPin').value.trim();
@@ -727,14 +890,12 @@
         localStorage.setItem('loggedTeacher', user); 
         appMode = 'entry';
         
-        document.getElementById('teacherGreeting').textContent = "Welcome, " + user;
         document.getElementById('dashboardGreeting').textContent = "Welcome, " + user;
         document.getElementById('teacherPin').value = ""; 
         document.getElementById('newTeacherPinSetup').value = ""; 
         document.getElementById('loginStep1').style.display = "block";
         document.getElementById('loginStep2').style.display = "none";
         
-        document.getElementById('logoutBtn').style.display = "block";
         document.getElementById('logoutBtnDash').style.display = "block";
         showPage('pageDashboard'); 
     }
@@ -742,8 +903,8 @@
     function logoutDevice() {
         loggedInUser = null;
         adminToken = "";
+        appMode = 'entry';
         localStorage.removeItem('loggedTeacher'); 
-        document.getElementById('logoutBtn').style.display = "none";
         document.getElementById('logoutBtnDash').style.display = "none";
         showPage('pageHome');
     }
@@ -767,6 +928,7 @@
             btn.textContent = "Enter Console"; btn.disabled = false;
             if (data.status === "success" && data.role === "admin") {
                 adminToken = pin; 
+                loggedInUser = "Admin"; 
                 document.getElementById('adminPinInput').value = "";
                 showPage('pageAdminDash');
             } else {
@@ -782,14 +944,11 @@
     function resetToDefaultPin() {
         const targetTeacher = document.getElementById('adminTeacherSelect').value;
         const msg = document.getElementById('adminDashMessage');
-        
-        if (targetTeacher === "Admin") {
-            msg.style.color = "#ef4444"; 
-            msg.style.backgroundColor = "#fee2e2"; 
-            msg.textContent = "Admin PIN cannot be reset to the 1234 default.";
+        if (targetTeacher === "Admin" || targetTeacher === "") {
+            msg.style.color = "#ef4444"; msg.style.backgroundColor = "#fee2e2"; 
+            msg.textContent = "Select a valid teacher.";
             return;
         }
-
         document.getElementById('newTeacherPin').value = "1234";
         setTeacherPin();
     }
@@ -800,6 +959,7 @@
         const msg = document.getElementById('adminDashMessage');
         const btn = document.getElementById('setPinBtn');
         
+        if(!targetTeacher) { msg.style.color = "#ef4444"; msg.textContent = "Please select a teacher."; return; }
         if(!newPin || newPin.length < 4) { msg.style.color = "#ef4444"; msg.textContent = "PIN must be at least 4 digits."; return; }
         
         btn.textContent = "Saving..."; btn.disabled = true;
@@ -828,14 +988,8 @@
     function logoutAdmin() {
         adminToken = "";
         loggedInUser = null;
+        appMode = 'entry';
         showPage('pageHome');
-    }
-
-    function goToAdminEntry() {
-        loggedInUser = "Admin"; 
-        document.getElementById('teacherGreeting').textContent = "Welcome, Admin Mode";
-        document.getElementById('logoutBtn').style.display = "block";
-        showPage('pageClassSelect');
     }
 
     // --- NAVIGATION HELPERS ---
@@ -867,45 +1021,57 @@
     }
 
     // --- SPECIAL BOOKING SYSTEM ---
-    let bookingReturnPage = 'pageClassSelect';
+    let bookingReturnPage = 'pageDashboard';
 
     function showBookingPage(fromPage) {
         bookingReturnPage = fromPage;
         showPage('pageBooking');
         
-        let dateInput = document.getElementById('bookDate');
-        let classInput = document.getElementById('bookClass');
+        let subtitle = document.getElementById('bookingSubtitle');
+        if (loggedInUser === 'Admin') {
+            subtitle.textContent = "Check the slots";
+        } else {
+            subtitle.textContent = "Book Your Slots";
+        }
         
-        if (classInput.options.length === 0) {
-            let optionsHtml = '';
-            ['10','9','8'].forEach(std => {
-                ['A','B','C','D','E','F','G','H'].forEach(div => {
-                    optionsHtml += `<option value="${std}${div}">Class ${std}${div}</option>`;
-                });
+        // Reset state
+        document.getElementById('bookDate').value = "";
+        window.bookingSelectedDate = null;
+        document.getElementById('bookingDateDisplay').textContent = "Select Date";
+        document.getElementById('bookingDateDisplay').classList.remove('active');
+        document.getElementById('slotsContainer').innerHTML = "";
+        document.getElementById('myBookingsSection').style.display = 'none';
+        
+        let allowedDivs = [];
+        ['10','9','8'].forEach(std => {
+            ['A','B','C','D','E','F','G','H'].forEach(div => {
+                let cls = std + div;
+                if (loggedInUser === 'Admin' || loggedInUser === 'Viewer' || languageTeachers.includes(loggedInUser)) {
+                    allowedDivs.push(cls);
+                } else {
+                    let subs = getTeacherSubjectsForClass(loggedInUser, cls);
+                    if (subs.length > 0) allowedDivs.push(cls);
+                }
             });
-            classInput.innerHTML = optionsHtml;
-        }
+        });
+        
+        let bookClassOptions = [];
+        allowedDivs.forEach(cls => {
+            bookClassOptions.push({value: cls, text: 'Class ' + cls});
+        });
+        updateCustomSelectOptions('bookClass', bookClassOptions, 'Select Class', 'renderBookings');
 
-        if(!dateInput.value) {
-            let today = new Date();
-            let yyyy = today.getFullYear();
-            let mm = String(today.getMonth() + 1).padStart(2, '0');
-            let dd = String(today.getDate()).padStart(2, '0');
-            let todayStr = `${yyyy}-${mm}-${dd}`;
-            dateInput.min = todayStr;
-            dateInput.value = todayStr;
-        }
+        bookingCalMonth = new Date().getMonth();
+        bookingCalYear = new Date().getFullYear();
+        renderCustomCalendar('bookingCalendar', bookingCalYear, bookingCalMonth, null, 'selectBookingDate', 'booking');
         
         fetchBookings();
     }
 
-    function goBackFromBooking() {
-        showPage(bookingReturnPage);
-    }
+    function goBackFromBooking() { showPage(bookingReturnPage); }
     
     function fetchBookings() {
         document.getElementById('bookingLoading').style.display = "block";
-        document.getElementById('slotsContainer').style.display = "none";
         
         fetch(scriptURL, {
             method: 'POST',
@@ -915,26 +1081,89 @@
         .then(res => res.json())
         .then(data => {
             document.getElementById('bookingLoading').style.display = "none";
-            document.getElementById('slotsContainer').style.display = "block";
             if (data.status === "success") {
                 specialBookings = data.data;
+                renderMyBookings();
                 renderBookings();
             }
-        })
-        .catch(err => {
-            document.getElementById('bookingLoading').textContent = "Network error. Try again.";
+        }).catch(err => { 
+            document.getElementById('bookingLoading').style.display = "none";
+            let c = document.getElementById('slotsContainer');
+            c.innerHTML = `<div style='text-align:center; color:#ef4444; font-weight:bold;'>Network error syncing bookings.</div>`;
         });
+    }
+
+    function renderMyBookings() {
+        let container = document.getElementById('myBookingsList');
+        let section = document.getElementById('myBookingsSection');
+        let title = document.getElementById('myBookingsTitle');
+        
+        if (loggedInUser === 'Viewer') { 
+            section.style.display = 'none'; 
+            return; 
+        }
+
+        if (loggedInUser === 'Admin') {
+            title.textContent = "📋 All Bookings";
+        } else {
+            title.textContent = "📋 My Bookings";
+        }
+
+        let myB = [];
+        let today = new Date();
+        today.setHours(0,0,0,0);
+
+        for (let date in specialBookings) {
+            let parts = date.split('-');
+            if(parts.length !== 3) continue;
+            let dObj = new Date(parseInt(parts[0], 10), parseInt(parts[1], 10)-1, parseInt(parts[2], 10));
+            if (dObj < today) continue; 
+            
+            for (let cls in specialBookings[date]) {
+                for (let slot in specialBookings[date][cls]) {
+                    let b = specialBookings[date][cls][slot];
+                    if (b.teacher === loggedInUser || loggedInUser === 'Admin') {
+                        myB.push({ date: date, cls: cls, slotIndex: slot, subject: b.subject, teacher: b.teacher });
+                    }
+                }
+            }
+        }
+
+        if (myB.length === 0) {
+            let msg = loggedInUser === 'Admin' ? "No bookings exist." : "You have no bookings.";
+            container.innerHTML = `<div style="padding: 10px; text-align:center; color:#64748b; font-weight:bold;">${msg}</div>`;
+            section.style.display = 'block';
+            return;
+        }
+
+        myB.sort((a,b) => new Date(a.date) - new Date(b.date));
+
+        let slotsText = ["9:30 AM - 11:00 AM", "11:15 AM - 12:45 PM", "2:00 PM - 3:30 PM"];
+        let html = '';
+        myB.forEach(b => {
+            let titleText = loggedInUser === 'Admin' ? `${b.subject} (${b.teacher})` : b.subject;
+            let cancelBtnHtml = '';
+            if (loggedInUser !== 'Admin') {
+                cancelBtnHtml = `<button class="nav-btn" style="padding: 6px 12px; font-size: 13px; border-color: #ef4444; color: #ef4444; margin: 0; min-width: 75px;" onclick="cancelBooking('${b.date}', '${b.cls}', ${b.slotIndex}, event)">Cancel</button>`;
+            }
+
+            html += `<div style="background: #ffffff; border: 1px solid #cbd5e1; padding: 10px; border-radius: 8px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center;">
+                <div style="line-height:1.4;">
+                    <strong style="color: #3b82f6;">${b.date}</strong> | <span style="font-weight:bold; color:#1e293b;">Class ${b.cls}</span><br>
+                    <span style="font-size: 13px; color: #64748b;">${slotsText[b.slotIndex]} - ${titleText}</span>
+                </div>
+                ${cancelBtnHtml}
+            </div>`;
+        });
+        container.innerHTML = html;
+        section.style.display = 'block';
     }
 
     function getTeacherSubjectsForClass(teacher, className) {
         let subs = [];
-        if (languageTeachers.includes(teacher)) {
-            subs.push("Language");
-        }
+        if (languageTeachers.includes(teacher)) subs.push("Language");
         for (let sub in teacherMapping) {
-            if (teacherMapping[sub][className] === teacher) {
-                subs.push(sub);
-            }
+            if (teacherMapping[sub][className] === teacher) subs.push(sub);
         }
         return [...new Set(subs)];
     }
@@ -942,7 +1171,10 @@
     function renderBookings() {
         let date = document.getElementById('bookDate').value;
         let cls = document.getElementById('bookClass').value;
-        if(!date || !cls) return;
+        if(!date || !cls) {
+            document.getElementById('slotsContainer').innerHTML = "<div style='text-align:center; color:#64748b;'>Please select both a date and a class to view/book slots.</div>";
+            return;
+        }
         
         let slots = ["9:30 AM to 11:00 AM", "11:15 AM to 12:45 PM", "2:00 PM to 3:30 PM"];
         let html = '';
@@ -950,9 +1182,7 @@
         let availableSubs = [];
         if (loggedInUser !== 'Admin' && loggedInUser !== 'Viewer') {
             availableSubs = getTeacherSubjectsForClass(loggedInUser, cls);
-        } else if (loggedInUser === 'Admin') {
-            availableSubs = Object.keys(teacherMapping); 
-        }
+        } 
 
         slots.forEach((time, index) => {
             let b = specialBookings[date] && specialBookings[date][cls] && specialBookings[date][cls][index];
@@ -961,20 +1191,30 @@
             
             if (b) {
                 html += `<div style="color: #b91c1c; font-weight: bold; font-size:15px;">${b.subject} - ${b.teacher}</div>`;
-                if(b.teacher === loggedInUser || loggedInUser === 'Admin') {
-                   html += `<button class="nav-btn" style="padding: 8px; font-size: 13px; margin-top: 10px; border-color: #ef4444; color: #ef4444;" onclick="cancelBooking('${date}', '${cls}', ${index}, event)">Cancel Booking</button>`;
+                if(b.teacher === loggedInUser) {
+                   html += `<button class="nav-btn" style="padding: 8px; font-size: 13px; margin-top: 10px; border-color: #ef4444; color: #ef4444; min-width: 75px;" onclick="cancelBooking('${date}', '${cls}', ${index}, event)">Cancel</button>`;
                 }
             } else {
                 html += `<div style="color: #15803d; font-weight: bold; font-size:15px;">Available</div>`;
-                if(loggedInUser !== 'Viewer' && availableSubs.length > 0) {
-                    html += `<div style="margin-top: 10px;">
-                        <select id="bookSub_${index}" style="width: 58%; display: inline-block; margin-bottom: 0; padding:10px;">`;
-                    availableSubs.forEach(s => html += `<option value="${s}">${s}</option>`);
-                    html += `</select>
-                        <button class="nav-btn" style="padding: 10px; font-size: 14px; width: 38%; display: inline-block; border-color: #10b981; color: #10b981;" onclick="bookSlot('${date}', '${cls}', ${index}, event)">Book Slot</button>
-                    </div>`;
-                } else if (loggedInUser !== 'Admin' && loggedInUser !== 'Viewer') {
-                    html += `<div style="font-size: 13px; color: #64748b; margin-top: 5px;">You do not handle subjects for this class.</div>`;
+                
+                if(loggedInUser !== 'Viewer' && loggedInUser !== 'Admin') {
+                    if (availableSubs.length > 0) {
+                        html += `<div style="margin-top: 10px;">
+                            <div class="custom-select-container" style="width: 58%; display: inline-block; margin-bottom: 0; vertical-align: top;">
+                                <div class="custom-select-display" id="display_bookSub_${index}" onclick="toggleCustomSelect('bookSub_${index}')" style="padding: 10px; font-size:14px;">Select Subject</div>
+                                <div class="custom-select-options" id="options_bookSub_${index}">`;
+                        
+                        availableSubs.forEach(s => {
+                            html += `<div class="custom-select-option" onclick="selectCustomOption('bookSub_${index}', '${s}', '${s}', '')">${s}</div>`;
+                        });
+                        
+                        html += `</div><input type="hidden" id="bookSub_${index}"></div>
+                            <button class="nav-btn" style="padding: 10px; font-size: 14px; width: 38%; display: inline-block; border-color: #10b981; color: #10b981; margin-left: 2%; vertical-align: top;" onclick="bookSlot('${date}', '${cls}', ${index}, event)">Book Slot</button>
+                            <div id="slotMsg_${index}" style="color: #ef4444; font-size: 13px; margin-top: 5px; font-weight:bold; display:none; width: 100%;"></div>
+                        </div>`;
+                    } else {
+                        html += `<div style="font-size: 13px; color: #64748b; margin-top: 5px;">You do not handle subjects for this class.</div>`;
+                    }
                 }
             }
             html += `</div>`;
@@ -984,8 +1224,35 @@
 
     function bookSlot(date, cls, index, event) {
         let sub = document.getElementById(`bookSub_${index}`).value;
+        let msgDiv = document.getElementById(`slotMsg_${index}`);
+        msgDiv.style.display = 'none';
+
+        if (!sub) {
+            msgDiv.style.color = '#ef4444';
+            msgDiv.textContent = "Please select a subject before booking.";
+            msgDiv.style.display = 'block';
+            return;
+        }
+
+        // Secondary IT Limit check right before submitting
+        if (sub === 'IT') {
+            let itCount = 0;
+            if (specialBookings[date]) {
+                for (let c in specialBookings[date]) {
+                    if (specialBookings[date][c][index] && specialBookings[date][c][index].subject === 'IT') {
+                        itCount++;
+                    }
+                }
+            }
+            if (itCount >= 2) {
+                msgDiv.style.color = '#ef4444';
+                msgDiv.textContent = "No IT slot available for this time.";
+                msgDiv.style.display = 'block';
+                return;
+            }
+        }
+
         let teacherName = loggedInUser === 'Admin' ? 'Admin' : loggedInUser;
-        
         let btn = event.target;
         btn.textContent = "Booking...";
         btn.disabled = true;
@@ -996,116 +1263,269 @@
             body: JSON.stringify({ action: "saveBooking", date: date, cls: cls, slotIndex: index, teacher: teacherName, subject: sub })
         })
         .then(res => res.json())
-        .then(data => {
+        .then(data => { 
+            msgDiv.style.color = '#10b981';
+            msgDiv.textContent = "Successfully booked slot!";
+            msgDiv.style.display = 'block';
             fetchBookings(); 
+        })
+        .catch(err => {
+            msgDiv.style.color = '#ef4444';
+            msgDiv.textContent = "Failed to save booking. Network error.";
+            msgDiv.style.display = 'block';
+            btn.textContent = "Book Slot";
+            btn.disabled = false;
         });
     }
     
     function cancelBooking(date, cls, index, event) {
-        if(confirm("Cancel this booking?")) {
-            let btn = event.target;
-            btn.textContent = "Canceling...";
-            btn.disabled = true;
-
-            fetch(scriptURL, {
-                method: 'POST',
-                headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-                body: JSON.stringify({ action: "cancelBooking", date: date, cls: cls, slotIndex: index })
-            })
-            .then(res => res.json())
-            .then(data => {
-                fetchBookings(); 
-            });
+        let btn = event.target;
+        if (!btn.classList.contains('confirm-mode')) {
+            btn.dataset.ogText = btn.textContent;
+            btn.textContent = "Sure?";
+            btn.style.backgroundColor = "#fee2e2";
+            btn.classList.add('confirm-mode');
+            setTimeout(() => { 
+                if(btn.classList.contains('confirm-mode')) {
+                    btn.textContent = btn.dataset.ogText; 
+                    btn.style.backgroundColor = "transparent";
+                    btn.classList.remove('confirm-mode');
+                }
+            }, 3000);
+            return;
         }
+
+        btn.textContent = "Canceling...";
+        btn.disabled = true;
+
+        fetch(scriptURL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+            body: JSON.stringify({ action: "cancelBooking", date: date, cls: cls, slotIndex: index })
+        })
+        .then(res => res.json())
+        .then(data => { fetchBookings(); })
+        .catch(err => {
+            let p = btn.parentElement;
+            let errDiv = p.querySelector('.cancel-err');
+            if(!errDiv) {
+                errDiv = document.createElement('div');
+                errDiv.className = 'cancel-err';
+                errDiv.style.color = '#ef4444';
+                errDiv.style.fontSize = '13px';
+                errDiv.style.marginTop = '5px';
+                p.appendChild(errDiv);
+            }
+            errDiv.textContent = "Failed to cancel. Network error.";
+            btn.textContent = btn.dataset.ogText;
+            btn.disabled = false;
+            btn.classList.remove('confirm-mode');
+        });
     }
 
-    async function downloadTimetable() {
-        let date = document.getElementById('bookDate').value;
-        if(!date) return alert("Select a date first.");
+    // --- TIMETABLE GENERATION SYSTEM ---
+    let ttReturnPage = 'pageBooking';
+    
+    function goToTimetableMenu(fromPage) {
+        ttReturnPage = fromPage || 'pageBooking';
+        showPage('pageTimetableMenu');
         
-        let btn = document.querySelector("#pageBooking .action-btn");
+        document.getElementById('ttMessage').textContent = "";
+        
+        // Sync selected date from Booking to Timetable
+        if (window.bookingSelectedDate) {
+            window.ttSelectedDate = window.bookingSelectedDate;
+            let parts = window.ttSelectedDate.split('-');
+            ttCalYear = parseInt(parts[0], 10);
+            ttCalMonth = parseInt(parts[1], 10) - 1;
+            document.getElementById('ttDateDisplay').textContent = "Selected Date: " + window.ttSelectedDate;
+            document.getElementById('ttDateDisplay').classList.add('active');
+        } else {
+            window.ttSelectedDate = null;
+            document.getElementById('ttDateDisplay').textContent = "Select Date";
+            document.getElementById('ttDateDisplay').classList.remove('active');
+            ttCalMonth = new Date().getMonth();
+            ttCalYear = new Date().getFullYear();
+        }
+        
+        renderCustomCalendar('ttCalendar', ttCalYear, ttCalMonth, window.ttSelectedDate, 'selectTTDate', 'tt');
+        
+        let ttClassOptions = [
+            {value: "10", text: "Class 10 (All Divisions)"},
+            {value: "9", text: "Class 9 (All Divisions)"},
+            {value: "8", text: "Class 8 (All Divisions)"}
+        ];
+        updateCustomSelectOptions('ttClassSelect', ttClassOptions, 'Select Class', '');
+        
+        let ttDivOptions = [];
+        ['10','9','8'].forEach(std => {
+            ['A','B','C','D','E','F','G','H'].forEach(div => {
+                ttDivOptions.push({value: std+div, text: 'Class ' + std + div});
+            });
+        });
+        updateCustomSelectOptions('ttDivSelect', ttDivOptions, 'Select Division', '');
+    }
+    
+    function goBackFromTimetableMenu() {
+        showPage(ttReturnPage);
+    }
+    
+    function fetchAndGenerateTimetable(type) {
+        let msg = document.getElementById('ttMessage');
+        msg.textContent = "";
+        
+        let date = window.ttSelectedDate;
+        if (!date) {
+            msg.textContent = "Please select a date on the calendar.";
+            return;
+        }
+        
+        let targetValue = type === 'classwise' ? document.getElementById('ttClassSelect').value : document.getElementById('ttDivSelect').value;
+        if (!targetValue) {
+            msg.textContent = "Please select a Class or Division from the dropdown.";
+            return;
+        }
+
+        window.currentTimetableTarget = targetValue;
+        window.currentTimetableDate = date;
+
+        let btnId = type === 'classwise' ? 'btnGenClass' : 'btnGenDiv';
+        let btn = document.getElementById(btnId);
+        let ogText = btn.textContent;
+        btn.textContent = "Loading... ⏳";
+        btn.disabled = true;
+
+        fetch(scriptURL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+            body: JSON.stringify({ action: "getBookings" })
+        })
+        .then(res => res.json())
+        .then(data => {
+            btn.textContent = ogText;
+            btn.disabled = false;
+            if (data.status === "success") {
+                specialBookings = data.data;
+                buildTimetableView(type, targetValue, date);
+            } else { msg.textContent = "Failed to fetch data."; }
+        })
+        .catch(err => {
+            btn.textContent = ogText;
+            btn.disabled = false;
+            msg.textContent = "Network error.";
+        });
+    }
+
+    function buildTimetableView(type, targetValue, date) {
+        showPage('pageTimetableView');
+        
+        let html = `<div style="padding: 20px; background: white; color: black; font-family: sans-serif; box-sizing:border-box;">`;
+        
+        if (type === 'classwise') {
+            html += `<h2 style="text-align: center; margin-bottom: 20px;">SANSKRIT HS VATTOLI - Class ${targetValue} Special Timetable<br><span style="font-size:16px;">${date}</span></h2>
+            <table style="width: 100%; border-collapse: collapse; border: 2px solid #000; font-size: 14px;">
+            <thead>
+                <tr>
+                    <th style="border: 1px solid #000; padding: 10px;">Division</th>
+                    <th style="border: 1px solid #000; padding: 10px;">9:30 AM - 11:00 AM</th>
+                    <th style="border: 1px solid #000; padding: 10px;">11:15 AM - 12:45 PM</th>
+                    <th style="border: 1px solid #000; padding: 10px;">2:00 PM - 3:30 PM</th>
+                </tr>
+            </thead><tbody>`;
+            
+            ['A','B','C','D','E','F','G','H'].forEach(div => {
+                let cls = targetValue + div;
+                let b0 = specialBookings[date] && specialBookings[date][cls] && specialBookings[date][cls][0] ? `${specialBookings[date][cls][0].subject}<br>(${specialBookings[date][cls][0].teacher})` : "";
+                let b1 = specialBookings[date] && specialBookings[date][cls] && specialBookings[date][cls][1] ? `${specialBookings[date][cls][1].subject}<br>(${specialBookings[date][cls][1].teacher})` : "";
+                let b2 = specialBookings[date] && specialBookings[date][cls] && specialBookings[date][cls][2] ? `${specialBookings[date][cls][2].subject}<br>(${specialBookings[date][cls][2].teacher})` : "";
+                
+                html += `<tr>
+                    <td style="border: 1px solid #000; padding: 10px; font-weight: bold; text-align: center;">${cls}</td>
+                    <td style="border: 1px solid #000; padding: 10px; text-align: center;">${b0}</td>
+                    <td style="border: 1px solid #000; padding: 10px; text-align: center;">${b1}</td>
+                    <td style="border: 1px solid #000; padding: 10px; text-align: center;">${b2}</td>
+                </tr>`;
+            });
+            html += `</tbody></table></div>`;
+        } else {
+            // Divisionwise
+            html += `<h2 style="text-align: center; margin-bottom: 20px;">SANSKRIT HS VATTOLI - Class ${targetValue} Special Timetable<br><span style="font-size:16px;">${date}</span></h2>
+            <table style="width: 100%; border-collapse: collapse; border: 2px solid #000; font-size: 16px;">
+            <thead>
+                <tr>
+                    <th style="border: 1px solid #000; padding: 12px; width:40%;">Time</th>
+                    <th style="border: 1px solid #000; padding: 12px;">Subject & Teacher</th>
+                </tr>
+            </thead><tbody>`;
+            
+            let cls = targetValue;
+            let slots = ["9:30 AM - 11:00 AM", "11:15 AM - 12:45 PM", "2:00 PM - 3:30 PM"];
+            slots.forEach((time, idx) => {
+                let b = specialBookings[date] && specialBookings[date][cls] && specialBookings[date][cls][idx];
+                let text = b ? `<strong>${b.subject}</strong><br>${b.teacher}` : "";
+                html += `<tr>
+                    <td style="border: 1px solid #000; padding: 12px; text-align: center; font-weight: bold;">${time}</td>
+                    <td style="border: 1px solid #000; padding: 12px; text-align: center;">${text}</td>
+                </tr>`;
+            });
+            html += `</tbody></table></div>`;
+        }
+        
+        document.getElementById('ttViewContainer').innerHTML = html;
+        document.getElementById('ttViewMessage').style.display = 'none';
+    }
+
+    function downloadTimetablePDF() {
+        let btn = document.getElementById('downloadTtBtn');
+        let msg = document.getElementById('ttViewMessage');
+        msg.style.display = 'none';
+        
         let ogText = btn.textContent;
         btn.textContent = "Generating PDF... ⏳";
         btn.disabled = true;
-        
-        let classes = [];
-        ['10','9','8'].forEach(std => {
-            ['A','B','C','D','E','F','G','H'].forEach(div => classes.push(std+div));
+
+        let target = window.currentTimetableTarget || 'Class';
+        let dateStr = window.currentTimetableDate || '';
+
+        let element = document.getElementById('ttViewContainer');
+        let opt = {
+            margin:       10,
+            filename:     `Timetable_${target}_${dateStr}.pdf`,
+            image:        { type: 'jpeg', quality: 0.98 },
+            html2canvas:  { scale: 2, useCORS: true },
+            jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
+        };
+
+        html2pdf().set(opt).from(element).save().then(() => {
+            btn.textContent = ogText;
+            btn.disabled = false;
+        }).catch(e => {
+            btn.textContent = ogText;
+            btn.disabled = false;
+            msg.textContent = "Error downloading PDF.";
+            msg.style.display = 'block';
         });
-        
-        let html = `<div style="padding: 20px; background: white; color: black; font-family: sans-serif; width: 297mm; box-sizing:border-box;">
-            <h2 style="text-align: center; margin-bottom: 20px;">SANSKRIT HS VATTOLI - Special Class Timetable - ${date}</h2>
-            <table style="width: 100%; border-collapse: collapse; border: 2px solid #000; font-size: 12px;">
-            <thead>
-                <tr>
-                    <th style="border: 1px solid #000; padding: 8px;">Class</th>
-                    <th style="border: 1px solid #000; padding: 8px;">9:30 AM - 11:00 AM</th>
-                    <th style="border: 1px solid #000; padding: 8px;">11:15 AM - 12:45 PM</th>
-                    <th style="border: 1px solid #000; padding: 8px;">2:00 PM - 3:30 PM</th>
-                </tr>
-            </thead>
-            <tbody>`;
-            
-        classes.forEach(cls => {
-            let b0 = specialBookings[date] && specialBookings[date][cls] && specialBookings[date][cls][0] ? `${specialBookings[date][cls][0].subject}<br>(${specialBookings[date][cls][0].teacher})` : "-";
-            let b1 = specialBookings[date] && specialBookings[date][cls] && specialBookings[date][cls][1] ? `${specialBookings[date][cls][1].subject}<br>(${specialBookings[date][cls][1].teacher})` : "-";
-            let b2 = specialBookings[date] && specialBookings[date][cls] && specialBookings[date][cls][2] ? `${specialBookings[date][cls][2].subject}<br>(${specialBookings[date][cls][2].teacher})` : "-";
-            
-            html += `<tr>
-                <td style="border: 1px solid #000; padding: 6px; font-weight: bold; text-align: center;">${cls}</td>
-                <td style="border: 1px solid #000; padding: 6px; text-align: center;">${b0}</td>
-                <td style="border: 1px solid #000; padding: 6px; text-align: center;">${b1}</td>
-                <td style="border: 1px solid #000; padding: 6px; text-align: center;">${b2}</td>
-            </tr>`;
-        });
-        
-        html += `</tbody></table></div>`;
-        
-        let container = document.getElementById('pdfDownloadArea');
-        container.innerHTML = html;
-        container.style.left = '0';
-        
-        try {
-            const { jsPDF } = window.jspdf;
-            let doc = new jsPDF('p', 'mm', 'a4'); 
-            let canvas = await html2canvas(container.children[0], { scale: 1.5, useCORS: true, logging: false });
-            let imgData = canvas.toDataURL('image/jpeg', 0.95);
-            
-            let imgWidth = 190;
-            let imgHeight = canvas.height * imgWidth / canvas.width;
-            
-            doc.addImage(imgData, 'JPEG', 10, 10, imgWidth, imgHeight);
-            doc.save(`Timetable_${date}.pdf`);
-        } catch(e) {
-            console.error(e);
-            alert("Error downloading timetable.");
-        }
-        
-        container.style.left = '-9999px';
-        btn.textContent = ogText;
-        btn.disabled = false;
     }
 
     // --- STATUS CHECK SYSTEM ---
     function showStatusPage(fromPage) {
         statusReturnPage = fromPage;
         showPage('pageStatus');
-        fetchStatus();
+        
+        let examOptions = [
+            {value: "First Term Exam", text: "First Term Exam"},
+            {value: "First Mid Term Exam", text: "First Mid Term Exam (Class 10)"}
+        ];
+        updateCustomSelectOptions('statusExamSelect', examOptions, 'Select Exam', 'fetchStatus');
+        document.getElementById('statusListContainer').innerHTML = "<div style='text-align:center; color:#64748b;'>Please select an exam to check status.</div>";
     }
     
-    function goBackFromStatus() {
-        showPage(statusReturnPage);
-    }
+    function goBackFromStatus() { showPage(statusReturnPage); }
 
-    function goToGuestReports() {
-        loggedInUser = "Viewer"; 
-        document.getElementById('teacherGreeting').textContent = "Public Reports Access";
-        document.getElementById('logoutBtn').style.display = "block";
-        showPage('pageClassSelect');
-    }
-    
     function fetchStatus() {
         let examName = document.getElementById('statusExamSelect').value;
+        if (!examName) return;
+
         document.getElementById('statusLoading').style.display = "block";
         document.getElementById('statusListContainer').innerHTML = "";
         
@@ -1145,7 +1565,7 @@
         let pendingGroups = {};
         
         for (let subject in teacherMapping) {
-            if (subject === 'Language 1' || subject === 'Language 2') continue;
+            if (subject === 'Language 1' || subject === 'Language 2' || subject === 'IT') continue;
             
             for (let cls in teacherMapping[subject]) {
                 if (examName === "First Mid Term Exam" && !cls.startsWith("10")) continue;
@@ -1197,8 +1617,12 @@
             document.querySelectorAll('.test-name').forEach(el => el.textContent = currentExam);
             document.body.style.backgroundColor = '#e0f2fe';
             
-            filterDivisionsForTeacher();
-            showPage('page1');
+            if (appMode === 'report') {
+                showPage('page4');
+            } else {
+                filterDivisionsForTeacher();
+                showPage('page1');
+            }
         }
     }
 
@@ -1209,8 +1633,12 @@
       if (exam === 'First Term Exam') { document.body.style.backgroundColor = '#e0f2fe'; } 
       else if (exam === 'First Mid Term Exam') { document.body.style.backgroundColor = '#fef3c7'; }
       
-      filterDivisionsForTeacher();
-      showPage('page1');
+      if (appMode === 'report') {
+          showPage('page4');
+      } else {
+          filterDivisionsForTeacher();
+          showPage('page1');
+      }
     }
 
     function goBackFromDivisions() {
@@ -1271,12 +1699,7 @@
             let btnId = 'btn-sub-' + sub.replace(/\s+/g, '');
             let btn = document.getElementById(btnId);
             
-            if (loggedInUser === "Admin") {
-                btn.classList.remove('disabled-btn'); btn.disabled = false;
-                return;
-            }
-
-            if (loggedInUser === "Viewer") {
+            if (loggedInUser === "Admin" || loggedInUser === "Viewer") {
                 btn.classList.add('disabled-btn'); btn.disabled = true;
                 return;
             }
