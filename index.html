@@ -1159,9 +1159,7 @@
                         name: student,
                         origClass: cls,
                         grades: { "First Term Exam": {} },
-                        gradeCounts: { 'A+':0, 'A':0, 'B+':0, 'B':0, 'C+':0, 'C':0, 'D+':0, 'D':0, 'E':0 },
-                        mustBeLastBatch: false,
-                        qualifiesForFirstBatch: false
+                        gradeCounts: { 'A+':0, 'A':0, 'B+':0, 'B':0, 'C+':0, 'C':0, 'D+':0, 'D':0, 'E':0 }
                     };
                 });
             }
@@ -1169,19 +1167,16 @@
 
         marksData.forEach(row => {
             if (row.className.startsWith('10') && targetClasses.includes(row.className)) {
-                let ex = row.exam || "First Mid Term Exam";
-                if (ex === "SSLC Mid Term Examination") ex = "First Mid Term Exam";
-
                 // Strictly evaluate First Term Exam only
-                if (ex === "First Term Exam") {
+                if (row.exam === "First Term Exam") {
                     let key = row.className + "_" + row.student;
                     if (studentStats[key] && row.mark !== "") {
                         let parsedMark = parseFloat(row.mark);
                         if (!isNaN(parsedMark)) {
                             let mark = Math.round(parsedMark);
-                            let maxMark = getMaxMark(ex, row.subject, row.className);
+                            let maxMark = getMaxMark(row.exam, row.subject, row.className);
                             let grade = getGrade(mark, maxMark, row.className);
-                            studentStats[key].grades[ex][row.subject] = grade;
+                            studentStats[key].grades[row.exam][row.subject] = grade;
                             studentStats[key].gradeCounts[grade]++;
                         }
                     }
@@ -1198,69 +1193,17 @@
             return s1.name.localeCompare(s2.name);
         });
 
-        sortedStudents.forEach(s => {
-            let hasD_or_E = s.gradeCounts['D'] > 0 || s.gradeCounts['E'] > 0;
-            let hasNoAPlus = s.gradeCounts['A+'] === 0;
-
-            if (hasD_or_E && hasNoAPlus) {
-                s.mustBeLastBatch = true;
-            } else if (s.gradeCounts['A+'] >= 3 && s.gradeCounts['A'] >= 2) {
-                s.qualifiesForFirstBatch = true;
-            }
-        });
-
-        let topPool = sortedStudents.filter(s => s.qualifiesForFirstBatch);
-        let lastPool = sortedStudents.filter(s => s.mustBeLastBatch);
-        let middlePool = sortedStudents.filter(s => !s.qualifiesForFirstBatch && !s.mustBeLastBatch);
-
         let batches = [];
         for (let i = 0; i < numClasses; i++) batches.push([]);
 
-        if (numClasses === 1) {
-            batches[0] = sortedStudents;
-        } else {
-            let numLastBatches = 1;
-            if (lastPool.length > 50) {
-                numLastBatches = Math.ceil(lastPool.length / 45);
-            }
-            if (numLastBatches >= numClasses) {
-                numLastBatches = numClasses - 1; 
-            }
-            
-            let middleBatchesCount = numClasses - 1 - numLastBatches;
-            
-            if (middleBatchesCount > 0) {
-                batches[0] = topPool;
-                
-                let mBase = Math.floor(middlePool.length / middleBatchesCount);
-                let mRem = middlePool.length % middleBatchesCount;
-                let cIdx = 0;
-                for (let i = 0; i < middleBatchesCount; i++) {
-                    let chnk = mBase + (i < mRem ? 1 : 0);
-                    batches[i + 1] = middlePool.slice(cIdx, cIdx + chnk);
-                    cIdx += chnk;
-                }
-                
-                let lBase = Math.floor(lastPool.length / numLastBatches);
-                let lRem = lastPool.length % numLastBatches;
-                let lIdx = 0;
-                for (let i = 0; i < numLastBatches; i++) {
-                    let chnk = lBase + (i < lRem ? 1 : 0);
-                    batches[1 + middleBatchesCount + i] = lastPool.slice(lIdx, lIdx + chnk);
-                    lIdx += chnk;
-                }
-            } else {
-                batches[0] = topPool.concat(middlePool);
-                
-                let lBase = Math.floor(lastPool.length / numLastBatches);
-                let lRem = lastPool.length % numLastBatches;
-                let lIdx = 0;
-                for (let i = 0; i < numLastBatches; i++) {
-                    let chnk = lBase + (i < lRem ? 1 : 0);
-                    batches[1 + i] = lastPool.slice(lIdx, lIdx + chnk);
-                    lIdx += chnk;
-                }
-            }
+        let baseSize = Math.floor(sortedStudents.length / numClasses);
+        let remainder = sortedStudents.length % numClasses;
+
+        let currentIndex = 0;
+        for (let i = 0; i < numClasses; i++) {
+            let chunk = baseSize + (i < remainder ? 1 : 0);
+            batches[i] = sortedStudents.slice(currentIndex, currentIndex + chunk);
+            currentIndex += chunk;
         }
 
         renderDividedClasses(batches, medium, numClasses);
@@ -2385,7 +2328,7 @@
         let displayStudents = [];
 
         if (mode === 'schoolTop10') {
-            displayStudents = standardStudents.filter(s => s.total > 0).sort((a, b) => b.total - a.total);
+            displayStudents = standardStudents.sort((a, b) => b.total - a.total);
         } else if (mode === 'specialCare') {
             displayStudents = standardStudents.filter(s => {
                 let mark = s.marks[subject];
@@ -2487,7 +2430,7 @@
 
       let displayStudents = [];
       if (currentReportType === 'top10') {
-        displayStudents = [...students].filter(a => pivot[a].total > 0).sort((a, b) => pivot[b].total - pivot[a].total);
+        displayStudents = [...students].sort((a, b) => pivot[b].total - pivot[a].total);
       } else {
         displayStudents = students;
       }
@@ -2555,7 +2498,7 @@
 
         if (currentReportType === 'top10') {
           document.getElementById('downloadPdfBtn').style.display = 'inline-block';
-          document.getElementById('downloadExcelBtn').style.display = 'none';
+          document.getElementById('downloadExcelBtn').style.display = 'inline-block';
         } else {
           document.getElementById('downloadPdfBtn').style.display = 'inline-block';
           document.getElementById('downloadExcelBtn').style.display = 'inline-block';
