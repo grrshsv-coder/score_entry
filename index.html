@@ -486,7 +486,7 @@
       
       <div style="display: flex; flex-direction: column; align-items: center; gap: 15px; margin-top: 20px;">
         <button class="nav-btn full-div" style="width: 85%; max-width: 300px; padding: 15px;" onclick="selectReportType('full')">📄 Class Report</button>
-        <button class="nav-btn top10-div" style="width: 85%; max-width: 300px; padding: 15px;" onclick="selectReportType('top10')">🏆 Class Top 10</button>
+        <button class="nav-btn top10-div" style="width: 85%; max-width: 300px; padding: 15px;" onclick="selectReportType('top10')">🏆 Class Rank List</button>
         <button class="nav-btn progress-div" style="width: 85%; max-width: 300px; padding: 15px;" onclick="selectReportType('progress')">📈 Progress Report</button>
         <hr style="width: 85%; max-width: 300px; border-top: 1px solid #cbd5e1;">
         <button class="nav-btn" style="width: 85%; max-width: 300px; padding: 15px; border-color:#3b82f6; color:#3b82f6;" onclick="fetchStandardMarksAndGenerate('schoolTop10')">🌟 School Rank List</button>
@@ -1160,8 +1160,8 @@
                         origClass: cls,
                         grades: { "First Term Exam": {} },
                         gradeCounts: { 'A+':0, 'A':0, 'B+':0, 'B':0, 'C+':0, 'C':0, 'D+':0, 'D':0, 'E':0 },
-                        qualifiesForFirstBatch: false,
-                        mustBeLastBatch: false
+                        mustBeLastBatch: false,
+                        qualifiesForFirstBatch: false
                     };
                 });
             }
@@ -1199,17 +1199,17 @@
         });
 
         sortedStudents.forEach(s => {
-            if (s.gradeCounts['E'] >= 1 || s.gradeCounts['D'] > 2 || (s.gradeCounts['D'] > 0 && s.gradeCounts['A+'] === 0)) {
+            let hasD_or_E = s.gradeCounts['D'] > 0 || s.gradeCounts['E'] > 0;
+            let hasNoAPlus = s.gradeCounts['A+'] === 0;
+
+            if (hasD_or_E && hasNoAPlus) {
                 s.mustBeLastBatch = true;
-            }
-            if (s.gradeCounts['A+'] >= 3 && (s.gradeCounts['A+'] + s.gradeCounts['A']) >= 5) {
+            } else if (s.gradeCounts['A+'] >= 3 && s.gradeCounts['A'] >= 2) {
                 s.qualifiesForFirstBatch = true;
-            } else {
-                s.qualifiesForFirstBatch = false;
             }
         });
 
-        let topPool = sortedStudents.filter(s => s.qualifiesForFirstBatch && !s.mustBeLastBatch);
+        let topPool = sortedStudents.filter(s => s.qualifiesForFirstBatch);
         let lastPool = sortedStudents.filter(s => s.mustBeLastBatch);
         let middlePool = sortedStudents.filter(s => !s.qualifiesForFirstBatch && !s.mustBeLastBatch);
 
@@ -2328,7 +2328,7 @@
 
     function fetchStandardMarksAndGenerate(mode, subject = null) {
         currentReportType = mode;
-        currentReportClass = currentStandard + (mode === 'schoolTop10' ? '_SchoolRankList' : '_' + subject.replace(/\s+/g, '') + '_SpecialCare');
+        currentReportClass = currentStandard + (mode === 'schoolTop10' ? '_SchoolTop10' : '_' + subject.replace(/\s+/g, '') + '_SpecialCare');
         
         let titleText = mode === 'schoolTop10' ? `Class ${currentStandard} - School Rank List` : `Class ${currentStandard} - Special Care (${subject})`;
         document.getElementById('reportTitle').textContent = titleText;
@@ -2385,17 +2385,7 @@
         let displayStudents = [];
 
         if (mode === 'schoolTop10') {
-            displayStudents = standardStudents.filter(s => {
-                if (s.total === 0) return false;
-                for (let i = 0; i < subjectsList.length; i++) {
-                    let sub = subjectsList[i];
-                    let mark = s.marks[sub];
-                    if (mark === undefined || mark === '' || mark === null) return false; 
-                    let maxMark = getMaxMark(currentExam, sub, s.cls);
-                    if (Math.round((parseFloat(mark) / maxMark) * 100) < 30) return false; 
-                }
-                return true;
-            }).sort((a, b) => b.total - a.total);
+            displayStudents = standardStudents.filter(s => s.total > 0).sort((a, b) => b.total - a.total);
         } else if (mode === 'specialCare') {
             displayStudents = standardStudents.filter(s => {
                 let mark = s.marks[subject];
@@ -2450,7 +2440,7 @@
       let className = currentStandard + divLetter;
       currentReportClass = className;
       
-      let titleSuffix = currentReportType === 'top10' ? " (Top 10 Students)" : "";
+      let titleSuffix = currentReportType === 'top10' ? " (Rank List)" : "";
       if (currentReportType === 'progress') titleSuffix = " Progress Reports";
       
       document.getElementById('reportTitle').textContent = "Class " + className + titleSuffix;
@@ -2497,16 +2487,7 @@
 
       let displayStudents = [];
       if (currentReportType === 'top10') {
-        displayStudents = [...students].filter(a => {
-             if (pivot[a].total === 0) return false;
-             for (let i = 0; i < subjectsList.length; i++) {
-                 let sub = subjectsList[i];
-                 let mark = pivot[a].marks[currentExam][sub] !== undefined ? pivot[a].marks[currentExam][sub] : 0;
-                 let maxMark = getMaxMark(currentExam, sub, className);
-                 if (Math.round((parseFloat(mark) / maxMark) * 100) < 30) return false; 
-             }
-             return true;
-          }).sort((a, b) => pivot[b].total - pivot[a].total).slice(0, 10);
+        displayStudents = [...students].filter(a => pivot[a].total > 0).sort((a, b) => pivot[b].total - pivot[a].total);
       } else {
         displayStudents = students;
       }
@@ -2550,7 +2531,7 @@
         document.getElementById('downloadExcelBtn').style.display = 'none';
 
       } else {
-        let titleSuffix = currentReportType === 'top10' ? " (Top 10 Students)" : "";
+        let titleSuffix = currentReportType === 'top10' ? " (Rank List)" : "";
         let html = '<div style="padding: 10px; background: white;"><h2 style="font-weight: normal; color: black; text-align: center; margin-bottom: 20px;">SANSKRIT HS VATTOLI - Class ' + className + titleSuffix + '</h2>';
         html += '<table class="marks-table" style="width: 100%; border-collapse: collapse; border: 2px solid #000; color: black;"><thead><tr><th style="font-weight: normal; color: black; border: 1px solid #000; padding: 6px;">Student Name</th>';
         
