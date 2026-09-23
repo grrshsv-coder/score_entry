@@ -115,7 +115,7 @@
     .back-btn:hover { color: #2563eb; transform: translateX(-3px) !important; box-shadow: none !important; }
     .back-btn:active { transform: translateX(0) !important; }
 
-    .logout-text-btn { display: block; width: 100%; text-align: right; color: #ef4444; font-size: 14px; font-weight: bold; background: transparent; border: none; box-shadow: none; padding: 0; margin-bottom: 15px; cursor: pointer; }
+    .logout-text-btn { display: block; width: 100%; text-align: right; color: #ef4444; font-size: 14px; font-weight: bold; background: transparent; border: none; box-shadow: none; padding: 0; margin-bottom: 15px; cursor: pointer; transition: 0.2s; }
     .logout-text-btn:hover { text-decoration: underline; color: #dc2626; transform: none; box-shadow: none; }
 
     /* Student List Form */
@@ -593,7 +593,7 @@
   <!-- NEW PAGE GRADE ANALYSIS VIEW -->
   <div class="table-container-wrapper page" id="pageGradeAnalysisView">
     <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px;">
-      <button class="back-btn" onclick="showPage('pageGradeClassSelect')" style="margin-bottom: 0;">← Back</button>
+      <button class="back-btn" onclick="goBackFromGradeClassSelect()" style="margin-bottom: 0;">← Back</button>
       <button id="downloadGradePdfBtn" class="nav-btn" style="border-color: #0ea5e9; color: #0ea5e9; padding: 10px 15px; font-size: 14px;" onclick="downloadGradePDF()">📥 Download PDF</button>
     </div>
     <div id="gradeAnalysisLoading" style="display: none; text-align: center; color: #0ea5e9; font-weight: bold; margin: 30px 0; font-size: 18px;">Generating Analysis... ⏳</div>
@@ -991,11 +991,28 @@
     }
 
     function logoutDevice() {
+        let btn = document.getElementById('logoutBtnDash');
+        if (!btn.classList.contains('confirm-mode')) {
+            btn.dataset.ogText = btn.textContent;
+            btn.textContent = "Sure?";
+            btn.classList.add('confirm-mode');
+            setTimeout(() => { 
+                if(btn.classList.contains('confirm-mode')) {
+                    btn.textContent = btn.dataset.ogText; 
+                    btn.classList.remove('confirm-mode');
+                }
+            }, 3000);
+            return;
+        }
+        
+        btn.textContent = btn.dataset.ogText || "Logout Device"; 
+        btn.classList.remove('confirm-mode');
+        
         loggedInUser = null;
         adminToken = "";
         appMode = 'entry';
         localStorage.removeItem('loggedTeacher'); 
-        document.getElementById('logoutBtnDash').style.display = "none";
+        btn.style.display = "none";
         showPage('pageHome');
     }
 
@@ -2705,11 +2722,12 @@
 
     // --- GRADE ANALYSIS SYSTEM ---
     function goToGradeAnalysis(fromPage) {
+        gradeReturnPage = fromPage || 'pageHome';
         showPage('pageGradeClassSelect');
     }
 
     function goBackFromGradeClassSelect() {
-        showPage('pageDashboard');
+        showPage(gradeReturnPage);
     }
     
     function fetchAndShowGradeAnalysis(std) {
@@ -2808,16 +2826,16 @@
     }
 
     function renderGradeAnalysis(stats, totals, std, divs, gradesList) {
-        let html = `<div id="gradeAnalysisPrint" style="padding: 10px; background: white; width: 100%; min-width: 900px; margin: 0 auto; box-sizing: border-box;">`;
-        html += `<h2 style="font-weight: normal; color: black; text-align: center; margin-bottom: 20px;">SANSKRIT HS VATTOLI<br>Class ${std} - First Term Exam Grade Analysis</h2>`;
+        let html = `<div id="gradeAnalysisPrint" style="padding: 10px; background: white; width: 100%; min-width: 900px; margin: 0; box-sizing: border-box;">`;
+        html += `<h2 style="font-weight: normal; color: black; text-align: left; margin-bottom: 20px;">SANSKRIT HS VATTOLI<br>Class ${std} - First Term Exam Grade Analysis</h2>`;
 
         divs.forEach((div, idx) => {
             let cls = std + div;
             let pageBreakStyle = idx > 0 && idx % 2 === 0 ? "page-break-before: always; padding-top: 10px;" : "padding-top: 10px;";
             
             html += `<div style="${pageBreakStyle}">`;
-            html += `<div class="batch-header" style="color: #000; background: transparent; padding: 8px 0; font-weight: bold; text-align: left; padding-left: 10px; font-size: 16px; border: 1px solid #000; border-bottom: none; max-width: 650px; margin: 0 auto;">Class ${cls}</div>`;
-            html += `<table class="marks-table" style="width: 100%; max-width: 650px; margin: 0 auto 20px auto; border-collapse: collapse; border: 2px solid #000; color: black; table-layout: fixed; word-wrap: break-word;">
+            html += `<div class="batch-header" style="color: #000; background: transparent; padding: 8px 0; font-weight: bold; text-align: left; padding-left: 10px; font-size: 16px; border: 1px solid #000; border-bottom: none; max-width: 650px; margin: 0;">Class ${cls}</div>`;
+            html += `<table class="marks-table" style="width: 100%; max-width: 650px; margin: 0 0 20px 0; border-collapse: collapse; border: 2px solid #000; color: black; table-layout: fixed; word-wrap: break-word;">
             <thead>
                 <tr>
                     <th style="border: 1px solid #000; padding: 6px; text-align: left; width: 120px; background-color:#f8fafc;">Subject</th>
@@ -2844,8 +2862,8 @@
 
         // Total Table
         html += `<div style="page-break-before: always; padding-top: 10px;">`;
-        html += `<div class="batch-header" style="color: #000; background: transparent; padding: 10px 0; font-weight: bold; text-align: center; font-size: 18px; border: 1px solid #000; border-bottom: none; margin: 20px auto 0 auto; max-width: 650px;">TOTAL (ALL DIVISIONS)</div>`;
-        html += `<table class="marks-table" style="width: 100%; max-width: 650px; margin: 0 auto 20px auto; border-collapse: collapse; border: 2px solid #000; color: black; table-layout: fixed; word-wrap: break-word;">
+        html += `<div class="batch-header" style="color: #000; background: transparent; padding: 10px 0; font-weight: bold; text-align: left; padding-left: 10px; font-size: 18px; border: 1px solid #000; border-bottom: none; margin: 20px 0 0 0; max-width: 650px;">TOTAL (ALL DIVISIONS)</div>`;
+        html += `<table class="marks-table" style="width: 100%; max-width: 650px; margin: 0 0 20px 0; border-collapse: collapse; border: 2px solid #000; color: black; table-layout: fixed; word-wrap: break-word;">
         <thead>
             <tr>
                 <th style="border: 1px solid #000; padding: 6px; text-align: left; width: 120px; background-color:#f8fafc;">Subject</th>
