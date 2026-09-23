@@ -165,6 +165,7 @@
         <button class="nav-btn" style="border-color:#10b981; color:#10b981; margin-top:10px;" onclick="goToGuestReports()">📊 View Reports</button>
         <button class="nav-btn" style="border-color:#8b5cf6; color:#8b5cf6; margin-top:10px;" onclick="goToTimetableMenu('pageHome')">📅 View Timetables</button>
         <button class="nav-btn" style="border-color:#ec4899; color:#ec4899; margin-top:10px;" onclick="goToDividePage('pageHome')">🔀 Divide Class 10</button>
+        <button class="nav-btn" style="border-color:#0ea5e9; color:#0ea5e9; margin-top:10px;" onclick="goToGradeAnalysis('pageHome')">📊 Grade Analysis</button>
       </div>
 
       <div class="developer-credit">Designed & Developed by GRR</div>
@@ -246,6 +247,7 @@
         <button class="nav-btn" style="border-color:#8b5cf6; color:#8b5cf6;" onclick="showBookingPage('pageAdminDash')">📅 Special Class Booking</button>
         <button class="nav-btn" style="border-color:#f59e0b; color:#d97706;" onclick="showStatusPage('pageAdminDash')">📋 View Entry Status</button>
         <button class="nav-btn" style="border-color:#ec4899; color:#ec4899;" onclick="goToDividePage('pageAdminDash')">🔀 Divide Class 10</button>
+        <button class="nav-btn" style="border-color:#0ea5e9; color:#0ea5e9;" onclick="goToGradeAnalysis('pageAdminDash')">📊 Grade Analysis</button>
       </div>
       <div class="developer-credit">Designed & Developed by GRR</div>
     </div>
@@ -266,6 +268,7 @@
         <button class="nav-btn" style="border-color:#8b5cf6; color:#8b5cf6; padding: 20px; font-size: 18px;" onclick="showBookingPage('pageDashboard')">📅 Special Class Booking</button>
         <button class="nav-btn" style="border-color:#f59e0b; color:#d97706; padding: 20px; font-size: 18px;" onclick="showStatusPage('pageDashboard')">📋 Entry Status</button>
         <button class="nav-btn" style="border-color:#ec4899; color:#ec4899; padding: 20px; font-size: 18px;" onclick="goToDividePage('pageDashboard')">🔀 Divide Class 10</button>
+        <button class="nav-btn" style="border-color:#0ea5e9; color:#0ea5e9; padding: 20px; font-size: 18px;" onclick="goToGradeAnalysis('pageDashboard')">📊 Grade Analysis</button>
       </div>
       <div class="developer-credit">Designed & Developed by GRR</div>
     </div>
@@ -281,6 +284,21 @@
         <button class="nav-btn sub-4" onclick="selectStandard('10')" style="padding: 20px; font-size: 18px;">📘 Class 10</button>
         <button class="nav-btn sub-5" onclick="selectStandard('9')" style="padding: 20px; font-size: 18px;">📗 Class 9</button>
         <button class="nav-btn sub-6" onclick="selectStandard('8')" style="padding: 20px; font-size: 18px;">📙 Class 8</button>
+      </div>
+      <div class="developer-credit">Designed & Developed by GRR</div>
+    </div>
+
+    <!-- PAGE GRADE ANALYSIS CLASS SELECT -->
+    <div id="pageGradeClassSelect" class="page">
+      <button class="back-btn" onclick="goBackFromGradeClassSelect()">← Back</button>
+      <h1 class="school-name">Grade Analysis</h1>
+      <h3 style="color:#0ea5e9; margin-top: -5px; margin-bottom: 20px;">First Term Exam</h3>
+      <hr class="divider">
+      <h2>Select Class</h2>
+      <div class="list-grid" style="margin-top: 25px;">
+        <button class="nav-btn sub-4" onclick="fetchAndShowGradeAnalysis('10')" style="padding: 20px; font-size: 18px;">📘 Class 10</button>
+        <button class="nav-btn sub-5" onclick="fetchAndShowGradeAnalysis('9')" style="padding: 20px; font-size: 18px;">📗 Class 9</button>
+        <button class="nav-btn sub-6" onclick="fetchAndShowGradeAnalysis('8')" style="padding: 20px; font-size: 18px;">📙 Class 8</button>
       </div>
       <div class="developer-credit">Designed & Developed by GRR</div>
     </div>
@@ -572,6 +590,18 @@
     <div class="developer-credit">Designed & Developed by GRR</div>
   </div>
 
+  <!-- NEW PAGE GRADE ANALYSIS VIEW -->
+  <div class="table-container-wrapper page" id="pageGradeAnalysisView">
+    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px;">
+      <button class="back-btn" onclick="showPage('pageGradeClassSelect')" style="margin-bottom: 0;">← Back</button>
+      <button id="downloadGradePdfBtn" class="nav-btn" style="border-color: #0ea5e9; color: #0ea5e9; padding: 10px 15px; font-size: 14px;" onclick="downloadGradePDF()">📥 Download PDF</button>
+    </div>
+    <div id="gradeAnalysisLoading" style="display: none; text-align: center; color: #0ea5e9; font-weight: bold; margin: 30px 0; font-size: 18px;">Generating Analysis... ⏳</div>
+    <div id="gradeAnalysisMessage" style="text-align:center; color:#ef4444; font-weight:bold; margin-bottom: 10px; display:none;"></div>
+    <div id="gradeAnalysisContainer" style="background:white; border-radius:8px; border:1px solid #cbd5e1; padding: 10px; overflow-x: auto;"></div>
+    <div class="developer-credit">Designed & Developed by GRR</div>
+  </div>
+
   <div id="pdfDownloadArea"></div>
 
   <script>
@@ -738,6 +768,7 @@
     window.currentTimetableDate = null;
 
     let divideReturnPage = 'pageHome';
+    let gradeReturnPage = 'pageHome'; // Determines where the Grade Analysis back button goes
 
     window.addEventListener('load', function() {
       const teacherSet = new Set(languageTeachers); 
@@ -779,11 +810,11 @@
       document.querySelectorAll('.page').forEach(page => page.classList.remove('active'));
       document.getElementById(pageId).classList.add('active');
       
-      if (pageId === 'pageHome' || pageId === 'pageDashboard' || pageId === 'pageClassSelect' || pageId === 'page0' || pageId === 'pageLogin' || pageId === 'pageAdminLogin') {
+      if (pageId === 'pageHome' || pageId === 'pageDashboard' || pageId === 'pageClassSelect' || pageId === 'page0' || pageId === 'pageLogin' || pageId === 'pageAdminLogin' || pageId === 'pageGradeClassSelect') {
           document.body.style.backgroundColor = '#eef2f5'; 
       }
       
-      if(pageId === 'page5' || pageId === 'pageTimetableView' || pageId === 'pageDividedView') {
+      if(pageId === 'page5' || pageId === 'pageTimetableView' || pageId === 'pageDividedView' || pageId === 'pageGradeAnalysisView') {
         document.getElementById('mainContainer').style.display = 'none';
       } else {
         document.getElementById('mainContainer').style.display = 'block';
@@ -1084,6 +1115,182 @@
         showPage('pageClassSelect');
     }
 
+    // --- GRADE ANALYSIS SYSTEM ---
+    function goToGradeAnalysis(fromPage) {
+        gradeReturnPage = fromPage || 'pageHome';
+        showPage('pageGradeClassSelect');
+    }
+
+    function goBackFromGradeClassSelect() {
+        showPage(gradeReturnPage);
+    }
+
+    let currentGradeStd = '';
+    
+    function fetchAndShowGradeAnalysis(std) {
+        currentGradeStd = std;
+        showPage('pageGradeAnalysisView');
+        document.getElementById('gradeAnalysisContainer').innerHTML = "";
+        document.getElementById('gradeAnalysisMessage').style.display = 'none';
+        document.getElementById('gradeAnalysisLoading').style.display = 'block';
+
+        fetch(scriptURL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+            body: JSON.stringify({ action: "getAllMarks" })
+        })
+        .then(res => res.json())
+        .then(data => {
+            document.getElementById('gradeAnalysisLoading').style.display = 'none';
+            if (data.status === "success") {
+                processGradeAnalysis(data.data, std);
+            } else {
+                document.getElementById('gradeAnalysisMessage').textContent = "Failed to load data.";
+                document.getElementById('gradeAnalysisMessage').style.display = 'block';
+            }
+        })
+        .catch(err => {
+            document.getElementById('gradeAnalysisLoading').style.display = 'none';
+            document.getElementById('gradeAnalysisMessage').textContent = "Network error.";
+            document.getElementById('gradeAnalysisMessage').style.display = 'block';
+        });
+    }
+
+    function processGradeAnalysis(marksData, std) {
+        let divs = ['A','B','C','D','E','F','G','H'];
+        let gradesList = std === '8' ? ['A', 'B', 'C', 'D', 'E'] : ['A+', 'A', 'B+', 'B', 'C+', 'C', 'D+', 'D', 'E'];
+        
+        let stats = {};
+        let totals = {};
+        
+        subjectsList.forEach(sub => {
+            totals[sub] = { attended: 0 };
+            gradesList.forEach(g => totals[sub][g] = 0);
+        });
+
+        divs.forEach(d => {
+            let cls = std + d;
+            stats[cls] = {};
+            subjectsList.forEach(sub => {
+                stats[cls][sub] = { attended: 0 };
+                gradesList.forEach(g => stats[cls][sub][g] = 0);
+            });
+        });
+
+        marksData.forEach(row => {
+            if (row.exam === "First Term Exam" && row.className.startsWith(std)) {
+                let cls = row.className;
+                let sub = row.subject;
+                if (row.mark !== "" && stats[cls] && stats[cls][sub]) {
+                    let parsedMark = parseFloat(row.mark);
+                    if (!isNaN(parsedMark)) {
+                        let mark = Math.round(parsedMark);
+                        let maxMark = getMaxMark("First Term Exam", sub, cls);
+                        let grade = getGrade(mark, maxMark, cls);
+                        
+                        stats[cls][sub].attended++;
+                        if (stats[cls][sub][grade] !== undefined) {
+                            stats[cls][sub][grade]++;
+                        }
+                        
+                        totals[sub].attended++;
+                        if (totals[sub][grade] !== undefined) {
+                            totals[sub][grade]++;
+                        }
+                    }
+                }
+            }
+        });
+
+        renderGradeAnalysis(stats, totals, std, divs, gradesList);
+    }
+
+    function renderGradeAnalysis(stats, totals, std, divs, gradesList) {
+        let html = `<div style="padding: 10px; background: white; max-width: 190mm; margin: 0 auto; box-sizing: border-box;">`;
+        html += `<h2 style="font-weight: normal; color: black; text-align: center; margin-bottom: 20px;">SANSKRIT HS VATTOLI<br>Class ${std} - First Term Exam Grade Analysis</h2>`;
+
+        divs.forEach((div, idx) => {
+            let cls = std + div;
+            let pageBreakStyle = idx > 0 && idx % 3 === 0 ? "page-break-before: always; padding-top: 10px;" : "padding-top: 10px;";
+            
+            html += `<div style="${pageBreakStyle}">`;
+            html += `<div class="batch-header" style="color: #000; background: transparent; padding: 8px 0; font-weight: bold; text-align: left; padding-left: 10px; font-size: 16px; border: 1px solid #000; border-bottom: none;">Class ${cls}</div>`;
+            html += `<table class="marks-table" style="width: 100%; border-collapse: collapse; border: 2px solid #000; color: black; margin-bottom:20px; table-layout: fixed; word-wrap: break-word;">
+            <thead>
+                <tr>
+                    <th style="border: 1px solid #000; padding: 6px; text-align: left; width: 25%;">Subject</th>
+                    <th style="border: 1px solid #000; padding: 6px;">Attended</th>`;
+            gradesList.forEach(g => {
+                html += `<th style="border: 1px solid #000; padding: 6px;">${g}</th>`;
+            });
+            html += `</tr></thead><tbody>`;
+
+            subjectsList.forEach(sub => {
+                html += `<tr>
+                    <td style="border: 1px solid #000; padding: 4px 8px; text-align:left; font-size:12px;">${sub}</td>
+                    <td style="border: 1px solid #000; padding: 4px; text-align:center; font-size:12px; font-weight:bold;">${stats[cls][sub].attended}</td>`;
+                gradesList.forEach(g => {
+                    html += `<td style="border: 1px solid #000; padding: 4px; text-align:center; font-size:12px;">${stats[cls][sub][g]}</td>`;
+                });
+                html += `</tr>`;
+            });
+            html += `</tbody></table></div>`;
+        });
+
+        // Total Table
+        html += `<div style="page-break-before: always; padding-top: 10px;">`;
+        html += `<div class="batch-header" style="color: #000; background: transparent; padding: 10px 0; font-weight: bold; text-align: center; font-size: 18px; border: 1px solid #000; border-bottom: none; margin-top: 20px;">TOTAL (ALL DIVISIONS)</div>`;
+        html += `<table class="marks-table" style="width: 100%; border-collapse: collapse; border: 2px solid #000; color: black; margin-bottom:20px; table-layout: fixed; word-wrap: break-word;">
+        <thead>
+            <tr>
+                <th style="border: 1px solid #000; padding: 6px; text-align: left; width: 25%;">Subject</th>
+                <th style="border: 1px solid #000; padding: 6px;">Attended</th>`;
+        gradesList.forEach(g => {
+            html += `<th style="border: 1px solid #000; padding: 6px;">${g}</th>`;
+        });
+        html += `</tr></thead><tbody>`;
+
+        subjectsList.forEach(sub => {
+            html += `<tr>
+                <td style="border: 1px solid #000; padding: 4px 8px; text-align:left; font-size:12px; font-weight:bold;">${sub}</td>
+                <td style="border: 1px solid #000; padding: 4px; text-align:center; font-size:12px; font-weight:bold;">${totals[sub].attended}</td>`;
+            gradesList.forEach(g => {
+                html += `<td style="border: 1px solid #000; padding: 4px; text-align:center; font-size:12px; font-weight:bold;">${totals[sub][g]}</td>`;
+            });
+            html += `</tr>`;
+        });
+        html += `</tbody></table></div>`;
+
+        html += `</div>`;
+        document.getElementById('gradeAnalysisContainer').innerHTML = html;
+    }
+
+    function downloadGradePDF() {
+        let btn = document.getElementById('downloadGradePdfBtn');
+        let ogText = btn.textContent;
+        btn.textContent = "Generating PDF... ⏳";
+        btn.disabled = true;
+
+        let element = document.getElementById('gradeAnalysisContainer');
+        let opt = {
+            margin:       10,
+            filename:     `Grade_Analysis_Class_${currentGradeStd}.pdf`,
+            image:        { type: 'jpeg', quality: 0.98 },
+            html2canvas:  { scale: 2, useCORS: true },
+            jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' },
+            pagebreak:    { mode: 'css', avoid: 'tr' }
+        };
+
+        html2pdf().set(opt).from(element).save().then(() => {
+            btn.textContent = ogText;
+            btn.disabled = false;
+        }).catch(e => {
+            btn.textContent = ogText;
+            btn.disabled = false;
+            alert("Error downloading PDF.");
+        });
+    }
+
     // --- DIVIDE CLASSES SYSTEM ---
     function goToDividePage(fromPage) {
         divideReturnPage = fromPage || 'pageHome';
@@ -1159,7 +1366,9 @@
                         name: student,
                         origClass: cls,
                         grades: { "First Term Exam": {} },
-                        gradeCounts: { 'A+':0, 'A':0, 'B+':0, 'B':0, 'C+':0, 'C':0, 'D+':0, 'D':0, 'E':0 }
+                        gradeCounts: { 'A+':0, 'A':0, 'B+':0, 'B':0, 'C+':0, 'C':0, 'D+':0, 'D':0, 'E':0 },
+                        hasBelowCPlus: false,
+                        mustBeLastBatch: false
                     };
                 });
             }
@@ -1167,16 +1376,19 @@
 
         marksData.forEach(row => {
             if (row.className.startsWith('10') && targetClasses.includes(row.className)) {
+                let ex = row.exam || "First Mid Term Exam";
+                if (ex === "SSLC Mid Term Examination") ex = "First Mid Term Exam";
+
                 // Strictly evaluate First Term Exam only
-                if (row.exam === "First Term Exam") {
+                if (ex === "First Term Exam") {
                     let key = row.className + "_" + row.student;
                     if (studentStats[key] && row.mark !== "") {
                         let parsedMark = parseFloat(row.mark);
                         if (!isNaN(parsedMark)) {
                             let mark = Math.round(parsedMark);
-                            let maxMark = getMaxMark(row.exam, row.subject, row.className);
+                            let maxMark = getMaxMark(ex, row.subject, row.className);
                             let grade = getGrade(mark, maxMark, row.className);
-                            studentStats[key].grades[row.exam][row.subject] = grade;
+                            studentStats[key].grades[ex][row.subject] = grade;
                             studentStats[key].gradeCounts[grade]++;
                         }
                     }
@@ -1193,17 +1405,67 @@
             return s1.name.localeCompare(s2.name);
         });
 
+        sortedStudents.forEach(s => {
+            if (s.gradeCounts['E'] >= 1 || s.gradeCounts['D'] > 2) {
+                s.mustBeLastBatch = true;
+            }
+            if (s.gradeCounts['C'] > 0 || s.gradeCounts['D+'] > 0 || s.gradeCounts['D'] > 0 || s.gradeCounts['E'] > 0) {
+                s.hasBelowCPlus = true;
+            }
+        });
+
+        let topPool = sortedStudents.filter(s => !s.hasBelowCPlus && !s.mustBeLastBatch);
+        let lastPool = sortedStudents.filter(s => s.mustBeLastBatch);
+        let middlePool = sortedStudents.filter(s => s.hasBelowCPlus && !s.mustBeLastBatch);
+
         let batches = [];
         for (let i = 0; i < numClasses; i++) batches.push([]);
 
-        let baseSize = Math.floor(sortedStudents.length / numClasses);
-        let remainder = sortedStudents.length % numClasses;
-
-        let currentIndex = 0;
-        for (let i = 0; i < numClasses; i++) {
-            let chunk = baseSize + (i < remainder ? 1 : 0);
-            batches[i] = sortedStudents.slice(currentIndex, currentIndex + chunk);
-            currentIndex += chunk;
+        if (numClasses === 1) {
+            batches[0] = sortedStudents;
+        } else {
+            let numLastBatches = 1;
+            if (lastPool.length > 50) {
+                numLastBatches = Math.ceil(lastPool.length / 45);
+            }
+            if (numLastBatches >= numClasses) {
+                numLastBatches = numClasses - 1; 
+            }
+            
+            let middleBatchesCount = numClasses - 1 - numLastBatches;
+            
+            if (middleBatchesCount > 0) {
+                batches[0] = topPool;
+                
+                let mBase = Math.floor(middlePool.length / middleBatchesCount);
+                let mRem = middlePool.length % middleBatchesCount;
+                let cIdx = 0;
+                for (let i = 0; i < middleBatchesCount; i++) {
+                    let chnk = mBase + (i < mRem ? 1 : 0);
+                    batches[i + 1] = middlePool.slice(cIdx, cIdx + chnk);
+                    cIdx += chnk;
+                }
+                
+                let lBase = Math.floor(lastPool.length / numLastBatches);
+                let lRem = lastPool.length % numLastBatches;
+                let lIdx = 0;
+                for (let i = 0; i < numLastBatches; i++) {
+                    let chnk = lBase + (i < lRem ? 1 : 0);
+                    batches[1 + middleBatchesCount + i] = lastPool.slice(lIdx, lIdx + chnk);
+                    lIdx += chnk;
+                }
+            } else {
+                batches[0] = topPool.concat(middlePool);
+                
+                let lBase = Math.floor(lastPool.length / numLastBatches);
+                let lRem = lastPool.length % numLastBatches;
+                let lIdx = 0;
+                for (let i = 0; i < numLastBatches; i++) {
+                    let chnk = lBase + (i < lRem ? 1 : 0);
+                    batches[1 + i] = lastPool.slice(lIdx, lIdx + chnk);
+                    lIdx += chnk;
+                }
+            }
         }
 
         renderDividedClasses(batches, medium, numClasses);
@@ -2578,6 +2840,184 @@
       const workbook = XLSX.utils.table_to_book(document.querySelector('#tableWrapper table'), {sheet: "Class Report"});
       XLSX.writeFile(workbook, 'Report_' + currentReportClass + '_' + currentExam.replace(/ /g, '_') + '.xlsx');
     }
+
+    // --- GRADE ANALYSIS SYSTEM ---
+    let gradeReturnPage = 'pageHome';
+
+    function goToGradeAnalysis(fromPage) {
+        gradeReturnPage = fromPage || 'pageHome';
+        showPage('pageGradeClassSelect');
+    }
+
+    function goBackFromGradeClassSelect() {
+        showPage(gradeReturnPage);
+    }
+
+    let currentGradeStd = '';
+    
+    function fetchAndShowGradeAnalysis(std) {
+        currentGradeStd = std;
+        showPage('pageGradeAnalysisView');
+        document.getElementById('gradeAnalysisContainer').innerHTML = "";
+        document.getElementById('gradeAnalysisMessage').style.display = 'none';
+        document.getElementById('gradeAnalysisLoading').style.display = 'block';
+
+        fetch(scriptURL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+            body: JSON.stringify({ action: "getAllMarks" })
+        })
+        .then(res => res.json())
+        .then(data => {
+            document.getElementById('gradeAnalysisLoading').style.display = 'none';
+            if (data.status === "success") {
+                processGradeAnalysis(data.data, std);
+            } else {
+                document.getElementById('gradeAnalysisMessage').textContent = "Failed to load data.";
+                document.getElementById('gradeAnalysisMessage').style.display = 'block';
+            }
+        })
+        .catch(err => {
+            document.getElementById('gradeAnalysisLoading').style.display = 'none';
+            document.getElementById('gradeAnalysisMessage').textContent = "Network error.";
+            document.getElementById('gradeAnalysisMessage').style.display = 'block';
+        });
+    }
+
+    function processGradeAnalysis(marksData, std) {
+        let divs = ['A','B','C','D','E','F','G','H'];
+        let gradesList = std === '8' ? ['A', 'B', 'C', 'D', 'E'] : ['A+', 'A', 'B+', 'B', 'C+', 'C', 'D+', 'D', 'E'];
+        
+        let stats = {};
+        let totals = {};
+        
+        subjectsList.forEach(sub => {
+            totals[sub] = { attended: 0 };
+            gradesList.forEach(g => totals[sub][g] = 0);
+        });
+
+        divs.forEach(d => {
+            let cls = std + d;
+            stats[cls] = {};
+            subjectsList.forEach(sub => {
+                stats[cls][sub] = { attended: 0 };
+                gradesList.forEach(g => stats[cls][sub][g] = 0);
+            });
+        });
+
+        marksData.forEach(row => {
+            if (row.exam === "First Term Exam" && row.className.startsWith(std)) {
+                let cls = row.className;
+                let sub = row.subject;
+                if (row.mark !== "" && stats[cls] && stats[cls][sub]) {
+                    let parsedMark = parseFloat(row.mark);
+                    if (!isNaN(parsedMark)) {
+                        let mark = Math.round(parsedMark);
+                        let maxMark = getMaxMark("First Term Exam", sub, cls);
+                        let grade = getGrade(mark, maxMark, cls);
+                        
+                        stats[cls][sub].attended++;
+                        if (stats[cls][sub][grade] !== undefined) {
+                            stats[cls][sub][grade]++;
+                        }
+                        
+                        totals[sub].attended++;
+                        if (totals[sub][grade] !== undefined) {
+                            totals[sub][grade]++;
+                        }
+                    }
+                }
+            }
+        });
+
+        renderGradeAnalysis(stats, totals, std, divs, gradesList);
+    }
+
+    function renderGradeAnalysis(stats, totals, std, divs, gradesList) {
+        let html = `<div style="padding: 10px; background: white; max-width: 190mm; margin: 0 auto; box-sizing: border-box;">`;
+        html += `<h2 style="font-weight: normal; color: black; text-align: center; margin-bottom: 20px;">SANSKRIT HS VATTOLI<br>Class ${std} - First Term Exam Grade Analysis</h2>`;
+
+        divs.forEach((div, idx) => {
+            let cls = std + div;
+            let pageBreakStyle = idx > 0 && idx % 3 === 0 ? "page-break-before: always; padding-top: 10px;" : "padding-top: 10px;";
+            
+            html += `<div style="${pageBreakStyle}">`;
+            html += `<div class="batch-header" style="color: #000; background: transparent; padding: 8px 0; font-weight: bold; text-align: left; padding-left: 10px; font-size: 16px; border: 1px solid #000; border-bottom: none;">Class ${cls}</div>`;
+            html += `<table class="marks-table" style="width: 100%; border-collapse: collapse; border: 2px solid #000; color: black; margin-bottom:20px; table-layout: fixed; word-wrap: break-word;">
+            <thead>
+                <tr>
+                    <th style="border: 1px solid #000; padding: 6px; text-align: left; width: 25%;">Subject</th>
+                    <th style="border: 1px solid #000; padding: 6px;">Attended</th>`;
+            gradesList.forEach(g => {
+                html += `<th style="border: 1px solid #000; padding: 6px;">${g}</th>`;
+            });
+            html += `</tr></thead><tbody>`;
+
+            subjectsList.forEach(sub => {
+                html += `<tr>
+                    <td style="border: 1px solid #000; padding: 4px 8px; text-align:left; font-size:12px;">${sub}</td>
+                    <td style="border: 1px solid #000; padding: 4px; text-align:center; font-size:12px; font-weight:bold;">${stats[cls][sub].attended}</td>`;
+                gradesList.forEach(g => {
+                    html += `<td style="border: 1px solid #000; padding: 4px; text-align:center; font-size:12px;">${stats[cls][sub][g]}</td>`;
+                });
+                html += `</tr>`;
+            });
+            html += `</tbody></table></div>`;
+        });
+
+        html += `<div style="page-break-before: always; padding-top: 10px;">`;
+        html += `<div class="batch-header" style="color: #000; background: transparent; padding: 10px 0; font-weight: bold; text-align: center; font-size: 18px; border: 1px solid #000; border-bottom: none; margin-top: 20px;">TOTAL (ALL DIVISIONS)</div>`;
+        html += `<table class="marks-table" style="width: 100%; border-collapse: collapse; border: 2px solid #000; color: black; margin-bottom:20px; table-layout: fixed; word-wrap: break-word;">
+        <thead>
+            <tr>
+                <th style="border: 1px solid #000; padding: 6px; text-align: left; width: 25%;">Subject</th>
+                <th style="border: 1px solid #000; padding: 6px;">Attended</th>`;
+        gradesList.forEach(g => {
+            html += `<th style="border: 1px solid #000; padding: 6px;">${g}</th>`;
+        });
+        html += `</tr></thead><tbody>`;
+
+        subjectsList.forEach(sub => {
+            html += `<tr>
+                <td style="border: 1px solid #000; padding: 4px 8px; text-align:left; font-size:12px; font-weight:bold;">${sub}</td>
+                <td style="border: 1px solid #000; padding: 4px; text-align:center; font-size:12px; font-weight:bold;">${totals[sub].attended}</td>`;
+            gradesList.forEach(g => {
+                html += `<td style="border: 1px solid #000; padding: 4px; text-align:center; font-size:12px; font-weight:bold;">${totals[sub][g]}</td>`;
+            });
+            html += `</tr>`;
+        });
+        html += `</tbody></table></div>`;
+
+        html += `</div>`;
+        document.getElementById('gradeAnalysisContainer').innerHTML = html;
+    }
+
+    function downloadGradePDF() {
+        let btn = document.getElementById('downloadGradePdfBtn');
+        let ogText = btn.textContent;
+        btn.textContent = "Generating PDF... ⏳";
+        btn.disabled = true;
+
+        let element = document.getElementById('gradeAnalysisContainer');
+        let opt = {
+            margin:       10,
+            filename:     `Grade_Analysis_Class_${currentGradeStd}.pdf`,
+            image:        { type: 'jpeg', quality: 0.98 },
+            html2canvas:  { scale: 2, useCORS: true },
+            jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' },
+            pagebreak:    { mode: 'css', avoid: 'tr' }
+        };
+
+        html2pdf().set(opt).from(element).save().then(() => {
+            btn.textContent = ogText;
+            btn.disabled = false;
+        }).catch(e => {
+            btn.textContent = ogText;
+            btn.disabled = false;
+            alert("Error downloading PDF.");
+        });
+    }
+
   </script>
 </body>
 </html>
