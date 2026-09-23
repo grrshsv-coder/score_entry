@@ -768,6 +768,7 @@
     window.currentTimetableDate = null;
 
     let divideReturnPage = 'pageHome';
+    let gradeReturnPage = 'pageHome'; 
 
     window.addEventListener('load', function() {
       const teacherSet = new Set(languageTeachers); 
@@ -2388,13 +2389,25 @@
         })
         .then(response => response.json())
         .then(data => {
+            document.getElementById('loadingIndicator').style.display = 'none';
             if (data.status === "success") { 
-                processStandardData(data.data, mode, subject); 
-            } else { 
-                document.getElementById('loadingIndicator').textContent = "Error loading data."; 
+                try {
+                    processStandardData(data.data, mode, subject); 
+                } catch(err) {
+                    document.getElementById('tableWrapper').innerHTML = `<div style='color:red; text-align:center;'>Processing Error: ${err.message}</div>`;
+                    document.getElementById('tableWrapper').style.display = 'block';
+                }
+            } 
+            else { 
+                document.getElementById('tableWrapper').innerHTML = `<div style='color:red; text-align:center;'>Error loading data.</div>`;
+                document.getElementById('tableWrapper').style.display = 'block';
             }
         })
-        .catch(error => { document.getElementById('loadingIndicator').textContent = "Network error."; });
+        .catch(error => { 
+            document.getElementById('loadingIndicator').style.display = 'none';
+            document.getElementById('tableWrapper').innerHTML = `<div style='color:red; text-align:center;'>Network error.</div>`;
+            document.getElementById('tableWrapper').style.display = 'block';
+        });
     }
 
     function processStandardData(fetchedData, mode, subject) {
@@ -2473,7 +2486,6 @@
         html += '</tbody></table></div>';
 
         document.getElementById('tableWrapper').innerHTML = html;
-        document.getElementById('loadingIndicator').style.display = 'none';
         document.getElementById('tableWrapper').style.display = 'block';
         document.getElementById('downloadPdfBtn').style.display = 'inline-block';
         document.getElementById('downloadExcelBtn').style.display = 'inline-block';
@@ -2797,7 +2809,7 @@
     }
 
     function renderGradeAnalysis(stats, totals, std, divs, gradesList) {
-        let html = `<div style="padding: 10px; background: white; max-width: 190mm; margin: 0 auto; box-sizing: border-box;">`;
+        let html = `<div id="gradeAnalysisPrint" style="padding: 10px; background: white; width: 100%; min-width: 900px; margin: 0 auto; box-sizing: border-box;">`;
         html += `<h2 style="font-weight: normal; color: black; text-align: center; margin-bottom: 20px;">SANSKRIT HS VATTOLI<br>Class ${std} - First Term Exam Grade Analysis</h2>`;
 
         divs.forEach((div, idx) => {
@@ -2809,21 +2821,24 @@
             html += `<table class="marks-table" style="width: 100%; border-collapse: collapse; border: 2px solid #000; color: black; margin-bottom:20px; table-layout: fixed; word-wrap: break-word;">
             <thead>
                 <tr>
-                    <th style="border: 1px solid #000; padding: 6px; text-align: left; width: 20%;">Subject</th>
-                    <th style="border: 1px solid #000; padding: 6px;">Attended</th>`;
+                    <th style="border: 1px solid #000; padding: 6px; text-align: left; width: 20%; background-color:#f8fafc;">Subject</th>
+                    <th style="border: 1px solid #000; padding: 6px; background-color:#f8fafc;">Attended</th>`;
             gradesList.forEach(g => {
-                html += `<th style="border: 1px solid #000; padding: 6px;">${g}</th>`;
+                html += `<th style="border: 1px solid #000; padding: 6px; background-color:#f8fafc;">${g}</th>`;
             });
             html += `</tr></thead><tbody>`;
 
+            let rowIdx = 0;
             subjectsList.forEach(sub => {
-                html += `<tr>
+                let bgColor = rowIdx % 2 === 0 ? '#ffffff' : '#f1f5f9';
+                html += `<tr style="background-color: ${bgColor};">
                     <td style="border: 1px solid #000; padding: 4px 8px; text-align:left; font-size:12px;">${sub}</td>
                     <td style="border: 1px solid #000; padding: 4px; text-align:center; font-size:12px; font-weight:bold;">${stats[cls][sub].attended}</td>`;
                 gradesList.forEach(g => {
                     html += `<td style="border: 1px solid #000; padding: 4px; text-align:center; font-size:12px;">${stats[cls][sub][g]}</td>`;
                 });
                 html += `</tr>`;
+                rowIdx++;
             });
             html += `</tbody></table></div>`;
         });
@@ -2834,21 +2849,24 @@
         html += `<table class="marks-table" style="width: 100%; border-collapse: collapse; border: 2px solid #000; color: black; margin-bottom:20px; table-layout: fixed; word-wrap: break-word;">
         <thead>
             <tr>
-                <th style="border: 1px solid #000; padding: 6px; text-align: left; width: 20%;">Subject</th>
-                <th style="border: 1px solid #000; padding: 6px;">Attended</th>`;
+                <th style="border: 1px solid #000; padding: 6px; text-align: left; width: 20%; background-color:#f8fafc;">Subject</th>
+                <th style="border: 1px solid #000; padding: 6px; background-color:#f8fafc;">Attended</th>`;
         gradesList.forEach(g => {
-            html += `<th style="border: 1px solid #000; padding: 6px;">${g}</th>`;
+            html += `<th style="border: 1px solid #000; padding: 6px; background-color:#f8fafc;">${g}</th>`;
         });
         html += `</tr></thead><tbody>`;
 
+        let rowIdxTotal = 0;
         subjectsList.forEach(sub => {
-            html += `<tr>
+            let bgColor = rowIdxTotal % 2 === 0 ? '#ffffff' : '#f1f5f9';
+            html += `<tr style="background-color: ${bgColor};">
                 <td style="border: 1px solid #000; padding: 4px 8px; text-align:left; font-size:12px; font-weight:bold;">${sub}</td>
                 <td style="border: 1px solid #000; padding: 4px; text-align:center; font-size:12px; font-weight:bold;">${totals[sub].attended}</td>`;
             gradesList.forEach(g => {
                 html += `<td style="border: 1px solid #000; padding: 4px; text-align:center; font-size:12px; font-weight:bold;">${totals[sub][g]}</td>`;
             });
             html += `</tr>`;
+            rowIdxTotal++;
         });
         html += `</tbody></table></div>`;
 
@@ -2862,7 +2880,13 @@
         btn.textContent = "Generating PDF... ⏳";
         btn.disabled = true;
 
-        let element = document.getElementById('gradeAnalysisContainer');
+        let element = document.getElementById('gradeAnalysisPrint');
+        let originalWidth = element.style.width;
+        let originalMinWidth = element.style.minWidth;
+        
+        element.style.width = '190mm';
+        element.style.minWidth = '190mm';
+
         let opt = {
             margin:       10,
             filename:     `Grade_Analysis_Class_${currentGradeStd}.pdf`,
@@ -2873,9 +2897,13 @@
         };
 
         html2pdf().set(opt).from(element).save().then(() => {
+            element.style.width = originalWidth;
+            element.style.minWidth = originalMinWidth;
             btn.textContent = ogText;
             btn.disabled = false;
         }).catch(e => {
+            element.style.width = originalWidth;
+            element.style.minWidth = originalMinWidth;
             btn.textContent = ogText;
             btn.disabled = false;
             alert("Error downloading PDF.");
