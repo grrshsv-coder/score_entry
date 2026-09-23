@@ -768,7 +768,6 @@
     window.currentTimetableDate = null;
 
     let divideReturnPage = 'pageHome';
-    let gradeReturnPage = 'pageHome'; // Determines where the Grade Analysis back button goes
 
     window.addEventListener('load', function() {
       const teacherSet = new Set(languageTeachers); 
@@ -1115,182 +1114,6 @@
         showPage('pageClassSelect');
     }
 
-    // --- GRADE ANALYSIS SYSTEM ---
-    function goToGradeAnalysis(fromPage) {
-        gradeReturnPage = fromPage || 'pageHome';
-        showPage('pageGradeClassSelect');
-    }
-
-    function goBackFromGradeClassSelect() {
-        showPage(gradeReturnPage);
-    }
-
-    let currentGradeStd = '';
-    
-    function fetchAndShowGradeAnalysis(std) {
-        currentGradeStd = std;
-        showPage('pageGradeAnalysisView');
-        document.getElementById('gradeAnalysisContainer').innerHTML = "";
-        document.getElementById('gradeAnalysisMessage').style.display = 'none';
-        document.getElementById('gradeAnalysisLoading').style.display = 'block';
-
-        fetch(scriptURL, {
-            method: 'POST',
-            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-            body: JSON.stringify({ action: "getAllMarks" })
-        })
-        .then(res => res.json())
-        .then(data => {
-            document.getElementById('gradeAnalysisLoading').style.display = 'none';
-            if (data.status === "success") {
-                processGradeAnalysis(data.data, std);
-            } else {
-                document.getElementById('gradeAnalysisMessage').textContent = "Failed to load data.";
-                document.getElementById('gradeAnalysisMessage').style.display = 'block';
-            }
-        })
-        .catch(err => {
-            document.getElementById('gradeAnalysisLoading').style.display = 'none';
-            document.getElementById('gradeAnalysisMessage').textContent = "Network error.";
-            document.getElementById('gradeAnalysisMessage').style.display = 'block';
-        });
-    }
-
-    function processGradeAnalysis(marksData, std) {
-        let divs = ['A','B','C','D','E','F','G','H'];
-        let gradesList = std === '8' ? ['A', 'B', 'C', 'D', 'E'] : ['A+', 'A', 'B+', 'B', 'C+', 'C', 'D+', 'D', 'E'];
-        
-        let stats = {};
-        let totals = {};
-        
-        subjectsList.forEach(sub => {
-            totals[sub] = { attended: 0 };
-            gradesList.forEach(g => totals[sub][g] = 0);
-        });
-
-        divs.forEach(d => {
-            let cls = std + d;
-            stats[cls] = {};
-            subjectsList.forEach(sub => {
-                stats[cls][sub] = { attended: 0 };
-                gradesList.forEach(g => stats[cls][sub][g] = 0);
-            });
-        });
-
-        marksData.forEach(row => {
-            if (row.exam === "First Term Exam" && row.className.startsWith(std)) {
-                let cls = row.className;
-                let sub = row.subject;
-                if (row.mark !== "" && stats[cls] && stats[cls][sub]) {
-                    let parsedMark = parseFloat(row.mark);
-                    if (!isNaN(parsedMark)) {
-                        let mark = Math.round(parsedMark);
-                        let maxMark = getMaxMark("First Term Exam", sub, cls);
-                        let grade = getGrade(mark, maxMark, cls);
-                        
-                        stats[cls][sub].attended++;
-                        if (stats[cls][sub][grade] !== undefined) {
-                            stats[cls][sub][grade]++;
-                        }
-                        
-                        totals[sub].attended++;
-                        if (totals[sub][grade] !== undefined) {
-                            totals[sub][grade]++;
-                        }
-                    }
-                }
-            }
-        });
-
-        renderGradeAnalysis(stats, totals, std, divs, gradesList);
-    }
-
-    function renderGradeAnalysis(stats, totals, std, divs, gradesList) {
-        let html = `<div style="padding: 10px; background: white; max-width: 190mm; margin: 0 auto; box-sizing: border-box;">`;
-        html += `<h2 style="font-weight: normal; color: black; text-align: center; margin-bottom: 20px;">SANSKRIT HS VATTOLI<br>Class ${std} - First Term Exam Grade Analysis</h2>`;
-
-        divs.forEach((div, idx) => {
-            let cls = std + div;
-            let pageBreakStyle = idx > 0 && idx % 3 === 0 ? "page-break-before: always; padding-top: 10px;" : "padding-top: 10px;";
-            
-            html += `<div style="${pageBreakStyle}">`;
-            html += `<div class="batch-header" style="color: #000; background: transparent; padding: 8px 0; font-weight: bold; text-align: left; padding-left: 10px; font-size: 16px; border: 1px solid #000; border-bottom: none;">Class ${cls}</div>`;
-            html += `<table class="marks-table" style="width: 100%; border-collapse: collapse; border: 2px solid #000; color: black; margin-bottom:20px; table-layout: fixed; word-wrap: break-word;">
-            <thead>
-                <tr>
-                    <th style="border: 1px solid #000; padding: 6px; text-align: left; width: 25%;">Subject</th>
-                    <th style="border: 1px solid #000; padding: 6px;">Attended</th>`;
-            gradesList.forEach(g => {
-                html += `<th style="border: 1px solid #000; padding: 6px;">${g}</th>`;
-            });
-            html += `</tr></thead><tbody>`;
-
-            subjectsList.forEach(sub => {
-                html += `<tr>
-                    <td style="border: 1px solid #000; padding: 4px 8px; text-align:left; font-size:12px;">${sub}</td>
-                    <td style="border: 1px solid #000; padding: 4px; text-align:center; font-size:12px; font-weight:bold;">${stats[cls][sub].attended}</td>`;
-                gradesList.forEach(g => {
-                    html += `<td style="border: 1px solid #000; padding: 4px; text-align:center; font-size:12px;">${stats[cls][sub][g]}</td>`;
-                });
-                html += `</tr>`;
-            });
-            html += `</tbody></table></div>`;
-        });
-
-        // Total Table
-        html += `<div style="page-break-before: always; padding-top: 10px;">`;
-        html += `<div class="batch-header" style="color: #000; background: transparent; padding: 10px 0; font-weight: bold; text-align: center; font-size: 18px; border: 1px solid #000; border-bottom: none; margin-top: 20px;">TOTAL (ALL DIVISIONS)</div>`;
-        html += `<table class="marks-table" style="width: 100%; border-collapse: collapse; border: 2px solid #000; color: black; margin-bottom:20px; table-layout: fixed; word-wrap: break-word;">
-        <thead>
-            <tr>
-                <th style="border: 1px solid #000; padding: 6px; text-align: left; width: 25%;">Subject</th>
-                <th style="border: 1px solid #000; padding: 6px;">Attended</th>`;
-        gradesList.forEach(g => {
-            html += `<th style="border: 1px solid #000; padding: 6px;">${g}</th>`;
-        });
-        html += `</tr></thead><tbody>`;
-
-        subjectsList.forEach(sub => {
-            html += `<tr>
-                <td style="border: 1px solid #000; padding: 4px 8px; text-align:left; font-size:12px; font-weight:bold;">${sub}</td>
-                <td style="border: 1px solid #000; padding: 4px; text-align:center; font-size:12px; font-weight:bold;">${totals[sub].attended}</td>`;
-            gradesList.forEach(g => {
-                html += `<td style="border: 1px solid #000; padding: 4px; text-align:center; font-size:12px; font-weight:bold;">${totals[sub][g]}</td>`;
-            });
-            html += `</tr>`;
-        });
-        html += `</tbody></table></div>`;
-
-        html += `</div>`;
-        document.getElementById('gradeAnalysisContainer').innerHTML = html;
-    }
-
-    function downloadGradePDF() {
-        let btn = document.getElementById('downloadGradePdfBtn');
-        let ogText = btn.textContent;
-        btn.textContent = "Generating PDF... ⏳";
-        btn.disabled = true;
-
-        let element = document.getElementById('gradeAnalysisContainer');
-        let opt = {
-            margin:       10,
-            filename:     `Grade_Analysis_Class_${currentGradeStd}.pdf`,
-            image:        { type: 'jpeg', quality: 0.98 },
-            html2canvas:  { scale: 2, useCORS: true },
-            jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' },
-            pagebreak:    { mode: 'css', avoid: 'tr' }
-        };
-
-        html2pdf().set(opt).from(element).save().then(() => {
-            btn.textContent = ogText;
-            btn.disabled = false;
-        }).catch(e => {
-            btn.textContent = ogText;
-            btn.disabled = false;
-            alert("Error downloading PDF.");
-        });
-    }
-
     // --- DIVIDE CLASSES SYSTEM ---
     function goToDividePage(fromPage) {
         divideReturnPage = fromPage || 'pageHome';
@@ -1376,19 +1199,16 @@
 
         marksData.forEach(row => {
             if (row.className.startsWith('10') && targetClasses.includes(row.className)) {
-                let ex = row.exam || "First Mid Term Exam";
-                if (ex === "SSLC Mid Term Examination") ex = "First Mid Term Exam";
-
                 // Strictly evaluate First Term Exam only
-                if (ex === "First Term Exam") {
+                if (row.exam === "First Term Exam") {
                     let key = row.className + "_" + row.student;
                     if (studentStats[key] && row.mark !== "") {
                         let parsedMark = parseFloat(row.mark);
                         if (!isNaN(parsedMark)) {
                             let mark = Math.round(parsedMark);
-                            let maxMark = getMaxMark(ex, row.subject, row.className);
+                            let maxMark = getMaxMark(row.exam, row.subject, row.className);
                             let grade = getGrade(mark, maxMark, row.className);
-                            studentStats[key].grades[ex][row.subject] = grade;
+                            studentStats[key].grades[row.exam][row.subject] = grade;
                             studentStats[key].gradeCounts[grade]++;
                         }
                     }
@@ -2842,8 +2662,6 @@
     }
 
     // --- GRADE ANALYSIS SYSTEM ---
-    let gradeReturnPage = 'pageHome';
-
     function goToGradeAnalysis(fromPage) {
         gradeReturnPage = fromPage || 'pageHome';
         showPage('pageGradeClassSelect');
@@ -2852,8 +2670,6 @@
     function goBackFromGradeClassSelect() {
         showPage(gradeReturnPage);
     }
-
-    let currentGradeStd = '';
     
     function fetchAndShowGradeAnalysis(std) {
         currentGradeStd = std;
@@ -2965,6 +2781,7 @@
             html += `</tbody></table></div>`;
         });
 
+        // Total Table
         html += `<div style="page-break-before: always; padding-top: 10px;">`;
         html += `<div class="batch-header" style="color: #000; background: transparent; padding: 10px 0; font-weight: bold; text-align: center; font-size: 18px; border: 1px solid #000; border-bottom: none; margin-top: 20px;">TOTAL (ALL DIVISIONS)</div>`;
         html += `<table class="marks-table" style="width: 100%; border-collapse: collapse; border: 2px solid #000; color: black; margin-bottom:20px; table-layout: fixed; word-wrap: break-word;">
