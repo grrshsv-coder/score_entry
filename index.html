@@ -768,7 +768,6 @@
     window.currentTimetableDate = null;
 
     let divideReturnPage = 'pageHome';
-    let gradeReturnPage = 'pageHome'; 
 
     window.addEventListener('load', function() {
       const teacherSet = new Set(languageTeachers); 
@@ -2389,24 +2388,13 @@
         })
         .then(response => response.json())
         .then(data => {
-            document.getElementById('loadingIndicator').style.display = 'none';
             if (data.status === "success") { 
-                try {
-                    processStandardData(data.data, mode, subject); 
-                } catch(err) {
-                    document.getElementById('tableWrapper').innerHTML = `<div style='color:red; text-align:center;'>Processing Error: ${err.message}</div>`;
-                    document.getElementById('tableWrapper').style.display = 'block';
-                }
+                processStandardData(data.data, mode, subject); 
             } else { 
-                document.getElementById('tableWrapper').innerHTML = `<div style='color:red; text-align:center;'>Error loading data.</div>`;
-                document.getElementById('tableWrapper').style.display = 'block';
+                document.getElementById('loadingIndicator').textContent = "Error loading data."; 
             }
         })
-        .catch(error => { 
-            document.getElementById('loadingIndicator').style.display = 'none';
-            document.getElementById('tableWrapper').innerHTML = `<div style='color:red; text-align:center;'>Network error.</div>`; 
-            document.getElementById('tableWrapper').style.display = 'block';
-        });
+        .catch(error => { document.getElementById('loadingIndicator').textContent = "Network error."; });
     }
 
     function processStandardData(fetchedData, mode, subject) {
@@ -2485,6 +2473,7 @@
         html += '</tbody></table></div>';
 
         document.getElementById('tableWrapper').innerHTML = html;
+        document.getElementById('loadingIndicator').style.display = 'none';
         document.getElementById('tableWrapper').style.display = 'block';
         document.getElementById('downloadPdfBtn').style.display = 'inline-block';
         document.getElementById('downloadExcelBtn').style.display = 'inline-block';
@@ -2775,8 +2764,11 @@
                 let clsStr = String(row.className);
                 if (clsStr.startsWith(std)) {
                     let sub = row.subject;
-                    if (row.mark !== "" && row.mark != null && stats[clsStr] && stats[clsStr][sub]) {
-                        let parsedMark = parseFloat(row.mark);
+                    
+                    let markStr = row.mark !== undefined && row.mark !== null ? String(row.mark).trim() : "";
+                    
+                    if (markStr !== "" && markStr.toLowerCase() !== "ab" && stats[clsStr] && stats[clsStr][sub]) {
+                        let parsedMark = parseFloat(markStr);
                         if (!isNaN(parsedMark)) {
                             let mark = Math.round(parsedMark);
                             let maxMark = getMaxMark(ex, sub, clsStr);
@@ -2810,14 +2802,14 @@
 
         divs.forEach((div, idx) => {
             let cls = std + div;
-            let pageBreakStyle = idx > 0 && idx % 3 === 0 ? "page-break-before: always; padding-top: 10px;" : "padding-top: 10px;";
+            let pageBreakStyle = idx > 0 && idx % 2 === 0 ? "page-break-before: always; padding-top: 10px;" : "padding-top: 10px;";
             
             html += `<div style="${pageBreakStyle}">`;
             html += `<div class="batch-header" style="color: #000; background: transparent; padding: 8px 0; font-weight: bold; text-align: left; padding-left: 10px; font-size: 16px; border: 1px solid #000; border-bottom: none;">Class ${cls}</div>`;
             html += `<table class="marks-table" style="width: 100%; border-collapse: collapse; border: 2px solid #000; color: black; margin-bottom:20px; table-layout: fixed; word-wrap: break-word;">
             <thead>
                 <tr>
-                    <th style="border: 1px solid #000; padding: 6px; text-align: left; width: 25%;">Subject</th>
+                    <th style="border: 1px solid #000; padding: 6px; text-align: left; width: 20%;">Subject</th>
                     <th style="border: 1px solid #000; padding: 6px;">Attended</th>`;
             gradesList.forEach(g => {
                 html += `<th style="border: 1px solid #000; padding: 6px;">${g}</th>`;
@@ -2842,7 +2834,7 @@
         html += `<table class="marks-table" style="width: 100%; border-collapse: collapse; border: 2px solid #000; color: black; margin-bottom:20px; table-layout: fixed; word-wrap: break-word;">
         <thead>
             <tr>
-                <th style="border: 1px solid #000; padding: 6px; text-align: left; width: 25%;">Subject</th>
+                <th style="border: 1px solid #000; padding: 6px; text-align: left; width: 20%;">Subject</th>
                 <th style="border: 1px solid #000; padding: 6px;">Attended</th>`;
         gradesList.forEach(g => {
             html += `<th style="border: 1px solid #000; padding: 6px;">${g}</th>`;
