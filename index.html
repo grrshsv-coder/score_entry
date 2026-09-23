@@ -2704,15 +2704,12 @@
     }
 
     // --- GRADE ANALYSIS SYSTEM ---
-    let gradeReturnPage = 'pageHome';
-
     function goToGradeAnalysis(fromPage) {
-        gradeReturnPage = fromPage || 'pageHome';
         showPage('pageGradeClassSelect');
     }
 
     function goBackFromGradeClassSelect() {
-        showPage(gradeReturnPage);
+        showPage('pageDashboard');
     }
     
     function fetchAndShowGradeAnalysis(std) {
@@ -2811,7 +2808,7 @@
     }
 
     function renderGradeAnalysis(stats, totals, std, divs, gradesList) {
-        let html = `<div id="gradeAnalysisPrint" style="padding: 10px; background: white; width: 100%; margin: 0 auto; box-sizing: border-box;">`;
+        let html = `<div id="gradeAnalysisPrint" style="padding: 10px; background: white; width: 100%; min-width: 900px; margin: 0 auto; box-sizing: border-box;">`;
         html += `<h2 style="font-weight: normal; color: black; text-align: center; margin-bottom: 20px;">SANSKRIT HS VATTOLI<br>Class ${std} - First Term Exam Grade Analysis</h2>`;
 
         divs.forEach((div, idx) => {
