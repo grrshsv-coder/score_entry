@@ -768,6 +768,7 @@
     window.currentTimetableDate = null;
 
     let divideReturnPage = 'pageHome';
+    let gradeReturnPage = 'pageHome'; 
 
     window.addEventListener('load', function() {
       const teacherSet = new Set(languageTeachers); 
@@ -1162,7 +1163,12 @@
             btn.textContent = ogText;
             btn.disabled = false;
             if (data.status === "success") {
-                processDivisionSplit(data.data, medium, numClasses);
+                try {
+                    processDivisionSplit(data.data, medium, numClasses);
+                } catch(err) {
+                    msgDiv.textContent = "Processing Error: " + err.message;
+                    msgDiv.style.display = 'block';
+                }
             } else {
                 msgDiv.textContent = "Failed to fetch data.";
                 msgDiv.style.display = 'block';
@@ -1198,17 +1204,20 @@
         });
 
         marksData.forEach(row => {
-            if (row.className.startsWith('10') && targetClasses.includes(row.className)) {
-                // Strictly evaluate First Term Exam only
-                if (row.exam === "First Term Exam") {
-                    let key = row.className + "_" + row.student;
-                    if (studentStats[key] && row.mark !== "") {
+            let ex = row.exam || "First Mid Term Exam";
+            if (ex === "SSLC Mid Term Examination") ex = "First Mid Term Exam";
+
+            if (ex === "First Term Exam" && row.className) {
+                let clsStr = String(row.className);
+                if (targetClasses.includes(clsStr)) {
+                    let key = clsStr + "_" + row.student;
+                    if (studentStats[key] && row.mark !== "" && row.mark != null) {
                         let parsedMark = parseFloat(row.mark);
                         if (!isNaN(parsedMark)) {
                             let mark = Math.round(parsedMark);
-                            let maxMark = getMaxMark(row.exam, row.subject, row.className);
-                            let grade = getGrade(mark, maxMark, row.className);
-                            studentStats[key].grades[row.exam][row.subject] = grade;
+                            let maxMark = getMaxMark(ex, row.subject, clsStr);
+                            let grade = getGrade(mark, maxMark, clsStr);
+                            studentStats[key].grades[ex][row.subject] = grade;
                             studentStats[key].gradeCounts[grade]++;
                         }
                     }
@@ -1900,7 +1909,11 @@
         .then(data => {
             document.getElementById('statusLoading').style.display = "none";
             if (data.status === "success") {
-                renderStatus(data.data, examName);
+                try {
+                    renderStatus(data.data, examName);
+                } catch(err) {
+                    document.getElementById('statusListContainer').innerHTML = `<div style='color:red;'>Processing Error: ${err.message}</div>`;
+                }
             } else {
                 document.getElementById('statusListContainer').innerHTML = "<div style='color:red;'>Error fetching data.</div>";
             }
@@ -1919,9 +1932,12 @@
             if (ex === "SSLC Mid Term Examination") ex = "First Mid Term Exam";
             if (ex !== examName) return;
             
-            if (!counts[row.className]) counts[row.className] = {};
-            if (!counts[row.className][row.subject]) counts[row.className][row.subject] = 0;
-            counts[row.className][row.subject]++;
+            if (row.className) {
+                let cls = String(row.className);
+                if (!counts[cls]) counts[cls] = {};
+                if (!counts[cls][row.subject]) counts[cls][row.subject] = 0;
+                counts[cls][row.subject]++;
+            }
         });
         
         let pendingGroups = {};
@@ -2237,7 +2253,8 @@
     }
 
     function getMaxMark(exam, subject, className) {
-        if (className.startsWith('8')) {
+        let cName = String(className || "");
+        if (cName.startsWith('8')) {
             if (subject === 'Physics' || subject === 'Chemistry' || subject === 'Biology') return 20;
             return 40;
         }
@@ -2248,8 +2265,8 @@
         } else {
             if (subject === 'Social Science' || subject === 'Mathematics') return 40;
             if (subject === 'English') {
-                if (className.includes('A') || className.includes('F')) return 40; 
-                if (className.includes('B') || className.includes('H')) return 31; 
+                if (cName.includes('A') || cName.includes('F')) return 40; 
+                if (cName.includes('B') || cName.includes('H')) return 31; 
                 return 40;
             }
             return 25;
@@ -2257,9 +2274,10 @@
     }
 
     function getGrade(mark, maxMark, className) {
+        let cName = String(className || "");
         let percentage = Math.round((parseFloat(mark) / maxMark) * 100);
         
-        if (className && className.startsWith('8')) {
+        if (cName.startsWith('8')) {
             if (percentage >= 80) return 'A';
             if (percentage >= 60) return 'B';
             if (percentage >= 40) return 'C';
@@ -2371,13 +2389,24 @@
         })
         .then(response => response.json())
         .then(data => {
+            document.getElementById('loadingIndicator').style.display = 'none';
             if (data.status === "success") { 
-                processStandardData(data.data, mode, subject); 
+                try {
+                    processStandardData(data.data, mode, subject); 
+                } catch(err) {
+                    document.getElementById('tableWrapper').innerHTML = `<div style='color:red; text-align:center;'>Processing Error: ${err.message}</div>`;
+                    document.getElementById('tableWrapper').style.display = 'block';
+                }
             } else { 
-                document.getElementById('loadingIndicator').textContent = "Error loading data."; 
+                document.getElementById('tableWrapper').innerHTML = `<div style='color:red; text-align:center;'>Error loading data.</div>`;
+                document.getElementById('tableWrapper').style.display = 'block';
             }
         })
-        .catch(error => { document.getElementById('loadingIndicator').textContent = "Network error."; });
+        .catch(error => { 
+            document.getElementById('loadingIndicator').style.display = 'none';
+            document.getElementById('tableWrapper').innerHTML = `<div style='color:red; text-align:center;'>Network error.</div>`; 
+            document.getElementById('tableWrapper').style.display = 'block';
+        });
     }
 
     function processStandardData(fetchedData, mode, subject) {
@@ -2394,11 +2423,12 @@
         let validData = fetchedData.filter(row => {
             let ex = row.exam || "First Mid Term Exam";
             if (ex === "SSLC Mid Term Examination") ex = "First Mid Term Exam";
-            return ex === currentExam && row.className.startsWith(currentStandard);
+            
+            return ex === currentExam && row.className && String(row.className).startsWith(currentStandard);
         });
 
         validData.forEach(row => {
-            let s = standardStudents.find(x => x.name === row.student && x.cls === row.className);
+            let s = standardStudents.find(x => x.name === row.student && x.cls === String(row.className));
             if(s) {
                 let parsedMark = parseFloat(row.mark);
                 let mark = isNaN(parsedMark) ? 0 : Math.round(parsedMark);
@@ -2455,7 +2485,6 @@
         html += '</tbody></table></div>';
 
         document.getElementById('tableWrapper').innerHTML = html;
-        document.getElementById('loadingIndicator').style.display = 'none';
         document.getElementById('tableWrapper').style.display = 'block';
         document.getElementById('downloadPdfBtn').style.display = 'inline-block';
         document.getElementById('downloadExcelBtn').style.display = 'inline-block';
@@ -2482,10 +2511,25 @@
       })
       .then(response => response.json())
       .then(data => {
-        if (data.status === "success") { buildTable(className, data.data); } 
-        else { document.getElementById('loadingIndicator').textContent = "Error loading data."; }
+        document.getElementById('loadingIndicator').style.display = 'none';
+        if (data.status === "success") { 
+            try {
+                buildTable(className, data.data); 
+            } catch(err) {
+                document.getElementById('tableWrapper').innerHTML = `<div style='color:red; text-align:center;'>Processing Error: ${err.message}</div>`;
+                document.getElementById('tableWrapper').style.display = 'block';
+            }
+        } 
+        else { 
+            document.getElementById('tableWrapper').innerHTML = `<div style='color:red; text-align:center;'>Error loading data.</div>`;
+            document.getElementById('tableWrapper').style.display = 'block';
+        }
       })
-      .catch(error => { document.getElementById('loadingIndicator').textContent = "Network error."; });
+      .catch(error => { 
+          document.getElementById('loadingIndicator').style.display = 'none';
+          document.getElementById('tableWrapper').innerHTML = `<div style='color:red; text-align:center;'>Network error.</div>`;
+          document.getElementById('tableWrapper').style.display = 'block';
+      });
     }
 
     function buildTable(className, fetchedData) {
@@ -2549,8 +2593,6 @@
         
         document.getElementById('tableWrapper').innerHTML = previewHtml;
         document.getElementById('pdfDownloadArea').innerHTML = pdfHtml;
-
-        document.getElementById('loadingIndicator').style.display = 'none';
         document.getElementById('tableWrapper').style.display = 'block';
         document.getElementById('downloadPdfBtn').style.display = 'inline-block';
         document.getElementById('downloadExcelBtn').style.display = 'none';
@@ -2575,7 +2617,6 @@
         html += '</tbody></table></div>';
 
         document.getElementById('tableWrapper').innerHTML = html;
-        document.getElementById('loadingIndicator').style.display = 'none';
         document.getElementById('tableWrapper').style.display = 'block';
 
         if (currentReportType === 'top10') {
@@ -2687,15 +2728,20 @@
         .then(data => {
             document.getElementById('gradeAnalysisLoading').style.display = 'none';
             if (data.status === "success") {
-                processGradeAnalysis(data.data, std);
+                try {
+                    processGradeAnalysis(data.data, std);
+                } catch(err) {
+                    document.getElementById('gradeAnalysisMessage').textContent = "Processing Error: " + err.message;
+                    document.getElementById('gradeAnalysisMessage').style.display = 'block';
+                }
             } else {
-                document.getElementById('gradeAnalysisMessage').textContent = "Failed to load data.";
+                document.getElementById('gradeAnalysisMessage').textContent = "Failed to load data from server.";
                 document.getElementById('gradeAnalysisMessage').style.display = 'block';
             }
         })
         .catch(err => {
             document.getElementById('gradeAnalysisLoading').style.display = 'none';
-            document.getElementById('gradeAnalysisMessage').textContent = "Network error.";
+            document.getElementById('gradeAnalysisMessage').textContent = "Network timeout or error.";
             document.getElementById('gradeAnalysisMessage').style.display = 'block';
         });
     }
@@ -2722,24 +2768,33 @@
         });
 
         marksData.forEach(row => {
-            if (row.exam === "First Term Exam" && row.className.startsWith(std)) {
-                let cls = row.className;
-                let sub = row.subject;
-                if (row.mark !== "" && stats[cls] && stats[cls][sub]) {
-                    let parsedMark = parseFloat(row.mark);
-                    if (!isNaN(parsedMark)) {
-                        let mark = Math.round(parsedMark);
-                        let maxMark = getMaxMark("First Term Exam", sub, cls);
-                        let grade = getGrade(mark, maxMark, cls);
-                        
-                        stats[cls][sub].attended++;
-                        if (stats[cls][sub][grade] !== undefined) {
-                            stats[cls][sub][grade]++;
-                        }
-                        
-                        totals[sub].attended++;
-                        if (totals[sub][grade] !== undefined) {
-                            totals[sub][grade]++;
+            let ex = row.exam || "First Mid Term Exam";
+            if (ex === "SSLC Mid Term Examination") ex = "First Mid Term Exam";
+
+            if (ex === "First Term Exam" && row.className) {
+                let clsStr = String(row.className);
+                if (clsStr.startsWith(std)) {
+                    let sub = row.subject;
+                    if (row.mark !== "" && row.mark != null && stats[clsStr] && stats[clsStr][sub]) {
+                        let parsedMark = parseFloat(row.mark);
+                        if (!isNaN(parsedMark)) {
+                            let mark = Math.round(parsedMark);
+                            let maxMark = getMaxMark(ex, sub, clsStr);
+                            let grade = getGrade(mark, maxMark, clsStr);
+                            
+                            stats[clsStr][sub].attended++;
+                            if (stats[clsStr][sub][grade] !== undefined) {
+                                stats[clsStr][sub][grade]++;
+                            } else {
+                                stats[clsStr][sub][grade] = 1;
+                            }
+                            
+                            totals[sub].attended++;
+                            if (totals[sub][grade] !== undefined) {
+                                totals[sub][grade]++;
+                            } else {
+                                totals[sub][grade] = 1;
+                            }
                         }
                     }
                 }
