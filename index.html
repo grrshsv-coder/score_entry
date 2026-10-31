@@ -440,7 +440,7 @@
       <div class="list-grid" style="margin-top: 25px;">
         <button class="nav-btn sub-6" onclick="selectExam('First Term Exam')" style="padding: 20px; font-size: 18px;">📄 First Term Exam</button>
         <button class="nav-btn sub-3" onclick="selectExam('First Mid Term Exam')" style="padding: 20px; font-size: 18px;">📄 First Mid Term Exam</button>
-        <button class="nav-btn sub-8" onclick="selectExam('Second Mid Term Exam')" style="padding: 20px; font-size: 18px;">📄 Second Mid Term Exam</button>
+        <button class="nav-btn sub-4" onclick="selectExam('Second Mid Term Exam')" style="padding: 20px; font-size: 18px;">📄 Second Mid Term Exam</button>
       </div>
       <div class="developer-credit">Designed & Developed by GRR</div>
     </div>
@@ -594,7 +594,7 @@
   <!-- NEW PAGE GRADE ANALYSIS VIEW -->
   <div class="table-container-wrapper page" id="pageGradeAnalysisView">
     <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px;">
-      <button class="back-btn" onclick="showPage('pageGradeClassSelect')" style="margin-bottom: 0;">← Back</button>
+      <button class="back-btn" onclick="goBackFromGradeClassSelect()" style="margin-bottom: 0;">← Back</button>
       <button id="downloadGradePdfBtn" class="nav-btn" style="border-color: #0ea5e9; color: #0ea5e9; padding: 10px 15px; font-size: 14px;" onclick="downloadGradePDF()">📥 Download PDF</button>
     </div>
     <div id="gradeAnalysisLoading" style="display: none; text-align: center; color: #0ea5e9; font-weight: bold; margin: 30px 0; font-size: 18px;">Generating Analysis... ⏳</div>
@@ -656,7 +656,7 @@
     // --- MANUAL ENTRY MASTER SWITCHES ---
     const IS_FIRST_TERM_ENTRY_OPEN = true;
     const IS_MID_TERM_ENTRY_OPEN = false; 
-    const IS_SECOND_MID_TERM_ENTRY_OPEN = true;
+    const IS_SECOND_MID_TERM_ENTRY_OPEN = true; 
 
     // THE REAL GOOGLE APPS SCRIPT URL
     const scriptURL = 'https://script.google.com/macros/s/AKfycby05tkg3ElQdyLWsIwXICADRJgQYWkJQZkELLdvV-KArxfZNvWQXfgE9LRRrB3Bii-7lQ/exec';
@@ -766,6 +766,4 @@
     let ttCalYear = new Date().getFullYear();
     window.bookingSelectedDate = null;
     window.ttSelectedDate = null;
-    window.currentTimetableTarget = null;
-    window.currentTimetableDate = null;
-
+    window
